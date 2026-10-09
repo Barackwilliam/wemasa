@@ -1,0 +1,19 @@
+<div class="upload">
+  {% if widget.is_initial %}
+  <div class="upload-current">
+    {% with url=widget.value.url|lower %}
+    {% if ".pdf" in url or ".doc" in url or ".xls" in url or ".ppt" in url or ".zip" in url %}
+    <a class="file-link" href="{{ widget.value.url }}" target="_blank" rel="noopener">📄 {{ widget.value.name|cut:"documents/" }}</a>
+    {% else %}
+    <a href="{{ widget.value.url }}" target="_blank" rel="noopener"><img src="{{ widget.value.url }}" alt="" loading="lazy"></a>
+    {% endif %}
+    {% endwith %}
+    {% if not widget.required %}<label class="clear"><input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}"> Remove</label>{% endif %}
+  </div>
+  {% endif %}
+  <label class="dropzone">
+    <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+    <span class="dz-text">{% if widget.is_initial %}Replace file{% else %}Choose a file{% endif %} <small>or drag it here</small></span>
+    <img class="dz-preview" alt="" hidden>
+  </label>
+</div>

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load site_tags %}
+{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
+{% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" %}
+<section class="section">
+  <div class="container" style="display:grid;gap:clamp(48px,6vw,80px)">
+    {% for g in groups %}
+    <div>
+      <h2 class="group-title reveal">{{ g.label }}</h2>
+      <div class="grid grid-4">
+        {% for m in g.members %}
+        <article class="card card-hover team-card reveal" style="--d:{% widthratio forloop.counter0 1 6 %}0ms">
+          <div class="media">{% if m.photo %}<img src="{{ m.photo.url }}" alt="{{ m.name }}" loading="lazy" decoding="async">{% else %}<span class="initials">{{ m.initials }}</span>{% endif %}</div>
+          <div class="card-body">
+            <h3>{{ m.name }}</h3>
+            <span class="role">{{ m.role }}</span>
+            {% if m.bio %}<p class="bio">{{ m.bio }}</p><button class="link-arrow read" type="button" data-bio="bio-{{ m.pk }}">Read profile {% icon 'arrow-right' %}</button>{% endif %}
+            {% if m.email or m.linkedin %}
+            <div class="socials">
+              {% if m.email %}<a href="mailto:{{ m.email }}" aria-label="Email {{ m.name }}">{% icon 'mail' %}</a>{% endif %}
+              {% if m.linkedin %}<a href="{{ m.linkedin }}" target="_blank" rel="noopener" aria-label="{{ m.name }} on LinkedIn">{% icon 'linkedin' %}</a>{% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </article>
+        {% if m.bio %}
+        <template id="bio-{{ m.pk }}">
+          {% if m.photo %}<img src="{{ m.photo.url }}" alt="{{ m.name }}">{% else %}<div class="media-placeholder" style="min-height:320px"><span class="initials" style="font-size:4rem;font-weight:800">{{ m.initials }}</span></div>{% endif %}
+          <div class="card-body"><span class="chip" style="margin-bottom:14px">{{ g.label }}</span><h2 style="font-size:1.9rem;margin-bottom:6px">{{ m.name }}</h2><p class="role" style="color:var(--green-700);font-weight:700">{{ m.role }}</p><div class="prose">{{ m.bio|linebreaks }}</div></div>
+        </template>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% empty %}
+      {% include "partials/empty.html" with icon_name="users" title="Team profiles coming soon" text="Meet the people behind WEMASA here soon." %}
+    {% endfor %}
+  </div>
+</section>
+<section class="section-tight">
+  <div class="container container-narrow">
+    <div class="card reveal" style="padding:clamp(26px,4vw,40px);display:flex;gap:22px;align-items:center;flex-wrap:wrap">
+      <span class="icon-tile lg sun">{% icon 'hand-heart' %}</span>
+      <div style="flex:1;min-width:240px"><h3 style="margin-bottom:4px">Want to work with us?</h3><p class="muted" style="margin:0">We are always glad to hear from volunteers, interns and professionals who share our passion for a clean environment.</p></div>
+      <a class="btn btn-primary" href="{% url 'website:get_involved' %}">Get involved {% icon 'arrow-right' cls='icon-move' %}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block modals %}
+<div class="modal" id="bio-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Team member profile">
+  <div class="modal-panel"><button class="icon-btn modal-close" type="button" data-close aria-label="Close">{% icon 'x' %}</button><div class="modal-content" style="display:contents"></div></div>
+</div>
+{% endblock %}

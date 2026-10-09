@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load site_tags %}
+{% block title %}{{ area.title }} — {{ site.short_name }}{% endblock %}
+{% block description %}{{ area.summary|truncatechars:160 }}{% endblock %}
+{% block og_image %}{% if area.image %}{{ area.image.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block content %}
+<section class="page-hero{% if not area.image %} no-image{% endif %}">
+  {% if area.image %}<div class="page-hero-media"><img src="{{ area.image.url }}" alt="" fetchpriority="high"></div>{% endif %}
+  <div class="container">
+    <ol class="breadcrumb"><li><a href="{% url 'website:home' %}">Home</a></li><li><a href="{% url 'website:focus_list' %}">Focus areas</a></li><li aria-current="page">{{ area.title }}</li></ol>
+    <span class="eyebrow eyebrow-light">Focus area</span>
+    <h1>{{ area.title }}</h1>
+    <p class="lead">{{ area.summary }}</p>
+  </div>
+  {% include "partials/wave.html" %}
+</section>
+
+<section class="section">
+  <div class="container detail-layout">
+    <div>
+      {% if area.description %}<div class="prose lead-text reveal">{{ area.description|safe }}</div>{% endif %}
+      {% if photos %}
+      <h2 class="block-title">From the field</h2>
+      <div class="photo-grid reveal">
+        {% for ph in photos %}<a class="shot" href="{{ ph.image.url }}" data-lightbox="focus" data-caption="{{ ph.caption }}"><img src="{{ ph.image.url }}" alt="{{ ph.caption }}" loading="lazy"></a>{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <aside class="sticky-aside">
+      <div class="card facts reveal">
+        <span class="icon-tile lg" style="margin-bottom:18px">{% icon area.icon %}</span>
+        <h3>{{ projects|length }} project{{ projects|length|pluralize }} in this area</h3>
+        <p class="muted" style="font-size:.95rem">Want to support work in {{ area.title|lower }}? We welcome partners, volunteers and donors.</p>
+        <div style="display:grid;gap:10px"><a class="btn btn-sun" href="{% url 'website:donate' %}">{% icon 'heart' %} Support this work</a><a class="btn btn-ghost" href="{% url 'website:contact' %}?topic=partnership">Partner with us</a></div>
+      </div>
+      {% if others %}
+      <div class="card facts reveal">
+        <h3>Other focus areas</h3>
+        {% for o in others %}<a class="fact" href="{{ o.get_absolute_url }}" style="color:inherit"><span class="icon-tile">{% icon o.icon %}</span><span><strong>{{ o.title }}</strong></span></a>{% endfor %}
+      </div>
+      {% endif %}
+    </aside>
+  </div>
+</section>
+
+{% if projects %}
+<section class="section bg-mist">
+  <div class="container">
+    {% section_head "Projects" "Programmes in this focus area" %}
+    <div class="grid grid-3">{% for project in projects %}{% include "partials/project_card.html" with delay=forloop.counter0 %}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+{% include "partials/cta.html" %}
+{% endblock %}

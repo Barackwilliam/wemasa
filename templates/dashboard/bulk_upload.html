@@ -1,0 +1,23 @@
+{% extends "dashboard/base.html" %}
+{% load site_tags %}
+{% block title %}Upload photos{% endblock %}
+{% block crumbs %}<a href="{% url 'dashboard:list' 'gallery' %}">Photo gallery</a> / <strong>Upload</strong>{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="page-head"><div><h1>Upload photos</h1><p class="muted">Photos are automatically resized and compressed so the website stays fast.</p></div>
+    <button class="btn btn-primary" type="submit">{% icon 'download' cls='rot-180' %} Upload</button></div>
+  <section class="panel">
+    <div class="fields">
+      <div class="field wide">
+        <label>Photos <em>*</em></label>
+        <label class="dropzone big"><input type="file" name="photos" accept="image/*" multiple required><span class="dz-text">Choose photos <small>or drag them here — you can select many at once</small></span><span class="dz-count muted"></span></label>
+        {% for e in form.photos.errors %}<small class="error">{{ e }}</small>{% endfor %}
+      </div>
+      <div class="field"><label for="id_project">Project</label>{{ form.project }}<small class="help">{{ form.project.help_text }}</small></div>
+      <div class="field"><label for="id_album">Album</label>{{ form.album }}<small class="help">{{ form.album.help_text }}</small></div>
+      <div class="field wide"><label for="id_caption">Caption</label>{{ form.caption }}<small class="help">{{ form.caption.help_text }}</small></div>
+    </div>
+  </section>
+</form>
+{% endblock %}

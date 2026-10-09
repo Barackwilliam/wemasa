@@ -1,0 +1,79 @@
+{% extends "dashboard/base.html" %}
+{% load site_tags dash_tags %}
+{% block title %}{% if object.pk %}Edit {{ section.name|lower }}{% else %}New {{ section.name|lower }}{% endif %}{% endblock %}
+{% block head %}<link rel="stylesheet" href="https://unpkg.com/trix@2.1.8/dist/trix.css">{% endblock %}
+{% block crumbs %}<a href="{% url 'dashboard:home' %}">Overview</a> / {% if section.singleton %}<strong>{{ section.label }}</strong>{% else %}<a href="{% url 'dashboard:list' section.slug %}">{{ section.label }}</a> / <strong>{% if object.pk %}Edit{% else %}New{% endif %}</strong>{% endif %}{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="edit-form" novalidate>
+  {% csrf_token %}
+  <div class="page-head sticky-head">
+    <div>
+      <h1>{% if section.singleton %}{{ section.label }}{% elif object.pk %}{{ object|truncatechars:60 }}{% else %}New {{ section.name|lower }}{% endif %}</h1>
+      {% if section.help %}<p class="muted">{{ section.help }}</p>{% endif %}
+    </div>
+    <div class="btn-row">
+      {% if view_url %}<a class="btn btn-ghost" href="{{ view_url }}" target="_blank" rel="noopener">{% icon 'external' %} View on site</a>{% endif %}
+      {% if not section.singleton %}<button class="btn btn-ghost" type="submit" name="_action" value="continue">Save &amp; keep editing</button>{% endif %}
+      <button class="btn btn-primary" type="submit" name="_action" value="save">{% icon 'check' %} Save</button>
+    </div>
+  </div>
+
+  {% if form.non_field_errors %}<div class="toast toast-error">{% icon 'x' %}<span>{{ form.non_field_errors|join:" " }}</span></div>{% endif %}
+
+  {% for title, fields in fieldsets %}
+  <section class="panel">
+    {% if title %}<div class="panel-head"><h2>{{ title }}</h2></div>{% endif %}
+    <div class="fields">
+      {% for field in fields %}
+      <div class="field {% if field|is_wide %}wide{% endif %} {% if field.errors %}has-error{% endif %} w-{{ field|widget_name|lower }}">
+        {% if field|widget_name == 'CheckboxInput' %}
+        <label class="switch">{{ field }}<span class="slider"></span><span class="switch-label">{{ field.label }}</span></label>
+        {% else %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <em>*</em>{% endif %}</label>
+        {{ field }}
+        {% endif %}
+        {% if field.help_text %}<small class="help">{{ field.help_text }}</small>{% endif %}
+        {% for e in field.errors %}<small class="error">{{ e }}</small>{% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+
+  {% for f in formsets %}
+  <section class="panel">
+    <div class="panel-head"><h2>{{ f.title }}</h2></div>
+    {% if f.help %}<p class="muted" style="margin-top:-6px">{{ f.help }}</p>{% endif %}
+    {{ f.fs.management_form }}
+    <div class="inline-rows">
+      {% for sub in f.fs %}
+      <div class="inline-row">
+        {% for hidden in sub.hidden_fields %}{{ hidden }}{% endfor %}
+        {% for field in sub.visible_fields %}
+        <div class="field {% if field.name == 'DELETE' %}field-delete{% endif %}">
+          {% if field.name == 'DELETE' %}<label class="del">{{ field }} Remove</label>{% else %}<label>{{ field.label }}</label>{{ field }}{% for e in field.errors %}<small class="error">{{ e }}</small>{% endfor %}{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+
+  {% if section.slug == 'projects' and object.pk %}
+  <section class="panel">
+    <div class="panel-head"><h2>Project photos</h2><a href="{% url 'dashboard:bulk_upload' %}?project={{ object.pk }}">{% icon 'camera' %} Upload photos</a></div>
+    <div class="photo-strip">{% for ph in object.photos.all %}<a href="{% url 'dashboard:update' 'gallery' ph.pk %}"><img src="{{ ph.image.url }}" alt="" loading="lazy"></a>{% empty %}<p class="muted">No photos yet.</p>{% endfor %}</div>
+  </section>
+  {% endif %}
+
+  <div class="form-foot">
+    {% if object.pk and not section.singleton %}<a class="btn btn-ghost danger" href="{% url 'dashboard:delete' section.slug object.pk %}">{% icon 'trash' %} Delete</a>{% else %}<span></span>{% endif %}
+    <div class="btn-row">
+      {% if not section.singleton %}<button class="btn btn-ghost" type="submit" name="_action" value="add_another">Save &amp; add another</button>{% endif %}
+      <button class="btn btn-primary" type="submit" name="_action" value="save">{% icon 'check' %} Save changes</button>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}<script src="https://unpkg.com/trix@2.1.8/dist/trix.umd.min.js"></script>{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load site_tags %}
+{% block title %}Search{% if q %}: {{ q }}{% endif %} — {{ site.short_name }}{% endblock %}
+{% block meta %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="page-hero no-image">
+  <div class="container">
+    <ol class="breadcrumb"><li><a href="{% url 'website:home' %}">Home</a></li><li aria-current="page">Search</li></ol>
+    <h1>{% if q %}Results for “{{ q }}”{% else %}Search the website{% endif %}</h1>
+    <form class="search-box search-hero-form" action="{% url 'website:search' %}" method="get" role="search">
+      {% icon 'search' %}<input type="search" name="q" value="{{ q }}" placeholder="Search projects, news, reports…" aria-label="Search" style="color:var(--ink)"><button class="btn btn-primary btn-sm" type="submit">Search</button>
+    </form>
+  </div>
+  {% include "partials/wave.html" %}
+</section>
+<section class="section">
+  <div class="container container-narrow">
+    {% if q and total %}
+      <p class="muted" style="margin-bottom:28px">{{ total }} result{{ total|pluralize }} found.</p>
+      {% for group, items in results.items %}
+      <div class="search-group">
+        <h2>{{ group }}</h2>
+        {% for it in items %}
+        <a class="card card-hover result" href="{{ it.url }}" style="color:inherit">
+          <span class="icon-tile">{% icon 'arrow-up-right' %}</span>
+          <span><h3>{{ it.title }}</h3>{% if it.text %}<p>{{ it.text|striptags|truncatewords:24 }}</p>{% endif %}</span>
+        </a>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    {% elif q %}
+      {% include "partials/empty.html" with icon_name="search" title="No results" text="Try a different word — for example: trees, schools, farming, cleanup or journalists." %}
+    {% else %}
+      {% include "partials/empty.html" with icon_name="search" title="What are you looking for?" text="Search across projects, news, reports, media coverage and our team." %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

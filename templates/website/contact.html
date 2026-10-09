@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load site_tags %}
+{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
+{% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" %}
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="contact-cards">
+      {% if site.location or site.address %}<div class="card contact-card reveal"><span class="icon-tile">{% icon 'map-pin' %}</span><small>Visit / write</small><strong>{{ site.location }}{% if site.location and site.address %}<br>{% endif %}{{ site.address }}</strong></div>{% endif %}
+      {% if site.phone %}<div class="card contact-card reveal" style="--d:.06s"><span class="icon-tile blue">{% icon 'phone' %}</span><small>Call us</small><a class="v" href="{{ site.phone|tel_link }}">{{ site.phone }}</a>{% if site.phone_alt %}<a class="v" href="{{ site.phone_alt|tel_link }}">{{ site.phone_alt }}</a>{% endif %}</div>{% endif %}
+      {% if site.email %}<div class="card contact-card reveal" style="--d:.12s"><span class="icon-tile sun">{% icon 'mail' %}</span><small>Email</small><a class="v" href="mailto:{{ site.email }}">{{ site.email }}</a></div>{% endif %}
+      {% if site.office_hours %}<div class="card contact-card reveal" style="--d:.18s"><span class="icon-tile">{% icon 'clock' %}</span><small>Office hours</small><strong>{{ site.office_hours }}</strong></div>{% endif %}
+    </div>
+  </div>
+</section>
+<section class="section" style="padding-top:0">
+  <div class="container split" style="align-items:stretch">
+    <div class="reveal">{% include "partials/contact_form.html" %}</div>
+    <div class="reveal" style="--d:.1s">
+      {% if site.map_embed_url %}
+      <iframe class="map-frame" src="{{ site.map_embed_url }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map to the WEMASA office" allowfullscreen></iframe>
+      {% else %}
+      <div class="map-placeholder">
+        <span class="icon-tile lg" style="background:rgba(255,255,255,.14);color:#fff;margin-bottom:20px">{% icon 'globe' %}</span>
+        <h3 style="font-size:1.7rem">Based in Temeke, working across Tanzania</h3>
+        <p style="color:rgba(255,255,255,.8)">Our team works in communities, schools and markets across Dar es Salaam and beyond. Reach us by phone, email or WhatsApp — we respond quickly.</p>
+        <div class="btn-row">
+          {% if site.whatsapp %}<a class="btn btn-sun" href="{{ site.whatsapp|whatsapp_link }}" target="_blank" rel="noopener">{% icon 'whatsapp' %} WhatsApp us</a>{% endif %}
+          {% if site.social_links %}<div class="socials">{% for s in site.social_links %}<a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="{{ s.name }}" style="color:#fff">{% icon s.icon %}</a>{% endfor %}</div>{% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

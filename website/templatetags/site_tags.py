@@ -1,0 +1,107 @@
+from urllib.parse import urlencode
+
+from django import template
+from django.templatetags.static import static
+from django.utils.html import escape, format_html
+from django.utils.safestring import mark_safe
+
+register = template.Library()
+
+SOCIAL_ICONS = {"x": "x-logo"}
+
+
+@register.simple_tag
+def icon(name, size=None, cls=""):
+    name = SOCIAL_ICONS.get(name, name) or "leaf"
+    style = f' style="width:{int(size)}px;height:{int(size)}px"' if size else ""
+    return mark_safe(f'<svg class="icon {escape(cls)}"{style} aria-hidden="true"><use href="#i-{escape(name)}"/></svg>')
+
+
+@register.filter
+def highlight(title, phrase):
+    """Wrap `phrase` inside `title` with an accent span."""
+    title = escape(title or "")
+    phrase = escape(phrase or "")
+    if phrase and phrase in title:
+        return mark_safe(title.replace(phrase, f'<span class="accent">{phrase}</span>', 1))
+    return mark_safe(title)
+
+
+@register.filter
+def img_url(field, fallback=""):
+    """URL of an uploaded image, or a static fallback image when empty."""
+    try:
+        if field and field.name:
+            return field.url
+    except ValueError:
+        pass
+    return static(fallback) if fallback else ""
+
+
+@register.simple_tag(takes_context=True)
+def query(context, **kwargs):
+    """Build a query string keeping current GET params, overriding the ones given."""
+    params = context["request"].GET.copy()
+    for key, value in kwargs.items():
+        if value in (None, ""):
+            params.pop(key, None)
+        else:
+            params[key] = value
+    if "page" not in kwargs:  # changing a filter always goes back to page 1
+        params.pop("page", None)
+    encoded = params.urlencode()
+    return f"?{encoded}" if encoded else "?"
+
+
+@register.filter
+def split_lines(value):
+    return [line.strip() for line in (value or "").splitlines() if line.strip()]
+
+
+@register.filter
+def whatsapp_link(number):
+    digits = "".join(ch for ch in (number or "") if ch.isdigit())
+    if digits.startswith("0"):
+        digits = "255" + digits[1:]
+    return f"https://wa.me/{digits}" if digits else ""
+
+
+@register.filter
+def tel_link(number):
+    cleaned = "".join(ch for ch in (number or "") if ch.isdigit() or ch == "+")
+    return f"tel:{cleaned}"
+
+
+@register.simple_tag
+def share_links(url, title):
+    data = {
+        "WhatsApp": ("whatsapp", f"https://wa.me/?{urlencode({'text': f'{title} {url}'})}"),
+        "Facebook": ("facebook", f"https://www.facebook.com/sharer/sharer.php?{urlencode({'u': url})}"),
+        "X": ("x", f"https://twitter.com/intent/tweet?{urlencode({'url': url, 'text': title})}"),
+        "LinkedIn": ("linkedin", f"https://www.linkedin.com/sharing/share-offsite/?{urlencode({'url': url})}"),
+    }
+    return [{"name": k, "icon": v[0], "url": v[1]} for k, v in data.items()]
+
+
+@register.inclusion_tag("partials/section_head.html")
+def section_head(eyebrow="", title="", subtitle="", align="center", light=False):
+    return {"eyebrow": eyebrow, "title": title, "subtitle": subtitle, "align": align, "light": light}
+
+
+@register.simple_tag
+def first_of(*values):
+    for value in values:
+        if value:
+            return value
+    return ""
+
+
+@register.filter
+def initials(value):
+    return "".join(part[0] for part in str(value).split()[:2]).upper()
+
+
+@register.simple_tag
+def bg_image(field, fallback=""):
+    url = img_url(field, fallback)
+    return format_html('style="--bg:url(\'{}\')"', url) if url else ""

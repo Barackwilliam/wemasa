@@ -1,0 +1,27 @@
+{% extends "dashboard/base.html" %}
+{% load site_tags %}
+{% block title %}Message from {{ msg.name }}{% endblock %}
+{% block crumbs %}<a href="{% url 'dashboard:list' 'messages' %}">Messages</a> / <strong>{{ msg.name }}</strong>{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>{{ msg.get_topic_display }}</h1><p class="muted">Received {{ msg.created_at|date:"j F Y, H:i" }}</p></div>
+  <div class="btn-row">
+    <form method="post">{% csrf_token %}<button class="btn btn-ghost" name="_action" value="unread">Mark as unread</button></form>
+    <a class="btn btn-ghost danger" href="{% url 'dashboard:delete' 'messages' msg.pk %}">{% icon 'trash' %} Delete</a>
+    <a class="btn btn-primary" href="mailto:{{ msg.email }}?subject=Re: your message to WEMASA">{% icon 'send' %} Reply by email</a>
+  </div>
+</div>
+<div class="two-col">
+  <section class="panel"><div class="panel-head"><h2>Message</h2></div><div class="message-body">{{ msg.message|linebreaks }}</div></section>
+  <section class="panel">
+    <div class="panel-head"><h2>Sender</h2></div>
+    <dl class="dl">
+      <dt>Name</dt><dd>{{ msg.name }}</dd>
+      <dt>Email</dt><dd><a href="mailto:{{ msg.email }}">{{ msg.email }}</a></dd>
+      {% if msg.phone %}<dt>Phone</dt><dd><a href="tel:{{ msg.phone }}">{{ msg.phone }}</a></dd>{% endif %}
+      {% if msg.organisation %}<dt>Organisation</dt><dd>{{ msg.organisation }}</dd>{% endif %}
+      <dt>Topic</dt><dd>{{ msg.get_topic_display }}</dd>
+    </dl>
+  </section>
+</div>
+{% endblock %}

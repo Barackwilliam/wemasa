@@ -1,0 +1,46 @@
+# Render Blueprint — Dashboard → New → Blueprint → choose this repository.
+# Values marked "sync: false" are requested when the Blueprint is created.
+services:
+  - type: web
+    name: wemasa
+    runtime: python
+    plan: starter
+    region: frankfurt
+    buildCommand: ./build.sh
+    startCommand: gunicorn config.wsgi:application --workers 3 --timeout 60 --access-logfile -
+    healthCheckPath: /robots.txt
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      # Supabase → Project Settings → Database → Connection string → "Session pooler" URI
+      - key: DATABASE_URL
+        sync: false
+      # Supabase → Storage → create a PUBLIC bucket, then Storage → Settings → S3 access keys
+      - key: SUPABASE_PROJECT_REF
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: wemasa-media
+      - key: SUPABASE_S3_KEY
+        sync: false
+      - key: SUPABASE_S3_SECRET
+        sync: false
+      - key: SUPABASE_REGION
+        sync: false
+      # First dashboard administrator (created once, on the first deploy)
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      # Custom domain(s), comma separated, e.g. wemasa.or.tz,www.wemasa.or.tz
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: SITE_URL
+        sync: false

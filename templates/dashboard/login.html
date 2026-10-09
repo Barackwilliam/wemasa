@@ -1,0 +1,31 @@
+{% load static site_tags %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
+  <title>Sign in · {{ site.short_name }} Dashboard</title>
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body class="login-body">
+{% include "partials/icons.html" %}
+<div class="login-wrap">
+  <div class="login-art">
+    <img src="{% static 'img/logo-160.webp' %}" width="88" height="88" alt="WEMASA logo">
+    <h1>Weka Mazingira Safi</h1>
+    <p>Manage every page, project, story and photo on the WEMASA website — changes go live instantly.</p>
+  </div>
+  <form class="login-card" method="post">
+    {% csrf_token %}
+    <h2>Welcome back</h2>
+    <p class="muted">Sign in to the content dashboard.</p>
+    {% if form.errors %}<div class="toast toast-error">{% icon 'x' %}<span>Your username or password is incorrect. Please try again.</span></div>{% endif %}
+    <label class="field"><span>Username or email</span><input type="text" name="username" autocomplete="username" required autofocus value="{{ form.username.value|default:'' }}"></label>
+    <label class="field"><span>Password</span><input type="password" name="password" autocomplete="current-password" required></label>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="btn btn-primary btn-block" type="submit">Sign in {% icon 'arrow-right' %}</button>
+    <a class="back" href="/">{% icon 'arrow-left' %} Back to the website</a>
+  </form>
+</div>
+</body>
+</html>

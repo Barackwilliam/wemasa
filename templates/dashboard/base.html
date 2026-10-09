@@ -1,0 +1,63 @@
+{% load static site_tags %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}Dashboard{% endblock %} · {{ site.short_name }} Admin</title>
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+{% include "partials/icons.html" %}
+<div class="dash">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-brand" href="{% url 'dashboard:home' %}">
+      <img src="{% static 'img/logo-160.webp' %}" width="40" height="40" alt="">
+      <span><strong>{{ site.short_name }}</strong><small>Content dashboard</small></span>
+    </a>
+    <nav class="side-nav">
+      <a class="side-link {% if not section and request.resolver_match.url_name == 'home' %}is-active{% endif %}" href="{% url 'dashboard:home' %}">{% icon 'chart' %} Overview</a>
+      {% for group, items in nav_groups %}
+      <div class="side-group">{{ group }}</div>
+      {% for s in items %}
+      <a class="side-link {% if section.slug == s.slug %}is-active{% endif %}" href="{% if s.singleton %}{% url 'dashboard:singleton' s.slug %}{% else %}{% url 'dashboard:list' s.slug %}{% endif %}">
+        {% icon s.icon %} {{ s.label }}{% if s.slug == 'messages' and unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
+      </a>
+      {% endfor %}
+      {% endfor %}
+      {% if user.is_superuser %}
+      <div class="side-group">Administration</div>
+      <a class="side-link" href="{% url 'admin:auth_user_changelist' %}">{% icon 'shield' %} Users &amp; access</a>
+      {% endif %}
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn only-mobile" type="button" data-toggle-sidebar aria-label="Menu">{% icon 'menu' %}</button>
+      <div class="crumbs">{% block crumbs %}{% endblock %}</div>
+      <div class="top-actions">
+        <a class="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener">{% icon 'external' %} <span class="hide-sm">View website</span></a>
+        <details class="user-menu">
+          <summary><span class="avatar">{{ user.get_username|slice:":1"|upper }}</span><span class="hide-sm">{{ user.get_full_name|default:user.get_username }}</span>{% icon 'chevron-down' %}</summary>
+          <div class="menu">
+            <a href="{% url 'dashboard:password' %}">{% icon 'shield' %} Change password</a>
+            <form method="post" action="{% url 'dashboard:clear_cache' %}">{% csrf_token %}<button type="submit">{% icon 'sparkles' %} Refresh website cache</button></form>
+            <form method="post" action="{% url 'dashboard:logout' %}">{% csrf_token %}<button type="submit">{% icon 'arrow-left' %} Sign out</button></form>
+          </div>
+        </details>
+      </div>
+    </header>
+    <main class="content">
+      {% if messages %}<div class="toasts">{% for m in messages %}<div class="toast toast-{{ m.tags }}">{% if m.tags == 'error' %}{% icon 'x' %}{% else %}{% icon 'check-circle' %}{% endif %}<span>{{ m }}</span></div>{% endfor %}</div>{% endif %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+<div class="sidebar-backdrop" data-toggle-sidebar></div>
+{% block scripts %}{% endblock %}
+<script src="{% static 'js/dashboard.js' %}" defer></script>
+</body>
+</html>

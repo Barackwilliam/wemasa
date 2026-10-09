@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load site_tags %}
+{% block title %}Page not found — {{ site.short_name }}{% endblock %}
+{% block content %}
+<section class="page-hero no-image" style="min-height:70vh;display:flex;align-items:center">
+  <div class="container">
+    <span class="eyebrow eyebrow-light">Error 404</span>
+    <h1>This page has wandered off the path</h1>
+    <p class="lead">The page you are looking for may have moved or no longer exists. Let’s get you back on track.</p>
+    <div class="btn-row" style="margin-top:28px">
+      <a class="btn btn-sun btn-lg" href="{% url 'website:home' %}">Back to home {% icon 'arrow-right' cls='icon-move' %}</a>
+      <a class="btn btn-glass btn-lg" href="{% url 'website:project_list' %}">Explore our projects</a>
+    </div>
+  </div>
+  {% include "partials/wave.html" %}
+</section>
+{% endblock %}

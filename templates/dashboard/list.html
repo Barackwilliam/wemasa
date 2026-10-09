@@ -1,0 +1,66 @@
+{% extends "dashboard/base.html" %}
+{% load site_tags %}
+{% block title %}{{ section.label }}{% endblock %}
+{% block crumbs %}<a href="{% url 'dashboard:home' %}">Overview</a> / <strong>{{ section.label }}</strong>{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>{{ section.label }}</h1>{% if section.help %}<p class="muted">{{ section.help }}</p>{% endif %}</div>
+  <div class="btn-row">
+    {% if section.slug == 'gallery' %}<a class="btn btn-ghost" href="{% url 'dashboard:bulk_upload' %}">{% icon 'camera' %} Upload many photos</a>{% endif %}
+    {% if section.slug == 'subscribers' %}<a class="btn btn-ghost" href="{% url 'dashboard:export_subscribers' %}">{% icon 'download' %} Export CSV</a>{% endif %}
+    {% if section.can_add %}<a class="btn btn-primary" href="{% url 'dashboard:create' section.slug %}">{% icon 'sparkles' %} Add {{ section.name|lower }}</a>{% endif %}
+  </div>
+</div>
+
+<form class="toolbar" method="get">
+  <label class="search">{% icon 'search' %}<input type="search" name="q" value="{{ q }}" placeholder="Search {{ section.label|lower }}…"></label>
+  {% if filter_choices %}
+  <select name="filter" onchange="this.form.submit()">
+    <option value="">All</option>
+    {% for value, label in filter_choices %}<option value="{{ value }}" {% if active_filter == value|stringformat:'s' %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  {% endif %}
+  <button class="btn btn-ghost btn-sm" type="submit">Search</button>
+  <span class="muted count">{{ page_obj.paginator.count }} item{{ page_obj.paginator.count|pluralize }}</span>
+</form>
+
+{% if rows %}
+<div class="table-wrap">
+  <table class="table">
+    <thead><tr>{% if section.thumb %}<th style="width:72px"></th>{% endif %}{% for c in columns %}<th>{{ c|capfirst }}</th>{% endfor %}<th class="actions-col"></th></tr></thead>
+    <tbody>
+      {% for row in rows %}
+      <tr class="{% if row.obj.is_read is False %}is-unread{% endif %}">
+        {% if section.thumb %}<td>{% if row.thumb %}<img class="thumb" src="{{ row.thumb.url }}" alt="" loading="lazy">{% else %}<span class="thumb thumb-empty">{% icon section.icon %}</span>{% endif %}</td>{% endif %}
+        {% for c in row.cells %}
+        <td>{% if forloop.first %}<a class="row-title" href="{% url 'dashboard:update' section.slug row.obj.pk %}">{{ c.text|default:"(untitled)"|truncatechars:80 }}</a>
+            {% elif c.bool is not None %}{% if c.bool %}<span class="pill pill-on">Yes</span>{% else %}<span class="pill">No</span>{% endif %}
+            {% else %}{{ c.text|truncatechars:60 }}{% endif %}</td>
+        {% endfor %}
+        <td class="actions-col">
+          {% if row.toggle %}
+          <form method="post" action="{% url 'dashboard:toggle' section.slug row.obj.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="icon-btn" type="submit" title="{% if row.obj.is_published %}Hide from website{% else %}Publish{% endif %}">{% if row.obj.is_published %}{% icon 'eye' %}{% else %}{% icon 'x' %}{% endif %}</button></form>
+          {% endif %}
+          <a class="icon-btn" href="{% url 'dashboard:update' section.slug row.obj.pk %}" title="Edit">{% icon 'clipboard' %}</a>
+          <a class="icon-btn danger" href="{% url 'dashboard:delete' section.slug row.obj.pk %}" title="Delete">{% icon 'trash' %}</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="pager">
+  {% if page_obj.has_previous %}<a class="btn btn-ghost btn-sm" href="?page={{ page_obj.previous_page_number }}&q={{ q|urlencode }}&filter={{ active_filter }}">← Previous</a>{% endif %}
+  <span class="muted">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a class="btn btn-ghost btn-sm" href="?page={{ page_obj.next_page_number }}&q={{ q|urlencode }}&filter={{ active_filter }}">Next →</a>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<div class="panel empty-state">
+  <span class="kpi-icon">{% icon section.icon %}</span>
+  <h2>{% if q %}Nothing matches “{{ q }}”{% else %}No {{ section.label|lower }} yet{% endif %}</h2>
+  {% if section.can_add %}<a class="btn btn-primary" href="{% url 'dashboard:create' section.slug %}">Add the first one</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

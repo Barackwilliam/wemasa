@@ -1,0 +1,56 @@
+{% extends "dashboard/base.html" %}
+{% load site_tags %}
+{% block crumbs %}<strong>Overview</strong>{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Habari, {{ user.first_name|default:user.get_username }} 👋</h1><p class="muted">Here is what is happening on the WEMASA website.</p></div>
+  <div class="btn-row">
+    <a class="btn btn-ghost" href="{% url 'dashboard:bulk_upload' %}">{% icon 'camera' %} Upload photos</a>
+    <a class="btn btn-primary" href="{% url 'dashboard:create' 'news' %}">{% icon 'newspaper' %} Write a story</a>
+  </div>
+</div>
+
+<div class="kpis">
+  <a class="kpi" href="{% url 'dashboard:list' 'projects' %}"><span class="kpi-icon">{% icon 'layers' %}</span><strong>{{ totals.projects }}</strong><small>Published projects</small></a>
+  <a class="kpi" href="{% url 'dashboard:list' 'gallery' %}"><span class="kpi-icon blue">{% icon 'camera' %}</span><strong>{{ totals.photos }}</strong><small>Photos in gallery</small></a>
+  <a class="kpi" href="{% url 'dashboard:list' 'messages' %}"><span class="kpi-icon sun">{% icon 'mail' %}</span><strong>{{ unread_count }}</strong><small>Unread messages</small></a>
+  <a class="kpi" href="{% url 'dashboard:list' 'subscribers' %}"><span class="kpi-icon">{% icon 'send' %}</span><strong>{{ subscriber_count }}</strong><small>Newsletter subscribers</small></a>
+</div>
+
+<div class="two-col">
+  <section class="panel">
+    <div class="panel-head"><h2>Latest messages</h2><a href="{% url 'dashboard:list' 'messages' %}">View all</a></div>
+    {% for m in latest_messages %}
+    <a class="msg-row {% if not m.is_read %}is-unread{% endif %}" href="{% url 'dashboard:message' m.pk %}">
+      <span class="avatar">{{ m.name|slice:":1"|upper }}</span>
+      <span class="msg-main"><strong>{{ m.name }}</strong><small>{{ m.get_topic_display }} · {{ m.message|truncatechars:70 }}</small></span>
+      <span class="msg-date">{{ m.created_at|timesince }} ago</span>
+    </a>
+    {% empty %}
+    <p class="muted empty-note">No messages yet. Messages sent through the website’s contact form will appear here.</p>
+    {% endfor %}
+  </section>
+  <section class="panel">
+    <div class="panel-head"><h2>Quick edit</h2></div>
+    <div class="quick">
+      <a href="{% url 'dashboard:singleton' 'home-page' %}">{% icon 'star' %} Home page</a>
+      <a href="{% url 'dashboard:singleton' 'about-page' %}">{% icon 'leaf' %} About page</a>
+      <a href="{% url 'dashboard:singleton' 'site-settings' %}">{% icon 'home' %} Contacts &amp; social</a>
+      <a href="{% url 'dashboard:create' 'projects' %}">{% icon 'layers' %} New project</a>
+      <a href="{% url 'dashboard:create' 'media' %}">{% icon 'mic' %} Add press coverage</a>
+      <a href="{% url 'dashboard:create' 'resources' %}">{% icon 'file' %} Upload a report</a>
+      <a href="{% url 'dashboard:create' 'team' %}">{% icon 'users' %} Add team member</a>
+      <a href="{% url 'dashboard:create' 'partners' %}">{% icon 'handshake' %} Add partner</a>
+    </div>
+  </section>
+</div>
+
+<section class="panel">
+  <div class="panel-head"><h2>All content</h2></div>
+  <div class="content-grid">
+    {% for c in counts %}
+    <a class="content-tile" href="{% url 'dashboard:list' c.section.slug %}"><span class="kpi-icon">{% icon c.section.icon %}</span><span><strong>{{ c.section.label }}</strong><small>{{ c.count }} item{{ c.count|pluralize }}</small></span></a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

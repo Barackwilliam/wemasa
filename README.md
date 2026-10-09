@@ -61,8 +61,19 @@ Tests: `python manage.py test`
 2. Jaza thamani zinazoulizwa (`DATABASE_URL`, `SUPABASE_*`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, domain).
 3. **Apply.** `build.sh` itasakinisha, ita-`migrate`, itaunda admin wa kwanza na kuingiza maudhui ya awali.
 
-> `render.yaml` inatumia plan ya **Starter** ili tovuti isilale (free plan hulala baada ya dakika 15 na ombi la
-> kwanza huchukua sekunde 30–60).
+> `render.yaml` inatumia plan ya **Free**. Plan ya bure hulala baada ya dakika 15 bila wageni, kwa hiyo weka
+> **UptimeRobot** iiamshe kila wakati (hatua 2a hapa chini).
+
+### 2a. UptimeRobot (kuzuia tovuti isilale)
+1. Fungua akaunti ya bure kwenye https://uptimerobot.com → **Add New Monitor**.
+2. Monitor type: **HTTP(s)**.
+3. URL: `https://<jina-la-service>.onrender.com/health/` (au domain yako, mfano `https://wemasa.or.tz/health/`).
+4. Monitoring interval: **5 minutes** → Create Monitor.
+
+`/health/` ni ukurasa mwepesi sana unaojibu `ok` (na kukagua database), hivyo hautumii rasilimali nyingi.
+UptimeRobot pia itakutumia email tovuti ikishindwa kufunguka.
+
+> Plan ya bure ya Render inatoa takriban saa 750 kwa mwezi — zinatosha service moja iwe hewani muda wote.
 
 ### 3. Domain
 Render → Settings → Custom Domains → ongeza domain (mfano `wemasa.or.tz`), weka DNS records, kisha ongeza domain

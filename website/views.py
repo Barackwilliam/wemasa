@@ -378,6 +378,20 @@ def search(request):
     })
 
 
+def health(request):
+    """Light endpoint for uptime monitors (e.g. UptimeRobot): keeps the free Render service awake."""
+    from django.db import connection
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+    except Exception:
+        return HttpResponse("database unavailable", content_type="text/plain", status=503)
+    response = HttpResponse("ok", content_type="text/plain")
+    response["Cache-Control"] = "no-store"
+    return response
+
+
 def robots_txt(request):
     lines = ["User-agent: *", "Disallow: /dashboard/", "Disallow: /system-admin/", "Disallow: /search/",
              f"Sitemap: {request.build_absolute_uri(reverse('sitemap'))}"]

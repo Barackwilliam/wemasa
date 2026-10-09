@@ -69,6 +69,10 @@ class PublicPagesTests(TestCase):
         self.assertEqual(self.client.get(project.get_absolute_url()).status_code, 404)
         self.assertNotContains(self.client.get(reverse("website:project_list")), project.title)
 
+    def test_health_endpoint(self):
+        response = self.client.get(reverse("website:health"))
+        self.assertEqual(response.content, b"ok")
+
     def test_unknown_page_returns_404(self):
         self.assertEqual(self.client.get("/does-not-exist/").status_code, 404)
 

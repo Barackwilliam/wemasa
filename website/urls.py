@@ -26,4 +26,5 @@ urlpatterns = [
     path("subscribe/", views.subscribe, name="subscribe"),
     path("search/", views.search, name="search"),
     path("robots.txt", views.robots_txt, name="robots"),
+    path("health/", views.health, name="health"),
 ]

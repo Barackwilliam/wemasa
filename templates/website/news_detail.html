@@ -1,40 +1,48 @@
 {% extends "base.html" %}
 {% load site_tags %}
-{% block title %}{{ post.title }} · {{ site.short_name }}{% endblock %}
+{% block title %}{{ post.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ post.summary|striptags|truncatechars:160 }}{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}{{ post.title }}{% endblock %}
 {% block og_image %}{% if post.cover %}{{ post.cover.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 {% block content %}
-<header class="page-head">
-  <div class="wrap">
-    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{% url 'website:home' %}">Home</a><a href="{% url 'website:news_list' %}">Stories</a><span>{{ post.get_category_display }}</span></nav>
-    <div class="article centered"><div class="main">
-      <h1 class="h1" style="max-width:none">{{ post.title }}</h1>
-      {% if post.excerpt %}<p class="standfirst">{{ post.excerpt }}</p>{% endif %}
-      <p class="label" style="margin-top:26px">{{ post.published_at|date:"j F Y" }}{% if post.author %} · {{ post.author }}{% endif %} · {{ post.reading_minutes }} min read</p>
-    </div></div>
-  </div>
-</header>
-{% if post.cover %}<figure class="head-photo wrap"><div class="photo r-wide" style="aspect-ratio:16/9"><img src="{{ post.cover.url }}" alt="{{ post.cover_caption }}" fetchpriority="high"></div>{% if post.cover_caption %}<figcaption>{{ post.cover_caption }}</figcaption>{% endif %}</figure>{% endif %}
-<section class="section" style="padding-top:0">
-  <div class="wrap article centered">
-    <div class="main">
-      <div class="prose dropcap">{{ post.body|safe }}</div>
-      {% if post.project %}<p class="aside-note" style="margin-top:40px">This story is from our project <a href="{{ post.project.get_absolute_url }}" style="color:var(--green)">{{ post.project.title }}</a>.</p>{% endif %}
-      <div class="share label">
-        <span>Share</span>
-        {% share_links request.build_absolute_uri post.title as shares %}
-        {% for s in shares %}<a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.name }}</a>{% endfor %}
-      </div>
+<section class="page-hero no-image" style="padding-bottom:clamp(120px,14vw,190px)">
+  <div class="container container-narrow">
+    <ol class="breadcrumb"><li><a href="{% url 'website:home' %}">Home</a></li><li><a href="{% url 'website:news_list' %}">News &amp; stories</a></li><li aria-current="page">{{ post.get_category_display }}</li></ol>
+    <span class="eyebrow eyebrow-light">{{ post.get_category_display }}</span>
+    <h1 style="font-size:clamp(2rem,4.4vw,3.4rem);max-width:none">{{ post.title }}</h1>
+    <div class="page-hero-meta">
+      <span>{% icon 'calendar' %} {{ post.published_at|date:"j F Y" }}</span>
+      <span>{% icon 'clock' %} {{ post.reading_minutes }} min read</span>
+      {% if post.author %}<span>{% icon 'user' %} {{ post.author }}</span>{% endif %}
     </div>
   </div>
 </section>
+<section class="section" style="padding-top:0">
+  <div class="container">
+    {% if post.cover %}<div class="article-cover"><img src="{{ post.cover.url }}" alt="{{ post.title }}" fetchpriority="high"></div>{% else %}<div style="height:clamp(40px,5vw,64px)"></div>{% endif %}
+    <article class="article">
+      {% if post.excerpt %}<p class="lead-text" style="font-size:1.3rem;color:var(--ink);font-weight:500;line-height:1.6">{{ post.excerpt }}</p>{% endif %}
+      <div class="prose">{{ post.body|safe }}</div>
+      {% if post.project %}
+      <a class="card card-hover result" href="{{ post.project.get_absolute_url }}" style="margin-top:36px;color:inherit">
+        <span class="icon-tile lg">{% icon 'layers' %}</span>
+        <span><small class="muted" style="font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.75rem">Related project</small><h3>{{ post.project.title }}</h3></span>
+      </a>
+      {% endif %}
+      <div class="share">
+        <strong>Share</strong>
+        {% share_links request.build_absolute_uri post.title as shares %}
+        {% for s in shares %}<a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="Share on {{ s.name }}">{% icon s.icon %}</a>{% endfor %}
+      </div>
+    </article>
+  </div>
+</section>
 {% if more %}
-<section class="section">
-  <div class="wrap">
-    <div class="sec-head"><h2 class="h2">More stories</h2></div>
-    <div class="stories">{% for p in more %}<article class="story-item"><a href="{{ p.get_absolute_url }}"><span class="label">{{ p.published_at|date:"j F Y" }}</span><h3 class="h3" style="margin-top:12px">{{ p.title }}</h3><p>{{ p.summary|truncatewords:26 }}</p></a></article>{% endfor %}</div>
+<section class="section bg-mist">
+  <div class="container">
+    {% section_head "Keep reading" "More news & stories" %}
+    <div class="grid grid-3">{% for post in more %}{% include "partials/news_card.html" with delay=forloop.counter0 %}{% endfor %}</div>
   </div>
 </section>
 {% endif %}

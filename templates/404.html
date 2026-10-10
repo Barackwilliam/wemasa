@@ -1,12 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Page not found · {{ site.short_name }}{% endblock %}
+{% load site_tags %}
+{% block title %}Page not found — {{ site.short_name }}{% endblock %}
 {% block content %}
-<header class="page-head" style="min-height:52vh">
-  <div class="wrap">
-    <p class="kicker label">Error 404</p>
-    <h1 class="h1">We could not find that page.</h1>
-    <p class="standfirst">It may have moved, or the link may be wrong.</p>
-    <div class="links" style="margin-top:32px"><a class="btn" href="{% url 'website:home' %}">Go to the home page</a><a class="link" href="{% url 'website:project_list' %}">See our projects →</a></div>
+<section class="page-hero no-image" style="min-height:70vh;display:flex;align-items:center">
+  <div class="container">
+    <span class="eyebrow eyebrow-light">Error 404</span>
+    <h1>This page has wandered off the path</h1>
+    <p class="lead">The page you are looking for may have moved or no longer exists. Let’s get you back on track.</p>
+    <div class="btn-row" style="margin-top:28px">
+      <a class="btn btn-sun btn-lg" href="{% url 'website:home' %}">Back to home {% icon 'arrow-right' cls='icon-move' %}</a>
+      <a class="btn btn-glass btn-lg" href="{% url 'website:project_list' %}">Explore our projects</a>
+    </div>
   </div>
-</header>
+  {% include "partials/wave.html" %}
+</section>
 {% endblock %}

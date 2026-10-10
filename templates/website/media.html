@@ -1,26 +1,39 @@
 {% extends "base.html" %}
 {% load site_tags %}
-{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
+{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_head.html" %}
-<section class="section" style="padding-top:0">
-  <div class="wrap">
-    {% if types|length > 1 %}
-    <nav class="filters"><a class="{% if not active %}on{% endif %}" href="{% query type='' %}">All</a>{% for key, label in types %}<a class="{% if active == key %}on{% endif %}" href="{% query type=key %}">{{ label }}</a>{% endfor %}</nav>
+{% include "partials/page_hero.html" %}
+<section class="section">
+  <div class="container">
+    {% if total %}
+    <div class="stats-band reveal" style="margin-bottom:clamp(36px,5vw,64px);padding:clamp(28px,4vw,44px)">
+      <div class="split" style="gap:24px">
+        <div><div class="stat-num"><span data-count="{{ total }}">{{ total }}</span><span class="suffix">+</span></div><div class="stat-label">media features and counting</div></div>
+        <p style="margin:0;color:rgba(255,255,255,.75)">National newspapers, television stations and online outlets have covered WEMASA’s work — amplifying environmental messages to audiences far beyond the communities we reach directly.</p>
+      </div>
+    </div>
+    {% endif %}
+    {% if types %}
+    <div class="filters center reveal">
+      <a class="filter {% if not active %}is-active{% endif %}" href="{% query type='' %}">All coverage</a>
+      {% for key, label in types %}<a class="filter {% if active == key %}is-active{% endif %}" href="{% query type=key %}">{{ label }}</a>{% endfor %}
+    </div>
     {% endif %}
     {% if items %}
-    <ul class="press"{% if types|length <= 1 %} style="border-top:1px solid var(--ink)"{% endif %}>{% for item in items %}{% include "partials/press_item.html" %}{% endfor %}</ul>
-    <p class="label" style="margin-top:20px">Headlines are reproduced as published. English summaries are ours.</p>
+    <div class="grid grid-3">{% for item in items %}{% include "partials/media_card.html" %}{% endfor %}</div>
     {% else %}
-    <div class="empty"><h2 class="h3">No coverage yet</h2></div>
+      {% include "partials/empty.html" with icon_name="mic" title="No coverage yet" text="Press coverage of our work will appear here." %}
     {% endif %}
   </div>
 </section>
-<section class="section">
-  <div class="wrap grid12">
-    <div style="grid-column:1/span 6"><h2 class="h2">For journalists</h2></div>
-    <div style="grid-column:8/span 5"><p class="muted">If you are writing about waste, climate or clean cooking in Tanzania, we can arrange interviews, field visits and photographs.</p><a class="link" href="{% url 'website:contact' %}?topic=media">Contact us →</a></div>
+<section class="section-tight">
+  <div class="container container-narrow">
+    <div class="card reveal" style="padding:clamp(26px,4vw,40px);display:flex;gap:22px;align-items:center;flex-wrap:wrap">
+      <span class="icon-tile lg blue">{% icon 'megaphone' %}</span>
+      <div style="flex:1;min-width:240px"><h3 style="margin-bottom:4px">Are you a journalist?</h3><p class="muted" style="margin:0">For interviews, photos or information about our programmes, our team is happy to help.</p></div>
+      <a class="btn btn-primary" href="{% url 'website:contact' %}?topic=media">Media enquiries {% icon 'arrow-right' cls='icon-move' %}</a>
+    </div>
   </div>
 </section>
 {% endblock %}

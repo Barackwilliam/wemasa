@@ -1,20 +1,28 @@
 {% extends "base.html" %}
 {% load site_tags %}
-{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
+{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_head.html" %}
-<section class="section" style="padding-top:0">
-  <div class="wrap">
+{% include "partials/page_hero.html" %}
+<section class="section">
+  <div class="container">
     {% if albums|length > 1 %}
-    <nav class="filters"><a class="{% if not active %}on{% endif %}" href="{% query album='' %}">All</a>{% for a in albums %}<a class="{% if active == a %}on{% endif %}" href="{% query album=a %}">{{ a }}</a>{% endfor %}</nav>
+    <div class="filters center reveal">
+      <a class="filter {% if not active %}is-active{% endif %}" href="{% query album='' %}">All photos</a>
+      {% for a in albums %}<a class="filter {% if active == a %}is-active{% endif %}" href="{% query album=a %}">{{ a }}</a>{% endfor %}
+    </div>
     {% endif %}
     {% if photos %}
-    <div class="gallery-cols">
-      {% for ph in photos %}<a href="{{ ph.image.url }}" data-lightbox="gallery" data-caption="{{ ph.caption|default:ph.album_name }}"><figure><div class="photo"><img src="{{ ph.image.url }}" alt="{{ ph.caption|default:ph.album_name }}" loading="lazy" decoding="async"></div><figcaption>{{ ph.caption|default:ph.album_name }}</figcaption></figure></a>{% endfor %}
+    <div class="masonry">
+      {% for ph in photos %}
+      <a class="shot" href="{{ ph.image.url }}" data-lightbox="gallery" data-caption="{{ ph.caption|default:ph.album_name }}">
+        <img src="{{ ph.image.url }}" alt="{{ ph.caption|default:ph.album_name }}" loading="lazy" decoding="async">
+        <figcaption>{{ ph.caption|default:ph.album_name }}</figcaption>
+      </a>
+      {% endfor %}
     </div>
     {% else %}
-    <div class="empty"><h2 class="h3">No photographs yet</h2></div>
+      {% include "partials/empty.html" with icon_name="camera" title="No photos yet" text="Photos from our activities will appear here." %}
     {% endif %}
   </div>
 </section>

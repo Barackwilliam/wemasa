@@ -1,78 +1,87 @@
 {% extends "base.html" %}
 {% load site_tags %}
-{% block title %}{{ project.title }} · {{ site.short_name }}{% endblock %}
+{% block title %}{{ project.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ project.summary|truncatechars:160 }}{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}{{ project.title }}{% endblock %}
 {% block og_image %}{% if project.cover %}{{ project.cover.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 {% block content %}
-<header class="page-head">
-  <div class="wrap">
-    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{% url 'website:home' %}">Home</a><a href="{% url 'website:project_list' %}">Projects</a>{% if project.focus_area %}<a href="{{ project.focus_area.get_absolute_url }}">{{ project.focus_area.title }}</a>{% endif %}</nav>
-    <h1 class="h1">{{ project.title }}</h1>
-    <p class="standfirst">{{ project.summary }}</p>
+<section class="page-hero{% if not project.cover %} no-image{% endif %}">
+  {% if project.cover %}<div class="page-hero-media"><img src="{{ project.cover.url }}" alt="" fetchpriority="high"></div>{% endif %}
+  <div class="container">
+    <ol class="breadcrumb"><li><a href="{% url 'website:home' %}">Home</a></li><li><a href="{% url 'website:project_list' %}">Projects</a></li><li aria-current="page">{{ project.title|truncatewords:6 }}</li></ol>
+    <div class="btn-row" style="gap:8px;margin-bottom:18px">
+      {% if project.focus_area %}<a class="chip chip-white" href="{{ project.focus_area.get_absolute_url }}">{% icon project.focus_area.icon %} {{ project.focus_area.title }}</a>{% endif %}
+      <span class="chip chip-dark">{{ project.get_status_display }}</span>
+    </div>
+    <h1>{{ project.title }}</h1>
+    <p class="lead">{{ project.summary }}</p>
+    <div class="page-hero-meta">
+      {% if project.location %}<span>{% icon 'map-pin' %} {{ project.location }}</span>{% endif %}
+      {% if project.period %}<span>{% icon 'calendar' %} {{ project.period }}</span>{% endif %}
+      {% if photos %}<span>{% icon 'camera' %} {{ photos|length }} photos</span>{% endif %}
+    </div>
   </div>
-</header>
-{% if project.cover %}<figure class="head-photo wrap"><div class="photo"><img src="{{ project.cover.url }}" alt="{{ project.cover_caption }}" fetchpriority="high"></div>{% if project.cover_caption %}<figcaption>{{ project.cover_caption }}</figcaption>{% endif %}</figure>{% endif %}
+  {% include "partials/wave.html" %}
+</section>
 
-<section class="section" style="padding-top:0">
-  <div class="wrap article">
-    <div class="main">
-      <div class="prose dropcap">{{ project.description|safe }}</div>
+<section class="section">
+  <div class="container detail-layout">
+    <div>
+      {% if stats %}
+      <div class="figures reveal">{% for s in stats %}<div class="figure-box"><strong>{{ s.value }}</strong><span>{{ s.label }}</span></div>{% endfor %}</div>
+      {% endif %}
+      <div class="prose lead-text reveal">{{ project.description|safe }}</div>
 
       {% if project.outcomes_list %}
-      <h2 class="h3 block-title">What came of it</h2>
-      <ol class="results">{% for o in project.outcomes_list %}<li>{{ o }}</li>{% endfor %}</ol>
+      <h2 class="block-title reveal">Key results</h2>
+      <ul class="outcomes reveal">{% for o in project.outcomes_list %}<li>{% icon 'check-circle' %}<span>{{ o }}</span></li>{% endfor %}</ul>
+      {% endif %}
+
+      {% if photos %}
+      <h2 class="block-title reveal">Photo gallery</h2>
+      <div class="photo-grid reveal">
+        {% for ph in photos %}<a class="shot" href="{{ ph.image.url }}" data-lightbox="project" data-caption="{{ ph.caption|default:project.title }}"><img src="{{ ph.image.url }}" alt="{{ ph.caption|default:project.title }}" loading="lazy" decoding="async"></a>{% endfor %}
+      </div>
       {% endif %}
 
       {% if testimonials %}
-      <h2 class="h3 block-title">In their words</h2>
-      {% for t in testimonials %}<blockquote class="prose"><p style="font-style:italic;font-size:1.35rem;color:var(--ink)">“{{ t.quote }}”</p><p class="label">{{ t.name }}{% if t.role %}, {{ t.role }}{% endif %}</p></blockquote>{% endfor %}
+      <h2 class="block-title reveal">What participants say</h2>
+      <div class="grid grid-2">{% for t in testimonials %}<figure class="card testimonial reveal" style="margin:0">{% icon 'quote' %}<blockquote>“{{ t.quote }}”</blockquote><figcaption class="person">{% if t.photo %}<img src="{{ t.photo.url }}" alt="">{% else %}<span class="avatar">{{ t.name|initials }}</span>{% endif %}<span><strong>{{ t.name }}</strong><small>{{ t.role }}</small></span></figcaption></figure>{% endfor %}</div>
       {% endif %}
 
-      {% if news %}
-      <h2 class="h3 block-title">Stories from this project</h2>
-      <ul class="index">{% for n in news %}<li><a href="{{ n.get_absolute_url }}"><span class="h3" style="font-size:1.3rem">{{ n.title }}</span><p>{{ n.published_at|date:"j F Y" }}</p><span class="arr">→</span></a></li>{% endfor %}</ul>
-      {% endif %}
-
-      <div class="share label">
-        <span>Share</span>
+      <div class="share">
+        <strong>Share this project</strong>
         {% share_links request.build_absolute_uri project.title as shares %}
-        {% for s in shares %}<a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.name }}</a>{% endfor %}
+        {% for s in shares %}<a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="Share on {{ s.name }}">{% icon s.icon %}</a>{% endfor %}
       </div>
     </div>
-    <aside class="aside">
-      <dl class="facts">
-        {% if project.location %}<div><dt>Where</dt><dd>{{ project.location }}</dd></div>{% endif %}
-        {% if project.period %}<div><dt>When</dt><dd>{{ project.period }}</dd></div>{% endif %}
-        {% if project.beneficiaries %}<div><dt>With</dt><dd>{{ project.beneficiaries }}</dd></div>{% endif %}
-        {% for s in stats %}<div><dt>{{ s.label }}</dt><dd>{{ s.value }}</dd></div>{% endfor %}
-        <div><dt>Status</dt><dd>{{ project.get_status_display }}</dd></div>
-        {% if partners %}<div><dt>Partners</dt><dd>{% for p in partners %}{{ p.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd></div>{% endif %}
-        {% if project.focus_area %}<div><dt>Area</dt><dd><a href="{{ project.focus_area.get_absolute_url }}">{{ project.focus_area.title }}</a></dd></div>{% endif %}
-      </dl>
-      {% if project.report %}<a class="btn btn-line" href="{{ project.report.file.url }}" target="_blank" rel="noopener">Download the report</a>{% endif %}
-      <a class="btn" href="{% url 'website:donate' %}">Support work like this</a>
+
+    <aside class="sticky-aside">
+      <div class="card facts reveal">
+        <h3>Project at a glance</h3>
+        {% if project.focus_area %}<div class="fact"><span class="icon-tile">{% icon project.focus_area.icon %}</span><span><small>Focus area</small><strong>{{ project.focus_area.title }}</strong></span></div>{% endif %}
+        {% if project.location %}<div class="fact"><span class="icon-tile">{% icon 'map-pin' %}</span><span><small>Location</small><strong>{{ project.location }}</strong></span></div>{% endif %}
+        {% if project.period %}<div class="fact"><span class="icon-tile">{% icon 'calendar' %}</span><span><small>When</small><strong>{{ project.period }}</strong></span></div>{% endif %}
+        {% if project.beneficiaries %}<div class="fact"><span class="icon-tile">{% icon 'users' %}</span><span><small>Who we reach</small><strong>{{ project.beneficiaries }}</strong></span></div>{% endif %}
+        <div class="fact"><span class="icon-tile">{% icon 'clipboard' %}</span><span><small>Status</small><strong>{{ project.get_status_display }}</strong></span></div>
+        {% if partners %}<div class="fact"><span class="icon-tile">{% icon 'handshake' %}</span><span><small>Partners</small><strong>{% for p in partners %}{{ p.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</strong></span></div>{% endif %}
+        {% if project.report %}<a class="btn btn-primary btn-block" style="margin-top:12px" href="{{ project.report.file.url }}" target="_blank" rel="noopener">{% icon 'download' %} Download report</a>{% endif %}
+      </div>
+      <div class="card facts reveal" style="background:var(--green-900);border:0;color:rgba(255,255,255,.8)">
+        <h3 style="color:#fff">Help us do more</h3>
+        <p style="font-size:.95rem">Your support lets us take programmes like this to more communities and schools.</p>
+        <a class="btn btn-sun btn-block" href="{% url 'website:donate' %}">{% icon 'heart' %} Donate</a>
+      </div>
     </aside>
   </div>
 </section>
 
-{% if photos %}
-<section class="section">
-  <div class="wrap">
-    <div class="sec-head"><h2 class="h2">Photographs</h2><div class="side"><p>{{ photos|length }} photograph{{ photos|length|pluralize }} from this project.</p></div></div>
-    <div class="sheet">
-      {% for ph in photos %}<a href="{{ ph.image.url }}" data-lightbox="project" data-caption="{{ ph.caption|default:project.title }}"><figure><div class="photo"><img src="{{ ph.image.url }}" alt="{{ ph.caption|default:project.title }}" loading="lazy" decoding="async"></div></figure></a>{% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
-
 {% if related %}
-<section class="section">
-  <div class="wrap">
-    <div class="sec-head"><h2 class="h2">More projects</h2><div class="side"><a class="link" href="{% url 'website:project_list' %}">All projects →</a></div></div>
-    <div class="entries three">{% for project in related %}{% include "partials/entry.html" %}{% endfor %}</div>
+<section class="section bg-mist">
+  <div class="container">
+    {% section_head "Keep exploring" "More of our work" %}
+    <div class="grid grid-3">{% for project in related %}{% include "partials/project_card.html" with delay=forloop.counter0 %}{% endfor %}</div>
   </div>
 </section>
 {% endif %}

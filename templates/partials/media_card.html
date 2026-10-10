@@ -1,0 +1,15 @@
+{% load site_tags %}
+<article class="card card-hover media-card reveal" style="--d:{{ delay|default:0 }}00ms">
+  <div class="top">
+    <div class="outlet">
+      <span class="icon-tile {% if item.media_type == 'tv' %}blue{% elif item.media_type == 'online' %}sun{% endif %}">{% if item.media_type == 'tv' %}{% icon 'tv' %}{% elif item.media_type == 'radio' %}{% icon 'radio' %}{% elif item.media_type == 'online' %}{% icon 'globe' %}{% else %}{% icon 'newspaper' %}{% endif %}</span>
+      <span>{{ item.outlet }}<small>{{ item.get_media_type_display }}</small></span>
+    </div>
+  </div>
+  <h3>{% if item.url %}<a class="card-link" href="{{ item.url }}" target="_blank" rel="noopener">{{ item.headline }}</a>{% else %}{{ item.headline }}{% endif %}</h3>
+  {% if item.excerpt %}<p>{{ item.excerpt|truncatewords:30 }}</p>{% else %}<p></p>{% endif %}
+  <div class="card-foot">
+    <span>{% if item.published_on %}{{ item.published_on|date:"j M Y" }}{% endif %}{% if item.reporter %} · {{ item.reporter }}{% endif %}</span>
+    {% if item.url %}<span class="link-arrow">Read {% icon 'arrow-up-right' %}</span>{% endif %}
+  </div>
+</article>

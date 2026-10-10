@@ -1,0 +1,15 @@
+{% load site_tags %}
+<section class="section">
+  <div class="container">
+    <div class="cta-band reveal">
+      {% if image %}<div class="cta-media"><img src="{{ image.url }}" alt="" loading="lazy"></div>{% endif %}
+      <span class="eyebrow eyebrow-light">{{ eyebrow|default:"Join the movement" }}</span>
+      <h2>{{ title|default:"Together, we can keep Tanzania clean and green." }}</h2>
+      <p>{{ text|default:"Partner with us, volunteer your skills or support a programme. Every contribution helps a community care for its environment." }}</p>
+      <div class="btn-row">
+        <a class="btn btn-sun btn-lg" href="{{ primary_url|default:'/donate/' }}">{% icon 'heart' %} {{ primary_text|default:"Support our work" }}</a>
+        <a class="btn btn-glass btn-lg" href="{{ secondary_url|default:'/get-involved/' }}">{{ secondary_text|default:"Get involved" }} {% icon 'arrow-right' cls='icon-move' %}</a>
+      </div>
+    </div>
+  </div>
+</section>

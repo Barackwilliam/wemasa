@@ -16,13 +16,13 @@ class ContactForm(HoneypotMixin, forms.ModelForm):
         model = ContactMessage
         fields = ["name", "email", "phone", "organisation", "topic", "message"]
         widgets = {
-            "name": forms.TextInput(attrs={"autocomplete": "name"}),
-            "email": forms.EmailInput(attrs={"autocomplete": "email"}),
-            "phone": forms.TextInput(attrs={"autocomplete": "tel"}),
-            "organisation": forms.TextInput(attrs={"autocomplete": "organization"}),
-            "message": forms.Textarea(attrs={"rows": 6}),
+            "name": forms.TextInput(attrs={"placeholder": "Your full name", "autocomplete": "name"}),
+            "email": forms.EmailInput(attrs={"placeholder": "you@example.com", "autocomplete": "email"}),
+            "phone": forms.TextInput(attrs={"placeholder": "+255 ...", "autocomplete": "tel"}),
+            "organisation": forms.TextInput(attrs={"placeholder": "Optional", "autocomplete": "organization"}),
+            "message": forms.Textarea(attrs={"rows": 6, "placeholder": "How can we work together?"}),
         }
-        labels = {"name": "Your name", "email": "Email", "phone": "Phone", "topic": "What is it about?", "organisation": "Organisation", "message": "Message"}
+        labels = {"topic": "What is this about?", "organisation": "Organisation"}
 
 
 class SubscribeForm(HoneypotMixin, forms.Form):

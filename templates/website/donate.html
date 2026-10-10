@@ -1,38 +1,60 @@
 {% extends "base.html" %}
 {% load site_tags %}
-{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
+{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_head.html" %}
-<section class="section" style="padding-top:0">
-  <div class="wrap">
-    {% if bank or mobile or other %}
-    <div class="give">
-      {% for m in bank %}{% include "website/_give.html" %}{% endfor %}
-      {% for m in mobile %}{% include "website/_give.html" %}{% endfor %}
-      {% for m in other %}{% include "website/_give.html" %}{% endfor %}
+{% include "partials/page_hero.html" %}
+<section class="section">
+  <div class="container">
+    {% section_head "Your gift at work" "Every shilling keeps a community cleaner" "Donations fund training materials, cleanup equipment, tree seedlings and school awareness sessions. We report transparently on how resources are used." %}
+    <div class="grid grid-3" style="margin-bottom:clamp(40px,5vw,72px)">
+      <article class="card value-card reveal"><span class="icon-tile lg">{% icon 'tree' %}</span><h3>Plant trees</h3><p>Provide seedlings and care for school and community tree-planting days.</p></article>
+      <article class="card value-card reveal" style="--d:.08s"><span class="icon-tile lg blue">{% icon 'graduation' %}</span><h3>Educate students</h3><p>Bring climate change awareness sessions to more secondary schools.</p></article>
+      <article class="card value-card reveal" style="--d:.16s"><span class="icon-tile lg sun">{% icon 'sprout' %}</span><h3>Empower farmers</h3><p>Train women farmers to make natural pesticides, boosters and fungicides.</p></article>
     </div>
-    <p class="label" style="margin-top:24px">Please send us a message after giving so we can thank you and issue a receipt.</p>
+
+    {% if bank or mobile or other %}
+    <div class="grid grid-2">
+      {% for m in bank %}{% include "website/_donation_card.html" with icon_name="bank" %}{% endfor %}
+      {% for m in mobile %}{% include "website/_donation_card.html" with icon_name="smartphone" %}{% endfor %}
+      {% for m in other %}{% include "website/_donation_card.html" with icon_name="wallet" %}{% endfor %}
+    </div>
     {% else %}
-    <div class="grid12" style="border-top:1px solid var(--ink);padding-top:28px">
-      <div style="grid-column:1/span 6"><h2 class="h2">How to give</h2></div>
-      <div style="grid-column:8/span 5">
-        <p class="standfirst">Our bank and mobile money details will be published here shortly. Until then, call or email us and we will send them to you, with a receipt for your gift.</p>
-        <div class="links">
-          {% if site.phone %}<a class="btn" href="{{ site.phone|tel_link }}">Call {{ site.phone }}</a>{% endif %}
-          {% if site.email %}<a class="link" href="mailto:{{ site.email }}?subject=Donation">Email us →</a>{% endif %}
-        </div>
+    <div class="cta-band reveal" style="padding:clamp(32px,5vw,56px)">
+      <span class="eyebrow eyebrow-light">How to give</span>
+      <h2>Contact us to make a donation</h2>
+      <p>Our bank and mobile money details are being finalised for this page. In the meantime, reach out and our finance team will share secure payment details and an official receipt.</p>
+      <div class="btn-row">
+        {% if site.phone %}<a class="btn btn-sun btn-lg" href="{{ site.phone|tel_link }}">{% icon 'phone' %} {{ site.phone }}</a>{% endif %}
+        {% if site.email %}<a class="btn btn-glass btn-lg" href="mailto:{{ site.email }}?subject=Donation%20to%20WEMASA">{% icon 'mail' %} Email us</a>{% endif %}
       </div>
     </div>
     {% endif %}
   </div>
 </section>
-{% if faqs %}
-<section class="section">
-  <div class="wrap contact-grid">
-    <div><h2 class="h2">Questions</h2></div>
-    <div class="faq">{% for f in faqs %}<details><summary>{{ f.question }}</summary><p>{{ f.answer }}</p></details>{% endfor %}</div>
-  </div>
+
+{% if stats %}
+<section class="section-tight">
+  <div class="container"><div class="stats-band reveal"><div class="grid grid-4">
+    {% for s in stats %}<div class="stat"><div class="stat-num">{{ s.prefix }}<span data-count="{{ s.value }}">{{ s.value }}</span><span class="suffix">{{ s.suffix }}</span></div><div class="stat-label">{{ s.label }}</div></div>{% endfor %}
+  </div></div></div>
 </section>
 {% endif %}
+
+<section class="section">
+  <div class="container split" style="align-items:start">
+    <div class="reveal">
+      <span class="eyebrow">Accountability</span>
+      <h2>Giving you can trust</h2>
+      <ul class="check-list">
+        <li>{% icon 'check' %}<span>Registered NGO in Tanzania{% if site.registration_number %} (Reg. No. {{ site.registration_number }}){% endif %}</span></li>
+        <li>{% icon 'check' %}<span>Guided by our values of equality, transparency, accountability and diligence</span></li>
+        <li>{% icon 'check' %}<span>Official receipts issued for every contribution</span></li>
+        <li>{% icon 'check' %}<span>Partners and donors receive project reports with results and photos</span></li>
+      </ul>
+      <a class="btn btn-ghost" href="{% url 'website:contact' %}?topic=donation">Questions about giving? {% icon 'arrow-right' cls='icon-move' %}</a>
+    </div>
+    {% if faqs %}<div class="faq reveal" style="--d:.1s">{% for f in faqs %}<details><summary>{{ f.question }} {% icon 'chevron-down' %}</summary><p>{{ f.answer }}</p></details>{% endfor %}</div>{% endif %}
+  </div>
+</section>
 {% endblock %}

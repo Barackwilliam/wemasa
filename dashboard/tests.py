@@ -64,7 +64,7 @@ class DashboardTests(TestCase):
         form = self.client.get(url).context["form"]
         data = {k: ("" if v is None else v) for k, v in form.initial.items() if not hasattr(v, "url")}
         data["hero_title"] = "A brand new headline"
-        data = {k: v for k, v in data.items() if k in form.fields and not k.endswith("image")}
+        data = {k: v for k, v in data.items() if k in form.fields and not k.endswith("image") and not k.endswith("image_2")}
         response = self.client.post(url, data)
         self.assertRedirects(response, url)
         page.refresh_from_db()
@@ -77,7 +77,7 @@ class DashboardTests(TestCase):
             "description": "<p>Details</p>", "location": "Kigamboni", "period": "2027", "beneficiaries": "Fishers",
             "outcomes": "", "is_featured": "on", "is_published": "on", "order": "1",
             "stats-TOTAL_FORMS": "1", "stats-INITIAL_FORMS": "0", "stats-MIN_NUM_FORMS": "0", "stats-MAX_NUM_FORMS": "1000",
-            "stats-0-label": "Mangroves planted", "stats-0-value": "500", "stats-0-order": "0",
+            "stats-0-value": "500", "stats-0-label": "Mangroves planted", "stats-0-order": "0",
         })
         self.assertRedirects(response, reverse("dashboard:list", args=["projects"]))
         project = Project.objects.get(title="Mangrove Restoration")

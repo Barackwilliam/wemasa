@@ -1,88 +1,149 @@
 {% extends "base.html" %}
-{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
+{% load site_tags %}
+{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_head.html" %}
+{% include "partials/page_hero.html" %}
 
-<section class="section" style="padding-top:0">
-  <div class="wrap article">
-    <div class="main">
-      {% if page.story_title %}<h2 class="h2" style="margin-bottom:30px">{{ page.story_title }}</h2>{% endif %}
-      <div class="prose dropcap">{{ page.story_text|safe }}</div>
-    </div>
-    <aside class="aside">
-      {% if page.story_image %}<figure><div class="photo r-portrait"><img src="{{ page.story_image.url }}" alt="{{ page.story_caption }}" loading="lazy"></div>{% if page.story_caption %}<figcaption>{{ page.story_caption }}</figcaption>{% endif %}</figure>{% endif %}
-      {% if page.story_quote %}<p class="h3" style="font-style:italic;font-weight:300;margin-top:32px">“{{ page.story_quote }}”</p>{% endif %}
-    </aside>
-  </div>
-</section>
-
+<!-- Story -->
 <section class="section">
-  <div class="wrap">
-    {% if page.vision %}<div class="statement"><span class="label">Vision</span><p>{{ page.vision }}</p></div>{% endif %}
-    {% if page.mission %}<div class="statement"><span class="label">Mission</span><p>{{ page.mission }}</p></div>{% endif %}
+  <div class="container split">
+    <div class="reveal">
+      {% if page.story_eyebrow %}<span class="eyebrow">{{ page.story_eyebrow }}</span>{% endif %}
+      <h2>{{ page.story_title }}</h2>
+      <div class="prose">{{ page.story_text|safe }}</div>
+    </div>
+    <div class="reveal" style="--d:.1s">
+      <div style="position:relative">
+        <div style="border-radius:var(--radius-xl);overflow:hidden;aspect-ratio:4/5;box-shadow:var(--shadow-lg);background:var(--mist)">
+          {% if page.story_image %}<img src="{{ page.story_image.url }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">{% endif %}
+        </div>
+        {% if page.story_quote %}
+        <figure class="card" style="position:absolute;left:-24px;right:24px;bottom:-34px;padding:24px 26px;margin:0;box-shadow:var(--shadow-lg)">
+          <blockquote style="margin:0;font-family:var(--font-accent);font-style:italic;font-size:1.3rem;line-height:1.45;color:var(--ink)">“{{ page.story_quote }}”</blockquote>
+        </figure>
+        {% endif %}
+      </div>
+    </div>
   </div>
 </section>
 
+<!-- Vision & mission -->
+<section class="section bg-sand">
+  <div class="container">
+    {% section_head "What drives us" "Our vision & mission" %}
+    <div class="grid grid-2">
+      <article class="vm-card vm-vision reveal"><span class="icon-tile lg">{% icon 'eye' %}</span><h3>Our vision</h3><p>{{ page.vision }}</p></article>
+      <article class="vm-card vm-mission reveal" style="--d:.1s"><span class="icon-tile lg">{% icon 'target' %}</span><h3>Our mission</h3><p>{{ page.mission }}</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- Objectives -->
 {% if objectives %}
 <section class="section">
-  <div class="wrap grid12">
-    <div style="grid-column:1/span 4"><h2 class="h2">{{ page.objectives_title|default:"Objectives" }}</h2>{% if page.objectives_intro %}<p class="muted" style="margin-top:16px">{{ page.objectives_intro }}</p>{% endif %}</div>
-    <ol class="numbered" style="grid-column:6/span 7">
-      {% for o in objectives %}<li><div><h3 class="h4">{{ o.title }}</h3>{% if o.description %}<p>{{ o.description }}</p>{% endif %}</div></li>{% endfor %}
-    </ol>
+  <div class="container">
+    {% section_head "Our mandate" page.objectives_title page.objectives_intro %}
+    <div class="grid grid-2">
+      {% for o in objectives %}
+      <article class="card card-hover objective reveal" style="--d:{% widthratio forloop.counter0 1 6 %}0ms">
+        <span class="icon-tile lg">{% icon o.icon %}</span>
+        <div><span class="n">OBJECTIVE {{ forloop.counter|stringformat:"02d" }}</span><h3>{{ o.title }}</h3><p>{{ o.description }}</p></div>
+      </article>
+      {% endfor %}
+    </div>
   </div>
 </section>
 {% endif %}
 
+<!-- Values -->
 {% if values %}
-<section class="section tint">
-  <div class="wrap">
-    <div class="sec-head"><h2 class="h2">{{ page.values_title|default:"Values" }}</h2><div class="side">{% if page.values_intro %}<p>{{ page.values_intro }}</p>{% endif %}</div></div>
-    <dl class="defs">
-      {% for v in values %}<div><dt>{{ v.local_name|default:v.name }}{% if v.local_name %}<span>{{ v.name }}</span>{% endif %}</dt><dd>{{ v.description }}</dd></div>{% endfor %}
-    </dl>
+<section class="section bg-mist">
+  <div class="container">
+    {% section_head "What we stand for" page.values_title page.values_intro %}
+    <div class="grid grid-4">
+      {% for v in values %}
+      <article class="card card-hover value-card reveal" style="--d:{% widthratio forloop.counter0 1 8 %}0ms">
+        <span class="icon-tile lg {% cycle '' 'blue' 'sun' '' %}">{% icon v.icon %}</span>
+        <h3>{{ v.name }}</h3>{% if v.local_name %}<span class="local">{{ v.local_name }}</span>{% endif %}
+        <p>{{ v.description }}</p>
+      </article>
+      {% endfor %}
+    </div>
   </div>
 </section>
 {% endif %}
 
+<!-- Approach -->
 {% if page.approach_title %}
 <section class="section">
-  <div class="wrap article">
-    <div class="main">
-      <h2 class="h2" style="margin-bottom:30px">{{ page.approach_title }}</h2>
+  <div class="container split">
+    <div class="reveal" style="border-radius:var(--radius-xl);overflow:hidden;aspect-ratio:4/3;box-shadow:var(--shadow-lg);background:var(--mist)">
+      {% if page.approach_image %}<img src="{{ page.approach_image.url }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">{% endif %}
+    </div>
+    <div class="reveal" style="--d:.1s">
+      <span class="eyebrow">How we work</span>
+      <h2>{{ page.approach_title }}</h2>
       <div class="prose">{{ page.approach_text|safe }}</div>
     </div>
-    {% if page.approach_image %}<aside class="aside"><figure><div class="photo r-classic"><img src="{{ page.approach_image.url }}" alt="{{ page.approach_caption }}" loading="lazy"></div>{% if page.approach_caption %}<figcaption>{{ page.approach_caption }}</figcaption>{% endif %}</figure></aside>{% endif %}
   </div>
 </section>
 {% endif %}
 
+<!-- Stats -->
+{% if stats %}
+<section class="section-tight">
+  <div class="container"><div class="stats-band reveal"><div class="grid grid-4">
+    {% for s in stats %}<div class="stat"><div class="stat-num">{{ s.prefix }}<span data-count="{{ s.value }}">{{ s.value }}</span><span class="suffix">{{ s.suffix }}</span></div><div class="stat-label">{{ s.label }}</div></div>{% endfor %}
+  </div></div></div>
+</section>
+{% endif %}
+
+<!-- Timeline -->
 {% if milestones %}
 <section class="section">
-  <div class="wrap">
-    <div class="sec-head"><h2 class="h2">{{ page.timeline_title|default:"Milestones" }}</h2></div>
-    <table class="ledger">
-      <tbody>{% for m in milestones %}<tr><td class="when" style="width:18%">{{ m.year }}</td><td><span class="h4" style="font-weight:500">{{ m.title }}</span><span class="sub">{{ m.description }}</span></td></tr>{% endfor %}</tbody>
-    </table>
-  </div>
-</section>
-{% endif %}
-
-{% if leaders %}
-<section class="section">
-  <div class="wrap">
-    <div class="sec-head"><h2 class="h2">Founders</h2><div class="side"><a class="link" href="{% url 'website:team' %}">The whole team →</a></div></div>
-    <div class="people">
-      {% for p in leaders %}<article class="person"><div class="photo">{% if p.photo %}<img src="{{ p.photo.url }}" alt="{{ p.name }}" loading="lazy">{% else %}<span class="initials">{{ p.initials }}</span>{% endif %}</div><h3 class="h4">{{ p.name }}</h3><p class="label">{{ p.role }}</p></article>{% endfor %}
+  <div class="container">
+    {% section_head "Our journey" page.timeline_title|default:"Milestones along the way" %}
+    <div class="timeline">
+      {% for m in milestones %}
+      <div class="tl-item reveal"><span class="tl-dot"></span><div class="card"><span class="tl-year">{{ m.year }}</span><h3>{{ m.title }}</h3><p>{{ m.description }}</p></div></div>
+      {% endfor %}
     </div>
   </div>
 </section>
 {% endif %}
 
-{% if page.legal_text %}
-<section class="section">
-  <div class="wrap"><div class="statement"><span class="label">{{ page.legal_title|default:"Registration" }}</span><p style="font-size:1.25rem;line-height:1.6;font-weight:400;color:var(--ink-soft)">{{ page.legal_text }}</p></div></div>
+<!-- Leadership -->
+{% if leaders %}
+<section class="section bg-sand">
+  <div class="container">
+    <div class="section-head-row">
+      {% section_head "Leadership" "The people leading WEMASA" "" "left" %}
+      <a class="btn btn-ghost reveal" href="{% url 'website:team' %}">Meet the full team {% icon 'arrow-right' cls='icon-move' %}</a>
+    </div>
+    <div class="grid grid-4">
+      {% for m in leaders %}
+      <article class="card team-card reveal">
+        <div class="media">{% if m.photo %}<img src="{{ m.photo.url }}" alt="{{ m.name }}" loading="lazy">{% else %}<span class="initials">{{ m.initials }}</span>{% endif %}</div>
+        <div class="card-body"><h3>{{ m.name }}</h3><span class="role">{{ m.role }}</span></div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
 </section>
 {% endif %}
+
+<!-- Legal -->
+{% if page.legal_text %}
+<section class="section-tight">
+  <div class="container container-narrow">
+    <div class="card reveal" style="padding:clamp(26px,4vw,40px);display:flex;gap:22px;align-items:flex-start">
+      <span class="icon-tile lg">{% icon 'shield' %}</span>
+      <div><h3>{{ page.legal_title|default:"Registration & governance" }}</h3><p class="muted" style="margin:0">{{ page.legal_text|linebreaksbr }}</p></div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% include "partials/cta.html" %}
 {% endblock %}

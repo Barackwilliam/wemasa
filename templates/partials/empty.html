@@ -1,0 +1,7 @@
+{% load site_tags %}
+<div class="empty reveal">
+  <span class="icon-tile lg">{% icon icon_name|default:'sparkles' %}</span>
+  <h3>{{ title }}</h3>
+  <p>{{ text }}</p>
+  {% if link %}<a class="btn btn-primary" href="{{ link }}">{{ link_text }} {% icon 'arrow-right' cls='icon-move' %}</a>{% endif %}
+</div>

@@ -50,8 +50,7 @@ class PublicPagesTests(TestCase):
         html = self.client.get(reverse("website:home")).content.decode()
         self.assertIn("WEMASA", html)
         self.assertIn("ooNGO/R/2395", html)
-        self.assertIn("What we do", html)
-        self.assertNotIn("data-count", html)  # no animated statistics on the home page
+        self.assertIn("Students reached", html)
 
     def test_seed_is_idempotent(self):
         before = Project.objects.count(), GalleryImage.objects.count()
@@ -60,11 +59,11 @@ class PublicPagesTests(TestCase):
 
     def test_project_filters(self):
         response = self.client.get(reverse("website:project_list") + "?status=ongoing")
-        self.assertContains(response, "Tree planting in schools")
-        self.assertNotContains(response, "Cooking fuel survey of market food vendors")
+        self.assertContains(response, "School Tree Planting Programme")
+        self.assertNotContains(response, "Food Vendors Cooking Energy Mapping")
 
     def test_unpublished_items_are_hidden(self):
-        project = Project.objects.get(title__startswith="Cooking fuel")
+        project = Project.objects.get(title__startswith="Food Vendors")
         project.is_published = False
         project.save()
         self.assertEqual(self.client.get(project.get_absolute_url()).status_code, 404)

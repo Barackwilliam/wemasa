@@ -1,35 +1,63 @@
 {% extends "base.html" %}
-{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
+{% load site_tags %}
+{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_head.html" %}
-<section class="section" style="padding-top:0">
-  <div class="wrap">
-    {% if stats %}
-    <table class="ledger">
-      <thead><tr><th style="width:16%">Figure</th><th>What it counts</th><th style="width:34%">Where</th></tr></thead>
-      <tbody>{% for s in stats %}<tr><td class="num">{{ s.prefix }}{{ s.value|floatformat:"0g" }}{{ s.suffix }}</td><td>{{ s.label|capfirst }}</td><td class="muted">{{ s.description }}</td></tr>{% endfor %}</tbody>
-    </table>
-    <p class="label" style="margin-top:20px">Figures come from our project records. We update them when a project closes.</p>
-    {% else %}
-    <div class="empty"><h2 class="h3">Figures coming soon</h2><p>We will publish results here as projects are completed.</p></div>
-    {% endif %}
-  </div>
-</section>
-{% if projects %}
+{% include "partials/page_hero.html" %}
+{% if stats %}
 <section class="section">
-  <div class="wrap">
-    <div class="sec-head"><h2 class="h2">The projects behind the figures</h2><div class="side"><a class="link" href="{% url 'website:project_list' %}">All projects →</a></div></div>
-    <div class="entries three">{% for project in projects|slice:":3" %}{% include "partials/entry.html" %}{% endfor %}</div>
+  <div class="container">
+    {% section_head "By the numbers" "Results we can count" "Every figure below represents real people — students, farmers, journalists and vendors — reached through WEMASA programmes." %}
+    <div class="grid grid-3">
+      {% for s in stats %}
+      <article class="card card-hover stat-card reveal" style="--d:{% widthratio forloop.counter0 1 6 %}0ms">
+        <span class="icon-tile lg {% cycle '' 'blue' 'sun' %}">{% icon s.icon %}</span>
+        <div class="stat-num">{{ s.prefix }}<span data-count="{{ s.value }}">{{ s.value }}</span><span class="suffix">{{ s.suffix }}</span></div>
+        <div class="stat-label">{{ s.label }}</div>
+        {% if s.description %}<div class="stat-desc">{{ s.description }}</div>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
   </div>
 </section>
 {% endif %}
+
+{% if projects %}
+<section class="section bg-mist">
+  <div class="container">
+    {% section_head "Results by project" "Where the numbers come from" %}
+    <div class="grid grid-3">{% for project in projects %}{% include "partials/project_card.html" with delay=forloop.counter0 %}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+
 {% if sdgs %}
 <section class="section">
-  <div class="wrap">
-    <div class="sec-head"><h2 class="h2">The global goals</h2><div class="side"><a class="link" href="{% url 'website:sdgs' %}">How we contribute →</a></div></div>
-    <ul class="sdg-list">{% for g in sdgs %}<li style="--sdg:{{ g.colour }}"><span class="sdg-num">{{ g.number }}</span><span class="h4" style="font-weight:500">{{ g.title }}</span><p>{{ g.description }}</p></li>{% endfor %}</ul>
+  <div class="container">
+    {% section_head "Global goals" "Contributing to the Sustainable Development Goals" "Our local action adds up to global progress. These are the UN goals our programmes advance most directly." %}
+    <div class="sdg-pills" style="justify-content:center">
+      {% for g in sdgs %}<a class="sdg-pill reveal" style="--sdg:{{ g.colour }}" href="{% url 'website:sdgs' %}#sdg-{{ g.number }}"><b>{{ g.number }}</b>{{ g.title }}</a>{% endfor %}
+    </div>
   </div>
 </section>
 {% endif %}
+
+{% if milestones %}
+<section class="section bg-sand">
+  <div class="container">
+    {% section_head "Our journey" "Milestones" %}
+    <div class="timeline">{% for m in milestones %}<div class="tl-item reveal"><span class="tl-dot"></span><div class="card"><span class="tl-year">{{ m.year }}</span><h3>{{ m.title }}</h3><p>{{ m.description }}</p></div></div>{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+
+{% if testimonials %}
+<section class="section">
+  <div class="container">
+    {% section_head "Voices" "Stories of change" %}
+    <div class="grid grid-3">{% for t in testimonials %}<figure class="card testimonial reveal" style="margin:0">{% icon 'quote' %}<blockquote>“{{ t.quote }}”</blockquote><figcaption class="person">{% if t.photo %}<img src="{{ t.photo.url }}" alt="">{% else %}<span class="avatar">{{ t.name|initials }}</span>{% endif %}<span><strong>{{ t.name }}</strong><small>{{ t.role }}</small></span></figcaption></figure>{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+{% include "partials/cta.html" %}
 {% endblock %}

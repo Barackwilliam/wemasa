@@ -1,0 +1,5 @@
+<div class="section-head{% if align == 'left' %} align-left{% endif %}{% if light %} is-light{% endif %} reveal">
+  {% if eyebrow %}<span class="eyebrow{% if light %} eyebrow-light{% endif %}">{{ eyebrow }}</span>{% endif %}
+  {% if title %}<h2>{{ title }}</h2>{% endif %}
+  {% if subtitle %}<p>{{ subtitle }}</p>{% endif %}
+</div>

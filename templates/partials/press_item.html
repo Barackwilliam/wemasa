@@ -1,5 +1,0 @@
-<li>
-  <div class="outlet">{{ item.outlet }}<small>{{ item.get_media_type_display }}{% if item.reporter %} · {{ item.reporter }}{% endif %}</small></div>
-  <p class="headline">{% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.headline }}</a>{% else %}{{ item.headline }}{% endif %}{% if item.excerpt %}<span class="trans">{{ item.excerpt }}</span>{% endif %}</p>
-  <div class="date label">{% if item.published_on %}{{ item.published_on|date:"j M Y" }}{% endif %}</div>
-</li>

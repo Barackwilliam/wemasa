@@ -1,13 +1,18 @@
-<form class="form" method="post" action="{% url 'website:contact' %}" id="message" novalidate>
-  {% if sent %}<div class="notice full" role="status">Thank you. Your message has reached us and we will reply soon.</div>{% endif %}
-  {% if form.non_field_errors %}<div class="notice bad full" role="alert">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+{% load site_tags %}
+<form class="card form-card" method="post" action="{% url 'website:contact' %}" id="message" novalidate>
+  <h2 style="font-size:clamp(1.6rem,2.6vw,2.1rem)">{{ form_title|default:"Send us a message" }}</h2>
+  <p class="muted">{{ form_intro|default:"Fill in the form and a member of our team will get back to you, usually within two working days." }}</p>
+  {% if sent %}<div class="alert alert-success" role="status">{% icon 'check-circle' %}<span>Thank you — your message has been received. We will be in touch soon.</span></div>{% endif %}
+  {% if form.non_field_errors %}<div class="alert alert-error" role="alert">{% icon 'x' %}<span>{{ form.non_field_errors|join:" " }}</span></div>{% endif %}
   <div class="hp" aria-hidden="true">{{ form.website }}</div>
-  {% for field in form %}{% if field.name != "website" %}
-  <div class="field{% if field.name == 'message' or field.name == 'topic' %} full{% endif %}">
-    <label for="{{ field.id_for_label }}">{{ field.label }}{% if not field.field.required %} (optional){% endif %}</label>
-    {{ field }}
-    {% for e in field.errors %}<span class="error">{{ e }}</span>{% endfor %}
+  <div class="form-grid">
+    {% for field in form %}{% if field.name != "website" %}
+    <div class="field{% if field.name == 'message' or field.name == 'topic' %} full{% endif %}">
+      <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span style="color:var(--green-600)">*</span>{% endif %}</label>
+      {{ field }}
+      {% for e in field.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+    {% endif %}{% endfor %}
+    <div class="full"><button class="btn btn-primary btn-lg" type="submit">Send message {% icon 'send' %}</button></div>
   </div>
-  {% endif %}{% endfor %}
-  <div class="full"><button class="btn" type="submit">Send message</button></div>
 </form>

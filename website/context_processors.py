@@ -8,6 +8,6 @@ def site(request):
         return {"site": SiteSettings.load()}
     return {
         "site": SiteSettings.load(),
-        "nav_focus_areas": list(FocusArea.objects.published().only("title", "slug")[:8]),
+        "nav_focus_areas": list(FocusArea.objects.published().only("title", "slug", "icon")[:8]),
         "site_url": settings.SITE_URL or request.build_absolute_uri("/").rstrip("/"),
     }

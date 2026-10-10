@@ -1,25 +1,37 @@
 {% extends "base.html" %}
-{% block title %}Search · {{ site.short_name }}{% endblock %}
+{% load site_tags %}
+{% block title %}Search{% if q %}: {{ q }}{% endif %} — {{ site.short_name }}{% endblock %}
 {% block meta %}<meta name="robots" content="noindex">{% endblock %}
 {% block content %}
-<header class="page-head">
-  <div class="wrap">
-    <nav class="crumbs label"><a href="{% url 'website:home' %}">Home</a><span>Search</span></nav>
-    <h1 class="h1">{% if q %}Results for “{{ q }}”{% else %}Search{% endif %}</h1>
-    <form class="search-form" style="margin-top:32px" action="{% url 'website:search' %}" method="get" role="search">
-      <label class="sr-only" for="q2">Search</label><input id="q2" type="search" name="q" value="{{ q }}" placeholder="Search the site"><button class="btn" type="submit">Search</button>
+<section class="page-hero no-image">
+  <div class="container">
+    <ol class="breadcrumb"><li><a href="{% url 'website:home' %}">Home</a></li><li aria-current="page">Search</li></ol>
+    <h1>{% if q %}Results for “{{ q }}”{% else %}Search the website{% endif %}</h1>
+    <form class="search-box search-hero-form" action="{% url 'website:search' %}" method="get" role="search">
+      {% icon 'search' %}<input type="search" name="q" value="{{ q }}" placeholder="Search projects, news, reports…" aria-label="Search" style="color:var(--ink)"><button class="btn btn-primary btn-sm" type="submit">Search</button>
     </form>
   </div>
-</header>
-<section class="section" style="padding-top:0">
-  <div class="wrap">
+  {% include "partials/wave.html" %}
+</section>
+<section class="section">
+  <div class="container container-narrow">
     {% if q and total %}
+      <p class="muted" style="margin-bottom:28px">{{ total }} result{{ total|pluralize }} found.</p>
       {% for group, items in results.items %}
-      <p class="label group-label" style="margin-top:40px">{{ group }}</p>
-      <ul class="index">{% for it in items %}<li><a href="{{ it.url }}"><span class="h3" style="font-size:1.35rem">{{ it.title }}</span><p>{{ it.text|striptags|truncatewords:24 }}</p><span class="arr">→</span></a></li>{% endfor %}</ul>
+      <div class="search-group">
+        <h2>{{ group }}</h2>
+        {% for it in items %}
+        <a class="card card-hover result" href="{{ it.url }}" style="color:inherit">
+          <span class="icon-tile">{% icon 'arrow-up-right' %}</span>
+          <span><h3>{{ it.title }}</h3>{% if it.text %}<p>{{ it.text|striptags|truncatewords:24 }}</p>{% endif %}</span>
+        </a>
+        {% endfor %}
+      </div>
       {% endfor %}
     {% elif q %}
-      <div class="empty"><h2 class="h3">Nothing found</h2><p>Try another word, such as trees, schools, farming or cleanup.</p></div>
+      {% include "partials/empty.html" with icon_name="search" title="No results" text="Try a different word — for example: trees, schools, farming, cleanup or journalists." %}
+    {% else %}
+      {% include "partials/empty.html" with icon_name="search" title="What are you looking for?" text="Search across projects, news, reports, media coverage and our team." %}
     {% endif %}
   </div>
 </section>

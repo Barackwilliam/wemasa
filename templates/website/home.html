@@ -22,17 +22,6 @@
           {% if site.registration_year %}<span>Serving communities since <strong>{{ site.registration_year }}</strong></span>{% endif %}
         </div>
       </div>
-      {% if stats %}
-      <div class="hero-cards">
-        {% for s in stats|slice:":3" %}
-        <div class="glass-card">
-          <div class="glass-row"><span class="icon-tile">{% icon s.icon %}</span>
-            <div><div class="num">{{ s.prefix }}<span data-count="{{ s.value }}">{{ s.value }}</span>{{ s.suffix }}</div><div class="lbl">{{ s.label }}</div></div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      {% endif %}
     </div>
   </div>
   <span class="scroll-cue" aria-hidden="true"></span>
@@ -94,33 +83,6 @@
         <div class="card-foot"><span class="count">{{ area.project_count }} project{{ area.project_count|pluralize }}</span><span class="go">{% icon 'arrow-up-right' %}</span></div>
       </article>
       {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
-
-<!-- Impact -->
-{% if stats %}
-<section class="section">
-  <div class="container">
-    <div class="stats-band reveal">
-      <div class="split" style="align-items:end;margin-bottom:clamp(28px,4vw,48px)">
-        <div>
-          {% if page.impact_eyebrow %}<span class="eyebrow eyebrow-light">{{ page.impact_eyebrow }}</span>{% endif %}
-          <h2 style="margin:0">{{ page.impact_title }}</h2>
-        </div>
-        <div><p style="margin:0;color:rgba(255,255,255,.75);font-size:1.08rem">{{ page.impact_subtitle }}</p></div>
-      </div>
-      <div class="grid grid-4">
-        {% for s in stats|slice:":4" %}
-        <div class="stat">
-          <div class="stat-num">{{ s.prefix }}<span data-count="{{ s.value }}">{{ s.value }}</span><span class="suffix">{{ s.suffix }}</span></div>
-          <div class="stat-label">{{ s.label }}</div>
-          {% if s.description %}<div class="stat-desc">{{ s.description }}</div>{% endif %}
-        </div>
-        {% endfor %}
-      </div>
-      <div style="margin-top:36px"><a class="btn btn-light" href="{% url 'website:impact' %}">See our full impact {% icon 'arrow-right' cls='icon-move' %}</a></div>
     </div>
   </div>
 </section>

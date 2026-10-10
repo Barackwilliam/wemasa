@@ -15,7 +15,7 @@
     <h3><a class="card-link" href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
     <p>{{ project.summary|truncatewords:30 }}</p>
     <div class="card-foot">
-      {% with stat=project.stats.all|first %}{% if stat %}<span class="stat-mini"><strong>{{ stat.value }}</strong> {{ stat.label }}</span>{% else %}<span class="stat-mini">{{ project.beneficiaries|default:"Community programme" }}</span>{% endif %}{% endwith %}
+      <span class="stat-mini">{{ project.beneficiaries|default:"Community programme" }}</span>
       <span class="link-arrow">View {% icon 'arrow-right' %}</span>
     </div>
   </div>

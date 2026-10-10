@@ -64,7 +64,6 @@ def home(request):
     return render(request, "website/home.html", {
         "page": HomePage.load(),
         "focus_areas": FocusArea.objects.published().annotate(project_count=Count("projects", filter=Q(projects__is_published=True))),
-        "stats": ImpactStat.objects.published().filter(show_on_home=True)[:6],
         "projects": projects,
         "news": news,
         "media": MediaCoverage.objects.published()[:12],

@@ -50,7 +50,8 @@ class PublicPagesTests(TestCase):
         html = self.client.get(reverse("website:home")).content.decode()
         self.assertIn("WEMASA", html)
         self.assertIn("ooNGO/R/2395", html)
-        self.assertIn("Students reached", html)
+        self.assertIn("Six areas where we focus our energy", html)
+        self.assertNotIn("data-count", html)  # no statistics on the home page
 
     def test_seed_is_idempotent(self):
         before = Project.objects.count(), GalleryImage.objects.count()

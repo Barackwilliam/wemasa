@@ -774,3 +774,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .glass-card .icon-tile { display: none; }
   .glass-card .lbl { font-size: .82rem; }
 }
+
+/* Hero without statistic cards */
+.hero-grid { grid-template-columns: minmax(0, 1fr); }
+.hero h1 { max-width: 16ch; }

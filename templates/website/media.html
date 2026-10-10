@@ -6,14 +6,6 @@
 {% include "partials/page_hero.html" %}
 <section class="section">
   <div class="container">
-    {% if total %}
-    <div class="stats-band reveal" style="margin-bottom:clamp(36px,5vw,64px);padding:clamp(28px,4vw,44px)">
-      <div class="split" style="gap:24px">
-        <div><div class="stat-num"><span data-count="{{ total }}">{{ total }}</span><span class="suffix">+</span></div><div class="stat-label">media features and counting</div></div>
-        <p style="margin:0;color:rgba(255,255,255,.75)">National newspapers, television stations and online outlets have covered WEMASA’s work — amplifying environmental messages to audiences far beyond the communities we reach directly.</p>
-      </div>
-    </div>
-    {% endif %}
     {% if types %}
     <div class="filters center reveal">
       <a class="filter {% if not active %}is-active{% endif %}" href="{% query type='' %}">All coverage</a>

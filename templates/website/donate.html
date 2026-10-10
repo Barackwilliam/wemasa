@@ -33,13 +33,7 @@
   </div>
 </section>
 
-{% if stats %}
-<section class="section-tight">
-  <div class="container"><div class="stats-band reveal"><div class="grid grid-4">
-    {% for s in stats %}<div class="stat"><div class="stat-num">{{ s.prefix }}<span data-count="{{ s.value }}">{{ s.value }}</span><span class="suffix">{{ s.suffix }}</span></div><div class="stat-label">{{ s.label }}</div></div>{% endfor %}
-  </div></div></div>
-</section>
-{% endif %}
+
 
 <section class="section">
   <div class="container split" style="align-items:start">

@@ -60,7 +60,7 @@ def published_projects():
 @cached_page
 def home(request):
     projects = list(published_projects().filter(is_featured=True)[:6])
-    news = list(NewsPost.objects.published()[:3])
+    news = list(NewsPost.objects.published()[:4])
     return render(request, "website/home.html", {
         "page": HomePage.load(),
         "focus_areas": FocusArea.objects.published().annotate(project_count=Count("projects", filter=Q(projects__is_published=True))),
@@ -70,6 +70,10 @@ def home(request):
         "testimonials": Testimonial.objects.published().select_related("project")[:6],
         "partners": Partner.objects.published(),
         "values": CoreValue.objects.published()[:4],
+        "milestones": Milestone.objects.published(),
+        "about": AboutPage.load(),
+        "options": InvolvementOption.objects.published()[:3],
+        "slides": [p for p in projects if p.cover][:3],
     })
 
 

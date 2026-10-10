@@ -105,3 +105,15 @@ def initials(value):
 def bg_image(field, fallback=""):
     url = img_url(field, fallback)
     return format_html('style="--bg:url(\'{}\')"', url) if url else ""
+
+
+ACCENTS = ["#27963C", "#0096D6", "#E58A12", "#7B4FC2", "#D9483B", "#13867A"]
+
+
+@register.filter
+def accent(index):
+    """A colour for each focus area, so cards and links can be colour-coded."""
+    try:
+        return ACCENTS[int(index) % len(ACCENTS)]
+    except (TypeError, ValueError):
+        return ACCENTS[0]

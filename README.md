@@ -35,8 +35,7 @@ Mabadiliko yakihifadhiwa, cache inafutwa papo hapo — tovuti inaonyesha maudhui
 ```bash
 cp .env.example .env            # DEBUG=True, bila DATABASE_URL → SQLite
 pip install -r requirements.txt
-python manage.py migrate
-python manage.py createcachetable
+python manage.py migrate        # inaunda pia jedwali la cache
 python manage.py seed_content   # maudhui ya awali + picha
 python manage.py createsuperuser
 python manage.py runserver

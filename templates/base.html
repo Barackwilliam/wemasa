@@ -88,31 +88,52 @@
 <div class="drawer" id="drawer" aria-hidden="true">
   <div class="drawer-backdrop" data-close></div>
   <div class="drawer-panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <span class="drawer-glow" aria-hidden="true"></span>
     <div class="drawer-head">
-      <a class="brand" href="{% url 'website:home' %}"><img class="brand-logo" src="{% static 'img/logo-160.webp' %}" width="44" height="44" alt=""><span class="brand-text"><strong>{{ site.short_name }}</strong></span></a>
-      <button class="icon-btn" type="button" data-close aria-label="Close menu">{% icon 'x' %}</button>
+      <a class="drawer-brand" href="{% url 'website:home' %}"><img src="{% static 'img/logo-160.webp' %}" width="46" height="46" alt=""><span><strong>{{ site.short_name }}</strong><small>Weka Mazingira Safi</small></span></a>
+      <button class="drawer-close" type="button" data-close aria-label="Close menu">{% icon 'x' %}</button>
     </div>
     <nav class="drawer-nav" aria-label="Mobile">
-      <a href="{% url 'website:home' %}">Home</a>
-      <details><summary>About {% icon 'chevron-down' %}</summary>
-        <a href="{% url 'website:about' %}">Who we are</a><a href="{% url 'website:team' %}">Our team</a>
-        <a href="{% url 'website:partners' %}">Partners</a><a href="{% url 'website:sdgs' %}">Global goals (SDGs)</a>
+      <a class="dn-item {% if url_name == 'home' %}is-active{% endif %}" style="--i:0" href="{% url 'website:home' %}"><span class="dn-icon">{% icon 'home' %}</span><span class="dn-label">Home</span><span class="dn-num">01</span></a>
+      <details class="dn-group" style="--i:1" {% if url_name in 'about team partners sdgs' %}open{% endif %}>
+        <summary class="dn-item {% if url_name in 'about team partners sdgs' %}is-active{% endif %}"><span class="dn-icon">{% icon 'users' %}</span><span class="dn-label">About</span><span class="dn-caret">{% icon 'chevron-down' %}</span></summary>
+        <div class="dn-sub">
+          <a href="{% url 'website:about' %}">{% icon 'leaf' %}Who we are</a><a href="{% url 'website:team' %}">{% icon 'user' %}Our team</a>
+          <a href="{% url 'website:partners' %}">{% icon 'handshake' %}Partners</a><a href="{% url 'website:sdgs' %}">{% icon 'globe' %}Global goals</a>
+        </div>
       </details>
-      <details><summary>Our Work {% icon 'chevron-down' %}</summary>
-        <a href="{% url 'website:focus_list' %}">Focus areas</a>
-        {% for area in nav_focus_areas %}<a href="{{ area.get_absolute_url }}">— {{ area.title }}</a>{% endfor %}
-        <a href="{% url 'website:project_list' %}">Projects</a><a href="{% url 'website:impact' %}">Our impact</a>
+      <details class="dn-group" style="--i:2" {% if url_name in 'focus_list focus_detail project_list project_detail impact' %}open{% endif %}>
+        <summary class="dn-item {% if url_name in 'focus_list focus_detail project_list project_detail impact' %}is-active{% endif %}"><span class="dn-icon">{% icon 'sprout' %}</span><span class="dn-label">Our Work</span><span class="dn-caret">{% icon 'chevron-down' %}</span></summary>
+        <div class="dn-sub">
+          <a href="{% url 'website:project_list' %}">{% icon 'layers' %}All projects</a><a href="{% url 'website:focus_list' %}">{% icon 'target' %}Focus areas</a>
+          {% for area in nav_focus_areas %}<a href="{{ area.get_absolute_url }}">{% icon area.icon %}{{ area.title }}</a>{% endfor %}
+          <a href="{% url 'website:impact' %}">{% icon 'award' %}Our impact</a>
+        </div>
       </details>
-      <details><summary>Resources {% icon 'chevron-down' %}</summary>
-        <a href="{% url 'website:news_list' %}">News &amp; stories</a><a href="{% url 'website:media' %}">In the media</a>
-        <a href="{% url 'website:resources' %}">Reports &amp; documents</a><a href="{% url 'website:gallery' %}">Photo gallery</a>
+      <details class="dn-group" style="--i:3" {% if url_name in 'news_list news_detail media resources gallery' %}open{% endif %}>
+        <summary class="dn-item {% if url_name in 'news_list news_detail media resources gallery' %}is-active{% endif %}"><span class="dn-icon">{% icon 'book' %}</span><span class="dn-label">Resources</span><span class="dn-caret">{% icon 'chevron-down' %}</span></summary>
+        <div class="dn-sub">
+          <a href="{% url 'website:news_list' %}">{% icon 'newspaper' %}News &amp; stories</a><a href="{% url 'website:media' %}">{% icon 'tv' %}In the media</a>
+          <a href="{% url 'website:resources' %}">{% icon 'file' %}Reports</a><a href="{% url 'website:gallery' %}">{% icon 'camera' %}Gallery</a>
+        </div>
       </details>
-      <a href="{% url 'website:get_involved' %}">Get Involved</a>
-      <a href="{% url 'website:contact' %}">Contact</a>
+      <a class="dn-item {% if url_name == 'get_involved' %}is-active{% endif %}" style="--i:4" href="{% url 'website:get_involved' %}"><span class="dn-icon">{% icon 'hand-heart' %}</span><span class="dn-label">Get Involved</span><span class="dn-num">05</span></a>
+      <a class="dn-item {% if url_name == 'contact' %}is-active{% endif %}" style="--i:5" href="{% url 'website:contact' %}"><span class="dn-icon">{% icon 'mail' %}</span><span class="dn-label">Contact</span><span class="dn-num">06</span></a>
     </nav>
+    <a class="drawer-card" style="--i:6" href="{% url 'website:get_involved' %}">
+      <span class="drawer-card-kicker">{% icon 'sparkles' %} Volunteer</span>
+      <strong>Join the next community cleanup in Temeke</strong>
+      <span class="drawer-card-go">{% icon 'arrow-right' %}</span>
+    </a>
     <div class="drawer-foot">
-      <a class="btn btn-sun btn-block" href="{% url 'website:donate' %}">{% icon 'heart' %} {{ site.donate_button_text }}</a>
-      {% if site.phone %}<a class="btn btn-ghost btn-block" href="{{ site.phone|tel_link }}">{% icon 'phone' %} {{ site.phone }}</a>{% endif %}
+      <a class="btn btn-yellow btn-block drawer-donate" href="{% url 'website:donate' %}">{% icon 'heart' %} {{ site.donate_button_text }}</a>
+      <div class="drawer-contact">
+        {% if site.phone %}<a href="{{ site.phone|tel_link }}" aria-label="Call {{ site.phone }}">{% icon 'phone' %}</a>{% endif %}
+        {% if site.whatsapp %}<a href="{{ site.whatsapp|whatsapp_link }}" target="_blank" rel="noopener" aria-label="WhatsApp">{% icon 'whatsapp' %}</a>{% endif %}
+        {% if site.email %}<a href="mailto:{{ site.email }}" aria-label="Email {{ site.email }}">{% icon 'mail' %}</a>{% endif %}
+        {% for s in site.social_links %}<a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="{{ s.name }}">{% icon s.icon %}</a>{% endfor %}
+      </div>
+      {% if site.phone %}<p class="drawer-note">Call or WhatsApp <a href="{{ site.phone|tel_link }}">{{ site.phone }}</a></p>{% endif %}
     </div>
   </div>
 </div>

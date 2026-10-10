@@ -1,0 +1,10 @@
+<article class="entry">
+  <a href="{{ project.get_absolute_url }}" class="title-link" tabindex="-1" aria-hidden="true">
+    {% if project.cover %}<div class="photo r-classic"><img src="{{ project.cover.url }}" alt="{{ project.cover_caption|default:project.title }}" loading="lazy" decoding="async"></div>
+    {% else %}<div class="photo r-classic no-photo">{% include "partials/waves.html" %}</div>{% endif %}
+  </a>
+  <div class="meta-line label">{% if project.focus_area %}<span>{{ project.focus_area.title }}</span>{% endif %}<span class="status">{{ project.get_status_display }}</span></div>
+  <h3 class="h3"><a class="title-link" href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+  <p>{{ project.summary }}</p>
+  {% if project.location %}<p class="label" style="margin-top:12px">{{ project.location }}</p>{% endif %}
+</article>

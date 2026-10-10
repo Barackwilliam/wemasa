@@ -1,0 +1,22 @@
+<header class="page-head">
+  <div class="wrap">
+    <nav class="crumbs label" aria-label="Breadcrumb">
+      <a href="{% url 'website:home' %}">Home</a>
+      {% if parent_url %}<a href="{{ parent_url }}">{{ parent_label }}</a>{% endif %}
+      <span aria-current="page">{{ crumb|default:header.eyebrow|default:header.title }}</span>
+    </nav>
+    <div class="head-grid">
+      <div>
+        <h1 class="h1">{{ title|default:header.title }}</h1>
+        {% if header.subtitle and not hide_subtitle %}<p class="standfirst">{{ header.subtitle }}</p>{% endif %}
+      </div>
+      {% if aside %}<div>{{ aside }}</div>{% endif %}
+    </div>
+  </div>
+</header>
+{% if header.image %}
+<figure class="head-photo wrap">
+  <div class="photo"><img src="{{ header.image.url }}" alt="{{ header.caption|default:'' }}" fetchpriority="high"></div>
+  {% if header.caption %}<figcaption>{{ header.caption }}</figcaption>{% endif %}
+</figure>
+{% endif %}

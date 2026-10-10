@@ -1,43 +1,27 @@
 {% extends "base.html" %}
-{% load site_tags %}
-{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
+{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_hero.html" %}
-<section class="section">
-  <div class="container" style="display:grid;gap:clamp(40px,5vw,64px)">
-    {% for g in groups %}
-    <div>
-      <h2 class="group-title reveal">{{ g.label }}</h2>
-      <div class="grid grid-3">
-        {% for p in g.partners %}
-        <article class="card card-hover partner-tile reveal" style="justify-content:flex-start">
-          {% if p.logo %}<img src="{{ p.logo.url }}" alt="{{ p.name }}" loading="lazy">{% else %}<span class="monogram">{{ p.initials }}</span>{% endif %}
-          <span class="partner-name">{% if p.website %}<a class="card-link" href="{{ p.website }}" target="_blank" rel="noopener" style="color:inherit">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}<small>{{ p.description|default:g.label }}</small></span>
-        </article>
-        {% endfor %}
-      </div>
-    </div>
-    {% empty %}
-      {% include "partials/empty.html" with icon_name="handshake" title="Partners" text="Our partners will be listed here." %}
-    {% endfor %}
+{% include "partials/page_head.html" %}
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <ul class="rows">
+      {% for g in groups %}{% for p in g.partners %}
+      <li>
+        <div>{% if p.logo %}<img src="{{ p.logo.url }}" alt="" style="max-height:48px;width:auto;margin-bottom:12px">{% endif %}<h2 class="h3">{% if p.website %}<a href="{{ p.website }}" target="_blank" rel="noopener" style="text-decoration:none">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}</h2></div>
+        <p>{{ p.description }}</p>
+        <span class="label end">{{ p.get_category_display }}</span>
+      </li>
+      {% endfor %}{% empty %}<li><p>Our partners will be listed here.</p></li>{% endfor %}
+    </ul>
   </div>
 </section>
-<section class="section bg-mist">
-  <div class="container split">
-    <div class="reveal">
-      <span class="eyebrow">Partner with WEMASA</span>
-      <h2>Let’s build cleaner, greener communities together</h2>
-      <p class="lead-text">Whether you are a development partner, a business with a sustainability agenda, a local government authority or a media house, there is a meaningful way to work with us.</p>
-      <ul class="check-list">
-        <li>{% icon 'check' %}<span>Co-design and fund community programmes with measurable results</span></li>
-        <li>{% icon 'check' %}<span>Reach schools, markets and women’s groups through a trusted local partner</span></li>
-        <li>{% icon 'check' %}<span>Transparent reporting with photos, figures and stories from the field</span></li>
-      </ul>
-      <a class="btn btn-primary" href="{% url 'website:contact' %}?topic=partnership">Start a conversation {% icon 'arrow-right' cls='icon-move' %}</a>
-    </div>
-    <div class="grid reveal" style="--d:.1s">
-      {% for o in options %}<div class="card objective"><span class="icon-tile lg">{% icon o.icon %}</span><div><h3>{{ o.title }}</h3><p>{{ o.description }}</p></div></div>{% endfor %}
+<section class="section">
+  <div class="wrap grid12">
+    <div style="grid-column:1/span 6"><h2 class="h1">Partner with us</h2></div>
+    <div style="grid-column:8/span 5">
+      <p class="standfirst">We work best with partners who want to stay involved: funders who visit, councils who follow up, businesses who change how they handle their own waste.</p>
+      <a class="btn" href="{% url 'website:contact' %}?topic=partnership">Start a conversation</a>
     </div>
   </div>
 </section>

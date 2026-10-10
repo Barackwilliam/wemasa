@@ -92,11 +92,11 @@ def fieldsets_for(section, form):
 
 INLINE_FORMSETS = {
     "stats": inlineformset_factory(
-        Project, ProjectStat, fields=["value", "label", "order"], extra=3, can_delete=True,
+        Project, ProjectStat, fields=["label", "value", "order"], extra=3, can_delete=True,
         widgets={"order": forms.NumberInput(attrs={"style": "max-width:90px"})},
     ),
 }
-INLINE_TITLES = {"stats": ("Key figures", "Numbers shown at the top of the project page, e.g. “3,700 — Students reached”.")}
+INLINE_TITLES = {"stats": ("Project facts", "Extra facts shown beside the project, e.g. “Students — About 3,700” or “Schools — Kibasila, Kongowe”.")}
 
 
 class BulkPhotoForm(forms.Form):

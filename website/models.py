@@ -13,17 +13,6 @@ from django.utils.text import Truncator
 
 from .utils import OptimisedImagesMixin, UploadTo, clean_html, unique_slug
 
-ICON_CHOICES = [
-    (name, name.replace("-", " ").title())
-    for name in (
-        "leaf", "sprout", "tree", "recycle", "trash", "droplet", "wave", "sun", "wind", "flame",
-        "globe", "map-pin", "school", "graduation", "book", "megaphone", "mic", "newspaper", "camera",
-        "users", "user", "heart", "hand-heart", "handshake", "shield", "scale", "eye", "target",
-        "lightbulb", "sparkles", "chart", "award", "briefcase", "clipboard", "database", "peace",
-        "child", "home", "phone", "mail", "clock", "calendar", "bank", "wallet", "smartphone", "star",
-    )
-]
-
 
 class RichTextField(models.TextField):
     """A TextField edited with the rich-text editor and sanitised on save."""
@@ -77,7 +66,7 @@ class SiteSettings(OptimisedImagesMixin, Singleton):
 
     org_name = models.CharField("Organisation name", max_length=150, default="WEMASA Tanzania Organization")
     short_name = models.CharField(max_length=40, default="WEMASA")
-    tagline = models.CharField(max_length=200, default="Weka Mazingira Safi — Keep the Environment Clean")
+    tagline = models.CharField(max_length=200, default="Weka Mazingira Safi. Keep the environment clean.")
     logo = models.ImageField(
         upload_to=UploadTo("brand"), blank=True,
         help_text="Optional. Leave empty to use the official WEMASA logo.",
@@ -113,7 +102,7 @@ class SiteSettings(OptimisedImagesMixin, Singleton):
     )
     announcement_link = models.CharField(max_length=300, blank=True)
     donate_button_text = models.CharField(max_length=40, default="Donate")
-    newsletter_title = models.CharField(max_length=120, default="Stay in the loop")
+    newsletter_title = models.CharField(max_length=120, default="Letters from the field")
     newsletter_text = models.CharField(max_length=300, blank=True)
 
     meta_description = models.CharField(
@@ -139,58 +128,41 @@ class SiteSettings(OptimisedImagesMixin, Singleton):
 
 
 class HomePage(OptimisedImagesMixin, Singleton):
-    image_sizes = {"hero_image": 2200, "intro_image": 1400, "intro_image_2": 1000, "story_image": 1800, "cta_image": 2000}
+    image_sizes = {"hero_image": 2000, "story_image": 1600, "cta_image": 1800}
 
-    hero_eyebrow = models.CharField(max_length=120, blank=True)
-    hero_title = models.CharField(max_length=160)
-    hero_highlight = models.CharField(
-        max_length=80, blank=True, help_text="A word or phrase from the title to show in the accent colour.",
-    )
-    hero_subtitle = models.TextField(blank=True)
+    hero_kicker = models.CharField("Small line above the headline", max_length=160, blank=True)
+    hero_title = models.CharField("Headline", max_length=200)
+    hero_text = models.TextField("Introduction", blank=True)
     hero_image = models.ImageField(upload_to=UploadTo("home"), blank=True)
-    hero_primary_text = models.CharField("Primary button text", max_length=40, blank=True)
-    hero_primary_url = models.CharField("Primary button link", max_length=300, blank=True)
-    hero_secondary_text = models.CharField("Secondary button text", max_length=40, blank=True)
-    hero_secondary_url = models.CharField("Secondary button link", max_length=300, blank=True)
+    hero_caption = models.CharField("Photo caption", max_length=250, blank=True)
+    hero_primary_text = models.CharField("First link text", max_length=40, blank=True)
+    hero_primary_url = models.CharField("First link", max_length=300, blank=True)
+    hero_secondary_text = models.CharField("Second link text", max_length=40, blank=True)
+    hero_secondary_url = models.CharField("Second link", max_length=300, blank=True)
 
-    intro_eyebrow = models.CharField(max_length=80, blank=True)
-    intro_title = models.CharField(max_length=200, blank=True)
-    intro_text = RichTextField(blank=True)
-    intro_points = models.TextField(blank=True, help_text="One highlight per line.")
-    intro_image = models.ImageField(upload_to=UploadTo("home"), blank=True)
-    intro_image_2 = models.ImageField(upload_to=UploadTo("home"), blank=True)
-    intro_badge_value = models.CharField(max_length=20, blank=True)
-    intro_badge_label = models.CharField(max_length=60, blank=True)
+    focus_title = models.CharField("“What we do” heading", max_length=200, blank=True)
+    focus_intro = models.TextField("“What we do” introduction", blank=True)
 
-    focus_eyebrow = models.CharField(max_length=80, blank=True)
-    focus_title = models.CharField(max_length=200, blank=True)
-    focus_subtitle = models.TextField(blank=True)
+    projects_title = models.CharField("Projects heading", max_length=200, blank=True)
+    projects_intro = models.TextField("Projects introduction", blank=True)
 
-    impact_eyebrow = models.CharField(max_length=80, blank=True)
-    impact_title = models.CharField(max_length=200, blank=True)
-    impact_subtitle = models.TextField(blank=True)
-
-    projects_eyebrow = models.CharField(max_length=80, blank=True)
-    projects_title = models.CharField(max_length=200, blank=True)
-    projects_subtitle = models.TextField(blank=True)
-
-    story_eyebrow = models.CharField(max_length=80, blank=True)
-    story_title = models.CharField(max_length=200, blank=True)
-    story_text = models.TextField(blank=True)
+    story_quote = models.TextField("Quote from our story", blank=True)
+    story_attribution = models.CharField("Quote attribution", max_length=150, blank=True)
+    story_text = models.TextField("Short story text", blank=True)
     story_image = models.ImageField(upload_to=UploadTo("home"), blank=True)
-    story_button_text = models.CharField(max_length=40, blank=True)
-    story_button_url = models.CharField(max_length=300, blank=True)
+    story_caption = models.CharField("Story photo caption", max_length=250, blank=True)
+    story_link_text = models.CharField(max_length=60, blank=True)
 
-    media_title = models.CharField(max_length=200, blank=True)
-    news_eyebrow = models.CharField(max_length=80, blank=True)
-    news_title = models.CharField(max_length=200, blank=True)
-    testimonials_title = models.CharField(max_length=200, blank=True)
-    partners_title = models.CharField(max_length=200, blank=True)
-    partners_subtitle = models.TextField(blank=True)
+    photos_title = models.CharField("Photo strip heading", max_length=200, blank=True)
+    press_title = models.CharField("Press heading", max_length=200, blank=True)
+    press_intro = models.TextField("Press introduction", blank=True)
+    stories_title = models.CharField("Stories heading", max_length=200, blank=True)
+    partners_title = models.CharField("Partners heading", max_length=200, blank=True)
 
-    cta_title = models.CharField(max_length=200, blank=True)
-    cta_text = models.TextField(blank=True)
-    cta_image = models.ImageField(upload_to=UploadTo("home"), blank=True)
+    cta_title = models.CharField("Closing heading", max_length=200, blank=True)
+    cta_text = models.TextField("Closing text", blank=True)
+    cta_image = models.ImageField("Closing photo", upload_to=UploadTo("home"), blank=True)
+    cta_caption = models.CharField("Closing photo caption", max_length=250, blank=True)
     cta_primary_text = models.CharField(max_length=40, blank=True)
     cta_primary_url = models.CharField(max_length=300, blank=True)
     cta_secondary_text = models.CharField(max_length=40, blank=True)
@@ -202,10 +174,6 @@ class HomePage(OptimisedImagesMixin, Singleton):
     def __str__(self):
         return "Home page"
 
-    @property
-    def intro_points_list(self):
-        return [line.strip() for line in self.intro_points.splitlines() if line.strip()]
-
 
 class AboutPage(OptimisedImagesMixin, Singleton):
     image_sizes = {"story_image": 1600, "approach_image": 1600}
@@ -214,6 +182,7 @@ class AboutPage(OptimisedImagesMixin, Singleton):
     story_title = models.CharField(max_length=200, blank=True)
     story_text = RichTextField(blank=True)
     story_image = models.ImageField(upload_to=UploadTo("about"), blank=True)
+    story_caption = models.CharField("Story photo caption", max_length=250, blank=True)
     story_quote = models.TextField(blank=True)
 
     vision = models.TextField(blank=True)
@@ -227,6 +196,7 @@ class AboutPage(OptimisedImagesMixin, Singleton):
     approach_title = models.CharField(max_length=200, blank=True)
     approach_text = RichTextField(blank=True)
     approach_image = models.ImageField(upload_to=UploadTo("about"), blank=True)
+    approach_caption = models.CharField("“How we work” photo caption", max_length=250, blank=True)
 
     timeline_title = models.CharField(max_length=200, blank=True)
     legal_title = models.CharField(max_length=200, blank=True)
@@ -255,6 +225,7 @@ class PageHeader(OptimisedImagesMixin, models.Model):
     title = models.CharField(max_length=160)
     subtitle = models.TextField(blank=True)
     image = models.ImageField(upload_to=UploadTo("headers"), blank=True)
+    caption = models.CharField("Photo caption", max_length=250, blank=True)
     meta_description = models.CharField(max_length=300, blank=True)
 
     class Meta:
@@ -273,7 +244,6 @@ class PageHeader(OptimisedImagesMixin, models.Model):
 class Objective(Orderable):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    icon = models.CharField(max_length=30, choices=ICON_CHOICES, default="target")
 
     objects = PublishedQuerySet.as_manager()
 
@@ -288,7 +258,6 @@ class CoreValue(Orderable):
     name = models.CharField(max_length=80)
     local_name = models.CharField("Swahili name", max_length=80, blank=True)
     description = models.TextField(blank=True)
-    icon = models.CharField(max_length=30, choices=ICON_CHOICES, default="star")
 
     objects = PublishedQuerySet.as_manager()
 
@@ -323,10 +292,10 @@ class FocusArea(OptimisedImagesMixin, Orderable):
 
     title = models.CharField(max_length=150)
     slug = models.SlugField(max_length=170, unique=True, blank=True)
-    icon = models.CharField(max_length=30, choices=ICON_CHOICES, default="leaf")
     summary = models.TextField(help_text="One or two sentences shown on cards.")
     description = RichTextField(blank=True)
     image = models.ImageField(upload_to=UploadTo("focus"), blank=True)
+    image_caption = models.CharField("Photo caption", max_length=250, blank=True)
 
     objects = PublishedQuerySet.as_manager()
 
@@ -356,6 +325,7 @@ class Project(OptimisedImagesMixin, Orderable):
     summary = models.TextField(help_text="Short description for cards (1–3 sentences).")
     description = RichTextField(blank=True)
     cover = models.ImageField("Cover photo", upload_to=UploadTo("projects"), blank=True)
+    cover_caption = models.CharField("Cover photo caption", max_length=250, blank=True)
     location = models.CharField(max_length=200, blank=True)
     period = models.CharField(max_length=80, blank=True, help_text="e.g. 2025, or March 2026, or 2024 – 2026")
     beneficiaries = models.CharField("Target group", max_length=200, blank=True)
@@ -390,16 +360,16 @@ class Project(OptimisedImagesMixin, Orderable):
 
 class ProjectStat(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="stats")
-    value = models.CharField(max_length=30, help_text="e.g. 3,700 or 8")
-    label = models.CharField(max_length=120, help_text="e.g. Students reached")
+    label = models.CharField(max_length=120, help_text="e.g. Students")
+    value = models.CharField(max_length=200, help_text="e.g. About 3,700")
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ["order", "id"]
-        verbose_name = "Project figure"
+        verbose_name = "Project fact"
 
     def __str__(self):
-        return f"{self.value} {self.label}"
+        return f"{self.label}: {self.value}"
 
 
 class GalleryImage(OptimisedImagesMixin, Orderable):
@@ -436,7 +406,6 @@ class ImpactStat(Orderable):
     suffix = models.CharField(max_length=10, blank=True, help_text="e.g. + or %")
     label = models.CharField(max_length=120)
     description = models.CharField(max_length=250, blank=True)
-    icon = models.CharField(max_length=30, choices=ICON_CHOICES, default="chart")
     show_on_home = models.BooleanField(default=True)
 
     objects = PublishedQuerySet.as_manager()
@@ -574,6 +543,7 @@ class NewsPost(OptimisedImagesMixin, models.Model):
     excerpt = models.TextField(blank=True, help_text="Short summary for cards. Leave empty to use the start of the article.")
     body = RichTextField()
     cover = models.ImageField("Cover photo", upload_to=UploadTo("news"), blank=True)
+    cover_caption = models.CharField("Cover photo caption", max_length=250, blank=True)
     project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True, related_name="news")
     author = models.CharField(max_length=120, blank=True, default="WEMASA Communications")
     published_at = models.DateTimeField(default=timezone.now)
@@ -703,7 +673,6 @@ class DonationMethod(Orderable):
 class InvolvementOption(Orderable):
     title = models.CharField(max_length=120)
     description = models.TextField()
-    icon = models.CharField(max_length=30, choices=ICON_CHOICES, default="hand-heart")
     button_text = models.CharField(max_length=40, blank=True)
     button_url = models.CharField(max_length=300, blank=True)
 

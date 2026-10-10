@@ -59,18 +59,15 @@ def published_projects():
 
 @cached_page
 def home(request):
-    projects = list(published_projects().filter(is_featured=True)[:6])
-    news = list(NewsPost.objects.published()[:3])
     return render(request, "website/home.html", {
         "page": HomePage.load(),
-        "focus_areas": FocusArea.objects.published().annotate(project_count=Count("projects", filter=Q(projects__is_published=True))),
-        "stats": ImpactStat.objects.published().filter(show_on_home=True)[:6],
-        "projects": projects,
-        "news": news,
-        "media": MediaCoverage.objects.published()[:12],
-        "testimonials": Testimonial.objects.published().select_related("project")[:6],
+        "focus_areas": FocusArea.objects.published(),
+        "projects": list(published_projects().filter(is_featured=True)[:5]),
+        "photos": GalleryImage.objects.published().select_related("project").order_by("?")[:12],
+        "news": NewsPost.objects.published()[:3],
+        "media": MediaCoverage.objects.published().exclude(excerpt="")[:5],
+        "testimonials": Testimonial.objects.published()[:3],
         "partners": Partner.objects.published(),
-        "values": CoreValue.objects.published()[:4],
     })
 
 

@@ -1,97 +1,148 @@
 {% extends "base.html" %}
 {% load static site_tags %}
-{% block title %}{{ site.org_name }} — {{ site.tagline }}{% endblock %}
-{% block preload %}{% if page.hero_image %}<link rel="preload" as="image" href="{{ page.hero_image.url }}" fetchpriority="high">{% endif %}{% endblock %}
+{% block title %}{{ site.org_name }}{% endblock %}
+{% block head %}{% if page.hero_image %}<link rel="preload" as="image" href="{{ page.hero_image.url }}">{% endif %}{% endblock %}
 
 {% block content %}
-<!-- Hero -->
-<section class="hero">
-  {% if page.hero_image %}<div class="hero-media"><img src="{{ page.hero_image.url }}" alt="WEMASA community programme" fetchpriority="high"></div>{% endif %}
-  <div class="container">
-    <div class="hero-grid">
-      <div>
-        {% if page.hero_eyebrow %}<span class="eyebrow eyebrow-light">{{ page.hero_eyebrow }}</span>{% endif %}
-        <h1>{{ page.hero_title|highlight:page.hero_highlight }}</h1>
-        {% if page.hero_subtitle %}<p class="hero-lead">{{ page.hero_subtitle }}</p>{% endif %}
-        <div class="btn-row">
-          {% if page.hero_primary_text %}<a class="btn btn-sun btn-lg" href="{{ page.hero_primary_url }}">{{ page.hero_primary_text }} {% icon 'arrow-right' cls='icon-move' %}</a>{% endif %}
-          {% if page.hero_secondary_text %}<a class="btn btn-glass btn-lg" href="{{ page.hero_secondary_url }}">{{ page.hero_secondary_text }}</a>{% endif %}
-        </div>
-        <div class="hero-trust">
-          {% if site.registration_number %}<span>{% icon 'shield' %}</span><span>Registered NGO · <strong>{{ site.registration_number }}</strong></span><span class="sep"></span>{% endif %}
-          {% if site.registration_year %}<span>Serving communities since <strong>{{ site.registration_year }}</strong></span>{% endif %}
-        </div>
+<section class="lead">
+  <div class="wrap grid12">
+    <div class="lead-text">
+      {% if page.hero_kicker %}<p class="kicker label">{{ page.hero_kicker }}</p>{% endif %}
+      <h1 class="display">{{ page.hero_title }}</h1>
+      {% if page.hero_text %}<p class="standfirst">{{ page.hero_text }}</p>{% endif %}
+      <div class="links">
+        {% if page.hero_primary_text %}<a class="btn" href="{{ page.hero_primary_url }}">{{ page.hero_primary_text }}</a>{% endif %}
+        {% if page.hero_secondary_text %}<a class="link" href="{{ page.hero_secondary_url }}">{{ page.hero_secondary_text }} →</a>{% endif %}
       </div>
-      {% if stats %}
-      <div class="hero-cards">
-        {% for s in stats|slice:":3" %}
-        <div class="glass-card">
-          <div class="glass-row"><span class="icon-tile">{% icon s.icon %}</span>
-            <div><div class="num">{{ s.prefix }}<span data-count="{{ s.value }}">{{ s.value }}</span>{{ s.suffix }}</div><div class="lbl">{{ s.label }}</div></div>
-          </div>
-        </div>
-        {% endfor %}
+      <div class="lead-facts label">
+        {% if site.registration_year %}<div>Registered<b>{{ site.registration_year }}</b></div>{% endif %}
+        <div>Based in<b>Temeke, Dar es Salaam</b></div>
+        {% if site.registration_number %}<div>NGO number<b class="keep-case">{{ site.registration_number }}</b></div>{% endif %}
       </div>
-      {% endif %}
     </div>
+    <figure class="lead-photo">
+      <div class="photo r-portrait">{% if page.hero_image %}<img src="{{ page.hero_image.url }}" alt="{{ page.hero_caption }}" fetchpriority="high">{% endif %}</div>
+      {% if page.hero_caption %}<figcaption>{{ page.hero_caption }}</figcaption>{% endif %}
+    </figure>
   </div>
-  <span class="scroll-cue" aria-hidden="true"></span>
-  {% include "partials/wave.html" %}
 </section>
 
-<!-- Values strip -->
-{% if values %}
-<section class="section-tight" style="padding-top:clamp(28px,4vw,48px)">
-  <div class="container">
-    <div class="feature-row reveal">
-      {% for v in values %}
-      <div><span class="icon-tile">{% icon v.icon %}</span><div><span class="local">{{ v.local_name }}</span><h4>{{ v.name }}</h4><p>{{ v.description|truncatewords:14 }}</p></div></div>
+{% if focus_areas %}
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="h2">{{ page.focus_title|default:"What we do" }}</h2>
+      <div class="side">{% if page.focus_intro %}<p>{{ page.focus_intro }}</p>{% endif %}</div>
+    </div>
+    <ul class="index">
+      {% for area in focus_areas %}
+      <li><a href="{{ area.get_absolute_url }}"{% if area.image %} data-peek="{{ area.image.url }}"{% endif %}>
+        <span class="h3">{{ area.title }}</span>
+        <p>{{ area.summary }}</p>
+        <span class="arr" aria-hidden="true">→</span>
+      </a></li>
       {% endfor %}
+    </ul>
+  </div>
+  <div class="peek" aria-hidden="true"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt=""></div>
+</section>
+{% endif %}
+
+{% if projects %}
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="h2">{{ page.projects_title|default:"From the field" }}</h2>
+      <div class="side">{% if page.projects_intro %}<p>{{ page.projects_intro }}</p>{% endif %}<a class="link" href="{% url 'website:project_list' %}">All projects →</a></div>
+    </div>
+    {% for project in projects|slice:":3" %}
+    <article class="spread{% cycle '' ' flip' %}">
+      <figure class="photo-col">
+        <a href="{{ project.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+          {% if project.cover %}<div class="photo r-classic"><img src="{{ project.cover.url }}" alt="{{ project.cover_caption }}" loading="lazy" decoding="async"></div>
+          {% else %}<div class="photo r-classic no-photo">{% include "partials/waves.html" %}</div>{% endif %}
+        </a>
+        {% if project.cover_caption %}<figcaption>{{ project.cover_caption }}</figcaption>{% endif %}
+      </figure>
+      <div class="text-col">
+        <div class="meta-line label">{% if project.location %}<span>{{ project.location }}</span>{% endif %}<span class="status">{{ project.get_status_display }}</span></div>
+        <h3 class="h2"><a class="title-link" href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+        <p>{{ project.summary }}</p>
+        <a class="link" href="{{ project.get_absolute_url }}">Read more →</a>
+      </div>
+    </article>
+    {% endfor %}
+    {% if projects|length > 3 %}
+    <div class="entries" style="margin-top:clamp(64px,8vw,110px)">
+      {% for project in projects|slice:"3:5" %}{% include "partials/entry.html" %}{% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+{% if page.story_quote %}
+<section class="section tint">
+  <div class="wrap story">
+    <blockquote>
+      <p>{{ page.story_quote }}</p>
+      {% if page.story_attribution %}<footer class="label">{{ page.story_attribution }}</footer>{% endif %}
+    </blockquote>
+    <div class="story-side">
+      {% if page.story_image %}<figure><div class="photo r-classic"><img src="{{ page.story_image.url }}" alt="{{ page.story_caption }}" loading="lazy"></div>{% if page.story_caption %}<figcaption>{{ page.story_caption }}</figcaption>{% endif %}</figure>{% endif %}
+      {% if page.story_text %}<p>{{ page.story_text }}</p>{% endif %}
+      <a class="link" href="{% url 'website:about' %}">{{ page.story_link_text|default:"Our story" }} →</a>
     </div>
   </div>
 </section>
 {% endif %}
 
-<!-- Who we are -->
+{% if photos %}
 <section class="section">
-  <div class="container split">
-    <div class="bento reveal">
-      <figure class="b-main">{% if page.intro_image %}<img src="{{ page.intro_image.url }}" alt="WEMASA training session" loading="lazy">{% endif %}</figure>
-      <figure>{% if page.intro_image_2 %}<img src="{{ page.intro_image_2.url }}" alt="Community members at a WEMASA activity" loading="lazy">{% endif %}</figure>
-      <div class="b-badge"><strong>{{ page.intro_badge_value|default:site.registration_year }}</strong><span>{{ page.intro_badge_label|default:"Year registered" }}</span></div>
-      <div class="floating-note"><span class="icon-tile">{% icon 'recycle' %}</span>Weka Mazingira Safi — keep the environment clean</div>
-    </div>
-    <div class="reveal" style="--d:.1s">
-      {% if page.intro_eyebrow %}<span class="eyebrow">{{ page.intro_eyebrow }}</span>{% endif %}
-      <h2>{{ page.intro_title }}</h2>
-      <div class="prose lead-text">{{ page.intro_text|safe }}</div>
-      {% if page.intro_points_list %}
-      <ul class="check-list">{% for p in page.intro_points_list %}<li>{% icon 'check' %}<span>{{ p }}</span></li>{% endfor %}</ul>
-      {% endif %}
-      <div class="btn-row">
-        <a class="btn btn-primary" href="{% url 'website:about' %}">Discover our story {% icon 'arrow-right' cls='icon-move' %}</a>
-        <a class="btn btn-ghost" href="{% url 'website:team' %}">Meet the team</a>
-      </div>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="h2">{{ page.photos_title|default:"Photographs" }}</h2>
+      <div class="side"><a class="link" href="{% url 'website:gallery' %}">All photographs →</a></div>
     </div>
   </div>
+  <div class="strip">
+    {% for ph in photos %}
+    <a href="{{ ph.image.url }}" data-lightbox="home" data-caption="{{ ph.caption }}">
+      <figure><div class="photo"><img src="{{ ph.image.url }}" alt="{{ ph.caption }}" loading="lazy" decoding="async"></div><figcaption>{{ ph.caption|default:ph.album_name }}</figcaption></figure>
+    </a>
+    {% endfor %}
+  </div>
 </section>
+{% endif %}
 
-<!-- Focus areas -->
-{% if focus_areas %}
-<section class="section bg-sand">
-  <div class="container">
-    <div class="section-head-row">
-      {% section_head page.focus_eyebrow page.focus_title page.focus_subtitle "left" %}
-      <a class="btn btn-ghost reveal" href="{% url 'website:focus_list' %}">All focus areas {% icon 'arrow-right' cls='icon-move' %}</a>
+{% if media %}
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="h2">{{ page.press_title|default:"In the press" }}</h2>
+      <div class="side">{% if page.press_intro %}<p>{{ page.press_intro }}</p>{% endif %}<a class="link" href="{% url 'website:media' %}">All coverage →</a></div>
     </div>
-    <div class="grid grid-3">
-      {% for area in focus_areas %}
-      <article class="card focus-card reveal" style="--d:{% widthratio forloop.counter0 1 8 %}0ms">
-        <span class="num-bg">{{ forloop.counter|stringformat:"02d" }}</span>
-        <span class="icon-tile lg">{% icon area.icon %}</span>
-        <h3><a class="card-link" href="{{ area.get_absolute_url }}">{{ area.title }}</a></h3>
-        <p>{{ area.summary }}</p>
-        <div class="card-foot"><span class="count">{{ area.project_count }} project{{ area.project_count|pluralize }}</span><span class="go">{% icon 'arrow-up-right' %}</span></div>
+    <ul class="press">{% for item in media %}{% include "partials/press_item.html" %}{% endfor %}</ul>
+  </div>
+</section>
+{% endif %}
+
+{% if news %}
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="h2">{{ page.stories_title|default:"Stories" }}</h2>
+      <div class="side"><a class="link" href="{% url 'website:news_list' %}">All stories →</a></div>
+    </div>
+    <div class="stories">
+      {% for post in news %}
+      <article class="story-item">
+        <a href="{{ post.get_absolute_url }}">
+          <span class="label">{{ post.get_category_display }} · {{ post.published_at|date:"j F Y" }}</span>
+          {% if post.cover %}<div class="photo r-classic"><img src="{{ post.cover.url }}" alt="{{ post.cover_caption }}" loading="lazy"></div>{% endif %}
+          <h3 class="h3">{{ post.title }}</h3>
+          <p>{{ post.summary|truncatewords:32 }}</p>
+        </a>
       </article>
       {% endfor %}
     </div>
@@ -99,149 +150,43 @@
 </section>
 {% endif %}
 
-<!-- Impact -->
-{% if stats %}
-<section class="section">
-  <div class="container">
-    <div class="stats-band reveal">
-      <div class="split" style="align-items:end;margin-bottom:clamp(28px,4vw,48px)">
-        <div>
-          {% if page.impact_eyebrow %}<span class="eyebrow eyebrow-light">{{ page.impact_eyebrow }}</span>{% endif %}
-          <h2 style="margin:0">{{ page.impact_title }}</h2>
-        </div>
-        <div><p style="margin:0;color:rgba(255,255,255,.75);font-size:1.08rem">{{ page.impact_subtitle }}</p></div>
-      </div>
-      <div class="grid grid-4">
-        {% for s in stats|slice:":4" %}
-        <div class="stat">
-          <div class="stat-num">{{ s.prefix }}<span data-count="{{ s.value }}">{{ s.value }}</span><span class="suffix">{{ s.suffix }}</span></div>
-          <div class="stat-label">{{ s.label }}</div>
-          {% if s.description %}<div class="stat-desc">{{ s.description }}</div>{% endif %}
-        </div>
-        {% endfor %}
-      </div>
-      <div style="margin-top:36px"><a class="btn btn-light" href="{% url 'website:impact' %}">See our full impact {% icon 'arrow-right' cls='icon-move' %}</a></div>
-    </div>
-  </div>
-</section>
-{% endif %}
-
-<!-- Projects -->
-{% if projects %}
-<section class="section bg-mist">
-  <div class="container">
-    <div class="section-head-row">
-      {% section_head page.projects_eyebrow page.projects_title page.projects_subtitle "left" %}
-      <a class="btn btn-ghost reveal" href="{% url 'website:project_list' %}">All projects {% icon 'arrow-right' cls='icon-move' %}</a>
-    </div>
-    {% with lead=projects.0 %}
-    <article class="card card-hover project-feature reveal" style="margin-bottom:clamp(20px,2.4vw,28px)">
-      <div class="media">
-        {% if lead.cover %}<img src="{{ lead.cover.url }}" alt="{{ lead.title }}" loading="lazy">{% endif %}
-        <div class="media-chips"><span class="chip chip-sun">{% icon 'star' %} Featured project</span></div>
-      </div>
-      <div class="card-body">
-        {% if lead.focus_area %}<span class="chip" style="align-self:flex-start;margin-bottom:16px">{% icon lead.focus_area.icon %} {{ lead.focus_area.title }}</span>{% endif %}
-        <h3 style="font-size:clamp(1.5rem,2.4vw,2rem)"><a class="card-link" href="{{ lead.get_absolute_url }}">{{ lead.title }}</a></h3>
-        <p class="muted">{{ lead.summary }}</p>
-        <div class="page-hero-meta" style="color:var(--muted);margin:6px 0 24px">
-          {% if lead.location %}<span>{% icon 'map-pin' %} {{ lead.location }}</span>{% endif %}
-          {% if lead.beneficiaries %}<span>{% icon 'users' %} {{ lead.beneficiaries }}</span>{% endif %}
-        </div>
-        <span class="btn btn-primary" style="align-self:flex-start">Explore the project {% icon 'arrow-right' cls='icon-move' %}</span>
-      </div>
-    </article>
-    {% endwith %}
-    <div class="grid grid-3">
-      {% for project in projects|slice:"1:" %}{% include "partials/project_card.html" with delay=forloop.counter0 %}{% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
-
-<!-- Our story band -->
-{% if page.story_title %}
-<section class="section">
-  <div class="container split split-wide">
-    <div class="reveal">
-      {% if page.story_eyebrow %}<span class="eyebrow">{{ page.story_eyebrow }}</span>{% endif %}
-      <h2>{{ page.story_title }}</h2>
-      <p class="lead-text">{{ page.story_text|linebreaksbr }}</p>
-      {% if page.story_button_text %}<a class="btn btn-primary" href="{{ page.story_button_url }}">{{ page.story_button_text }} {% icon 'arrow-right' cls='icon-move' %}</a>{% endif %}
-    </div>
-    <div class="reveal" style="--d:.1s">
-      <div style="border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:4/3;background:var(--mist)">
-        {% if page.story_image %}<img src="{{ page.story_image.url }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">{% endif %}
-      </div>
-    </div>
-  </div>
-</section>
-{% endif %}
-
-<!-- As featured in -->
-{% if media %}
-<section class="section-tight bg-sand">
-  <div class="container">
-    <div class="press-strip reveal">
-      <span class="label">{{ page.media_title|default:"As featured in" }}</span>
-      <div class="marquee" style="--speed:45s">
-        <div class="marquee-track">
-          {% for loop in "ab" %}{% for m in media %}<span class="press-item" {% if loop == 'b' %}aria-hidden="true"{% endif %}>{% if m.media_type == 'tv' %}{% icon 'tv' %}{% elif m.media_type == 'online' %}{% icon 'globe' %}{% else %}{% icon 'newspaper' %}{% endif %}{{ m.outlet }}</span>{% endfor %}{% endfor %}
-        </div>
-      </div>
-      <a class="link-arrow" href="{% url 'website:media' %}" style="flex:none">Press coverage {% icon 'arrow-right' %}</a>
-    </div>
-  </div>
-</section>
-{% endif %}
-
-<!-- News -->
-{% if news %}
-<section class="section">
-  <div class="container">
-    <div class="section-head-row">
-      {% section_head page.news_eyebrow page.news_title "" "left" %}
-      <a class="btn btn-ghost reveal" href="{% url 'website:news_list' %}">All news {% icon 'arrow-right' cls='icon-move' %}</a>
-    </div>
-    <div class="grid grid-3">{% for post in news %}{% include "partials/news_card.html" with delay=forloop.counter0 %}{% endfor %}</div>
-  </div>
-</section>
-{% endif %}
-
-<!-- Testimonials -->
 {% if testimonials %}
-<section class="section bg-mist">
-  <div class="container">
-    {% section_head "Voices from the community" page.testimonials_title %}
-    <div class="grid grid-3">
-      {% for t in testimonials %}
-      <figure class="card testimonial reveal" style="margin:0">
-        {% icon 'quote' %}
-        <blockquote>“{{ t.quote }}”</blockquote>
-        <figcaption class="person">{% if t.photo %}<img src="{{ t.photo.url }}" alt="" loading="lazy">{% else %}<span class="avatar">{{ t.name|initials }}</span>{% endif %}<span><strong>{{ t.name }}</strong><small>{{ t.role }}</small></span></figcaption>
-      </figure>
-      {% endfor %}
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head"><h2 class="h2">In their words</h2></div>
+    <div class="quotes">
+      {% for t in testimonials %}<figure><blockquote>“{{ t.quote }}”</blockquote><figcaption class="label" style="margin:0">{{ t.name }}{% if t.role %}, {{ t.role }}{% endif %}</figcaption></figure>{% endfor %}
     </div>
   </div>
 </section>
 {% endif %}
 
-<!-- Partners -->
 {% if partners %}
 <section class="section">
-  <div class="container">
-    {% section_head "Partners & supporters" page.partners_title page.partners_subtitle %}
-  </div>
-  <div class="marquee reveal" style="--speed:50s">
-    <div class="marquee-track">
-      {% for loop in "ab" %}{% for p in partners %}
-      <span class="marquee-item" {% if loop == 'b' %}aria-hidden="true"{% endif %}>{% if p.logo %}<img src="{{ p.logo.url }}" alt="{{ p.name }}" loading="lazy">{% else %}<span class="monogram">{{ p.initials }}</span>{% endif %}{{ p.name }}</span>
-      {% endfor %}{% endfor %}
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="h2">{{ page.partners_title|default:"We work with" }}</h2>
+      <div class="side"><a class="link" href="{% url 'website:partners' %}">About our partners →</a></div>
     </div>
+    <p class="names">{% for p in partners %}<span>{{ p.name }}</span>{% endfor %}</p>
   </div>
-  <div class="center mt-lg"><a class="link-arrow" href="{% url 'website:partners' %}">Become a partner {% icon 'arrow-right' %}</a></div>
 </section>
 {% endif %}
 
-{% include "partials/cta.html" with image=page.cta_image title=page.cta_title text=page.cta_text primary_text=page.cta_primary_text primary_url=page.cta_primary_url secondary_text=page.cta_secondary_text secondary_url=page.cta_secondary_url %}
+{% if page.cta_title %}
+<section class="section tint">
+  <div class="wrap closing">
+    <div class="closing-text">
+      {% include "partials/waves.html" %}
+      <h2 class="h1" style="margin-top:22px">{{ page.cta_title }}</h2>
+      {% if page.cta_text %}<p class="standfirst">{{ page.cta_text }}</p>{% endif %}
+      <div class="links">
+        {% if page.cta_primary_text %}<a class="btn" href="{{ page.cta_primary_url }}">{{ page.cta_primary_text }}</a>{% endif %}
+        {% if page.cta_secondary_text %}<a class="link" href="{{ page.cta_secondary_url }}">{{ page.cta_secondary_text }} →</a>{% endif %}
+      </div>
+    </div>
+    {% if page.cta_image %}<figure><div class="photo r-classic"><img src="{{ page.cta_image.url }}" alt="{{ page.cta_caption }}" loading="lazy"></div>{% if page.cta_caption %}<figcaption>{{ page.cta_caption }}</figcaption>{% endif %}</figure>{% endif %}
+  </div>
+</section>
+{% endif %}
 {% endblock %}

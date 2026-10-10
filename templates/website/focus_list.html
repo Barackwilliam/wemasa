@@ -1,31 +1,26 @@
 {% extends "base.html" %}
-{% load site_tags %}
-{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
+{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_hero.html" %}
-<section class="section">
-  <div class="container" style="display:grid;gap:clamp(48px,7vw,96px)">
+{% include "partials/page_head.html" %}
+<section class="section" style="padding-top:0">
+  <div class="wrap">
     {% for area in areas %}
-    <article class="split reveal" id="{{ area.slug }}">
-      <div style="{% if forloop.counter|divisibleby:2 %}order:2;{% endif %}border-radius:var(--radius-xl);overflow:hidden;aspect-ratio:4/3;box-shadow:var(--shadow-lg);background:var(--mist);position:relative">
-        {% if area.image %}<img src="{{ area.image.url }}" alt="{{ area.title }}" loading="lazy" style="width:100%;height:100%;object-fit:cover">{% else %}<div class="media-placeholder">{% icon area.icon %}</div>{% endif %}
-        <span class="chip chip-white" style="position:absolute;left:18px;top:18px">{{ forloop.counter|stringformat:"02d" }} / {{ areas|length|stringformat:"02d" }}</span>
-      </div>
-      <div>
-        <span class="icon-tile lg" style="margin-bottom:22px">{% icon area.icon %}</span>
-        <h2>{{ area.title }}</h2>
-        <p class="lead-text">{{ area.summary }}</p>
-        {% if area.live_projects %}
-        <ul class="check-list">{% for p in area.live_projects|slice:":4" %}<li>{% icon 'check' %}<a href="{{ p.get_absolute_url }}" style="color:inherit">{{ p.title }}</a></li>{% endfor %}</ul>
-        {% endif %}
-        <a class="btn btn-primary" href="{{ area.get_absolute_url }}">Explore {{ area.title|lower }} {% icon 'arrow-right' cls='icon-move' %}</a>
+    <article class="spread{% cycle '' ' flip' %}" id="{{ area.slug }}">
+      <figure class="photo-col">
+        {% if area.image %}<div class="photo r-classic"><img src="{{ area.image.url }}" alt="{{ area.image_caption }}" loading="lazy"></div>{% if area.image_caption %}<figcaption>{{ area.image_caption }}</figcaption>{% endif %}
+        {% else %}<div class="photo r-classic no-photo">{% include "partials/waves.html" %}</div>{% endif %}
+      </figure>
+      <div class="text-col">
+        {% if area.live_projects %}<div class="meta-line label"><span>{{ area.live_projects|length }} project{{ area.live_projects|length|pluralize }}</span></div>{% endif %}
+        <h2 class="h2"><a class="title-link" href="{{ area.get_absolute_url }}">{{ area.title }}</a></h2>
+        <p>{{ area.summary }}</p>
+        <a class="link" href="{{ area.get_absolute_url }}">Read more →</a>
       </div>
     </article>
     {% empty %}
-      {% include "partials/empty.html" with title="Focus areas coming soon" text="Our programme areas will be published here shortly." %}
+    <div class="empty"><h2 class="h3">Nothing here yet</h2><p>Our areas of work will be listed here soon.</p></div>
     {% endfor %}
   </div>
 </section>
-{% include "partials/cta.html" %}
 {% endblock %}

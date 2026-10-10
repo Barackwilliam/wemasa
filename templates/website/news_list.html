@@ -1,39 +1,36 @@
 {% extends "base.html" %}
 {% load site_tags %}
-{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
+{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_hero.html" %}
-<section class="section">
-  <div class="container">
+{% include "partials/page_head.html" %}
+<section class="section" style="padding-top:0">
+  <div class="wrap">
     {% if categories|length > 1 %}
-    <div class="filters center reveal">
-      <a class="filter {% if not active %}is-active{% endif %}" href="{% query category='' %}">Everything</a>
-      {% for key, label in categories %}<a class="filter {% if active == key %}is-active{% endif %}" href="{% query category=key %}">{{ label }}</a>{% endfor %}
-    </div>
+    <nav class="filters"><a class="{% if not active %}on{% endif %}" href="{% query category='' %}">All</a>{% for key, label in categories %}<a class="{% if active == key %}on{% endif %}" href="{% query category=key %}">{{ label }}</a>{% endfor %}</nav>
     {% endif %}
     {% if featured %}
-    <article class="card card-hover news-feature reveal">
-      <div class="media">{% if featured.cover %}<img src="{{ featured.cover.url }}" alt="{{ featured.title }}">{% endif %}<div class="media-chips"><span class="chip chip-sun">{% icon 'star' %} Featured</span></div></div>
-      <div class="card-body">
-        <span class="chip" style="align-self:flex-start;margin-bottom:14px">{{ featured.get_category_display }} · {{ featured.published_at|date:"j M Y" }}</span>
-        <h2 style="font-size:clamp(1.5rem,2.6vw,2.2rem)"><a class="card-link" href="{{ featured.get_absolute_url }}">{{ featured.title }}</a></h2>
-        <p class="muted">{{ featured.summary }}</p>
-        <span class="link-arrow">Read the full story {% icon 'arrow-right' %}</span>
+    <article class="spread" style="margin-bottom:clamp(64px,8vw,110px)">
+      <figure class="photo-col">{% if featured.cover %}<a href="{{ featured.get_absolute_url }}" tabindex="-1"><div class="photo r-classic"><img src="{{ featured.cover.url }}" alt="{{ featured.cover_caption }}"></div></a>{% if featured.cover_caption %}<figcaption>{{ featured.cover_caption }}</figcaption>{% endif %}{% endif %}</figure>
+      <div class="text-col">
+        <div class="meta-line label"><span>{{ featured.get_category_display }}</span><span>{{ featured.published_at|date:"j F Y" }}</span></div>
+        <h2 class="h2"><a class="title-link" href="{{ featured.get_absolute_url }}">{{ featured.title }}</a></h2>
+        <p>{{ featured.summary }}</p>
+        <a class="link" href="{{ featured.get_absolute_url }}">Read →</a>
       </div>
     </article>
     {% endif %}
     {% if page_obj %}
-    <div class="grid grid-3">{% for post in page_obj %}{% include "partials/news_card.html" %}{% endfor %}</div>
+    <div class="stories">
+      {% for post in page_obj %}{% if post != featured %}
+      <article class="story-item"><a href="{{ post.get_absolute_url }}"><span class="label">{{ post.get_category_display }} · {{ post.published_at|date:"j F Y" }}</span>{% if post.cover %}<div class="photo r-classic"><img src="{{ post.cover.url }}" alt="{{ post.cover_caption }}" loading="lazy"></div>{% endif %}<h3 class="h3">{{ post.title }}</h3><p>{{ post.summary|truncatewords:32 }}</p></a></article>
+      {% endif %}{% endfor %}
+    </div>
     {% if page_obj.paginator.num_pages > 1 %}
-    <nav class="pagination" aria-label="Pages">
-      {% if page_obj.has_previous %}<a href="{% query page=page_obj.previous_page_number %}" aria-label="Previous">{% icon 'arrow-left' %}</a>{% endif %}
-      {% for n in page_obj.paginator.page_range %}{% if n == page_obj.number %}<span class="is-current">{{ n }}</span>{% else %}<a href="{% query page=n %}">{{ n }}</a>{% endif %}{% endfor %}
-      {% if page_obj.has_next %}<a href="{% query page=page_obj.next_page_number %}" aria-label="Next">{% icon 'arrow-right' %}</a>{% endif %}
-    </nav>
+    <nav class="pages">{% if page_obj.has_previous %}<a href="{% query page=page_obj.previous_page_number %}">← Newer</a>{% endif %}{% for n in page_obj.paginator.page_range %}{% if n == page_obj.number %}<span class="on">{{ n }}</span>{% else %}<a href="{% query page=n %}">{{ n }}</a>{% endif %}{% endfor %}{% if page_obj.has_next %}<a href="{% query page=page_obj.next_page_number %}">Older →</a>{% endif %}</nav>
     {% endif %}
     {% else %}
-      {% include "partials/empty.html" with icon_name="newspaper" title="Stories coming soon" text="News and stories from our programmes will be published here." %}
+    <div class="empty"><h2 class="h3">No stories yet</h2></div>
     {% endif %}
   </div>
 </section>

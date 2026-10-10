@@ -1,5 +1,5 @@
 """
-Load WEMASA's starting content (text, figures, team, partners, photos).
+Load WEMASA's starting content (text, team, partners, press, photos).
 
 Safe to run on every deploy: it only fills in what is missing and never
 overwrites edits made in the dashboard. Use --reset to wipe all website
@@ -21,7 +21,7 @@ SEED_DIR = Path(settings.BASE_DIR) / "seed" / "images"
 
 def photo(name):
     path = SEED_DIR / name
-    if not path.exists():
+    if not name or not path.exists():
         return None
     return File(path.open("rb"), name=path.name)
 
@@ -52,18 +52,24 @@ def fill_singleton(model, values, images=None):
     return obj
 
 
+# Captions used for photos, written so they are true for every photo in the group.
+FARMING = "Organic farming training with women vegetable farmers, Dar es Salaam."
+SCHOOL_TREES = "Tree planting at a school in Dar es Salaam."
+CLEANUP = "Community cleanup, Dar es Salaam."
+WORKSHOP = "Workshop for young women environment journalists, Dar es Salaam, March 2026."
+ROADSIDE = "Tree planting along a road, Dar es Salaam."
+
 # ---------------------------------------------------------------------------
-# Content
+# Site-wide details
 # ---------------------------------------------------------------------------
 
 SITE = {
     "org_name": "WEMASA Tanzania Organization",
     "short_name": "WEMASA",
-    "tagline": "Weka Mazingira Safi — Keep the Environment Clean",
+    "tagline": "Weka Mazingira Safi. Keep the environment clean.",
     "footer_about": (
-        "WEMASA (Weka Mazingira Safi) is a Tanzanian non-governmental organisation raising community awareness "
-        "on waste management, environmental conservation and natural resources management — through education, "
-        "community action and innovation for a better planet."
+        "WEMASA (Weka Mazingira Safi) is a Tanzanian NGO working with neighbourhoods, schools, markets and "
+        "women farmers on waste, trees, clean cooking and organic farming."
     ),
     "registration_number": "ooNGO/R/2395",
     "registration_year": "2021",
@@ -74,456 +80,414 @@ SITE = {
     "location": "Temeke, Dar es Salaam, Tanzania",
     "address": "P.O. Box 42017, Dar es Salaam",
     "donate_button_text": "Donate",
-    "newsletter_title": "Get stories of change in your inbox",
-    "newsletter_text": "Field stories, project updates and opportunities to take part in WEMASA activities. No spam — unsubscribe any time.",
+    "newsletter_title": "Letters from the field",
+    "newsletter_text": "A short note when we have something worth telling you: a new project, a cleanup day, a report.",
     "meta_description": (
-        "WEMASA Tanzania Organization (Weka Mazingira Safi) empowers communities, schools, women and young people "
-        "in Tanzania to manage waste, protect natural resources and act on climate change."
+        "WEMASA Tanzania Organization (Weka Mazingira Safi) works with communities, schools and women farmers "
+        "in Dar es Salaam on waste, tree planting, clean cooking and organic farming."
     ),
 }
 
 HOME = {
-    "hero_eyebrow": "Weka Mazingira Safi · Registered NGO since 2021",
-    "hero_title": "Cleaner communities, greener futures for Tanzania",
-    "hero_highlight": "greener futures",
-    "hero_subtitle": (
-        "We equip communities, schools, women and young people with the knowledge and practical tools to manage "
-        "waste, protect natural resources and lead the response to climate change — one neighbourhood at a time."
+    "hero_kicker": "Weka Mazingira Safi · Keep the environment clean",
+    "hero_title": "It started with rubbish at the edge of a football pitch.",
+    "hero_text": (
+        "A few young neighbours in Dar es Salaam got tired of looking at it, so they knocked on doors and "
+        "talked to the families living nearby. The street got cleaner. That was the beginning of WEMASA. "
+        "Today we work with neighbourhoods, schools, market vendors, women farmers and journalists on the "
+        "everyday business of keeping the places we live clean and green."
     ),
-    "hero_primary_text": "Explore our work",
-    "hero_primary_url": "/projects/",
-    "hero_secondary_text": "Partner with us",
-    "hero_secondary_url": "/get-involved/",
-    "intro_eyebrow": "Who we are",
-    "intro_title": "A grassroots movement for a cleaner, healthier Tanzania",
-    "intro_text": (
-        "<p>WEMASA — short for <strong>Weka Mazingira Safi</strong>, “Keep the Environment Clean” — began with a "
-        "group of young neighbours who refused to accept littered streets as normal. Today we are a registered "
-        "national NGO working alongside communities, schools, women farmers, journalists and local authorities to "
-        "turn environmental awareness into everyday action.</p>"
-        "<p>We believe lasting change happens when people understand why the environment matters and have the "
-        "practical skills to protect it. That is why every programme we run combines education, community "
-        "participation and locally led solutions.</p>"
+    "hero_caption": "A participant in our organic farming training holds freshly harvested greens. Dar es Salaam.",
+    "hero_primary_text": "Read our story",
+    "hero_primary_url": "/about/",
+    "hero_secondary_text": "See the projects",
+    "hero_secondary_url": "/projects/",
+    "focus_title": "What we do",
+    "focus_intro": (
+        "Most of our work happens in Temeke and the surrounding wards of Dar es Salaam. "
+        "It falls into six areas, and they overlap more than this list suggests."
     ),
-    "intro_points": (
-        "Community cleanups and household waste-management education\n"
-        "Climate change awareness in secondary schools\n"
-        "Organic farming training for women vegetable growers\n"
-        "Evidence and mapping for smarter waste and energy decisions"
+    "projects_title": "From the field",
+    "projects_intro": "Recent projects, in the words and pictures of the people who ran them.",
+    "story_quote": (
+        "Households near the ground had got used to throwing waste just outside their doors. "
+        "Nobody said anything. So we did."
     ),
-    "intro_badge_value": "2021",
-    "intro_badge_label": "Registered as a national NGO",
-    "focus_eyebrow": "What we do",
-    "focus_title": "Six areas where we focus our energy",
-    "focus_subtitle": (
-        "Our programmes respond to the most pressing environmental challenges facing urban and peri-urban "
-        "communities in Tanzania — from waste and climate to food, energy and information."
-    ),
-    "impact_eyebrow": "Our impact",
-    "impact_title": "Real change, measured in people reached",
-    "impact_subtitle": (
-        "From classrooms in Temeke to vegetable plots in Kisewe and Kiburugwa, our programmes are changing how "
-        "communities think about waste, energy and the natural world."
-    ),
-    "projects_eyebrow": "Featured projects",
-    "projects_title": "Programmes making a difference on the ground",
-    "projects_subtitle": "A selection of initiatives led by WEMASA with communities, schools and partners.",
-    "story_eyebrow": "Our story",
-    "story_title": "It all started on a football pitch",
+    "story_attribution": "From the WEMASA founding story",
     "story_text": (
-        "One evening, while watching a local football match, a group of young neighbours noticed something "
-        "everyone else seemed to ignore: rubbish piling up at the edges of the pitch, right beside people's homes.\n\n"
-        "Instead of looking away, they went door to door — explaining how to store waste properly and why paying "
-        "for collection mattered. Within months, the streets looked different. That simple act of community "
-        "responsibility became WEMASA."
+        "We went house to house, explaining how to store rubbish so the collector could take it, and why the "
+        "small collection fee mattered. We asked our ward to bring in a proper waste contractor. Within a few "
+        "months the difference was obvious. In 2021 we registered as an NGO so we could do the same thing in "
+        "more places."
     ),
-    "story_button_text": "Read our full story",
-    "story_button_url": "/about/",
-    "media_title": "As featured in",
-    "news_eyebrow": "Latest from the field",
-    "news_title": "News & stories",
-    "testimonials_title": "What our community says",
-    "partners_title": "Working together for a cleaner Tanzania",
-    "partners_subtitle": (
-        "We collaborate with funders, government, businesses and civil society to multiply our impact."
+    "story_caption": "Women farmers and WEMASA staff after a training session.",
+    "story_link_text": "The full story",
+    "photos_title": "Photographs",
+    "press_title": "In the press",
+    "press_intro": (
+        "Our first workshop for women environment journalists, in March 2026, was picked up by newspapers, "
+        "television and online outlets across the country. These are their headlines, as published."
     ),
-    "cta_title": "Be part of a cleaner, greener Tanzania",
+    "stories_title": "Stories",
+    "partners_title": "We work with",
+    "cta_title": "Help us keep Dar es Salaam clean.",
     "cta_text": (
-        "Partner with us, volunteer your time and skills, or support a programme. Together we can keep our "
-        "communities clean, green and healthy for generations to come."
+        "Come to a cleanup. Bring us to your school. Fund a training for a farmers' group. "
+        "If you have an idea for working together, we would like to hear it."
     ),
-    "cta_primary_text": "Support our work",
-    "cta_primary_url": "/donate/",
-    "cta_secondary_text": "Get involved",
-    "cta_secondary_url": "/get-involved/",
+    "cta_caption": "Volunteers with brooms and reflector vests before a cleanup.",
+    "cta_primary_text": "Get involved",
+    "cta_primary_url": "/get-involved/",
+    "cta_secondary_text": "Donate",
+    "cta_secondary_url": "/donate/",
 }
-HOME_IMAGES = {
-    "hero_image": "farming-09.webp", "intro_image": "kisewe-06.webp", "intro_image_2": "trees-school-04.webp",
-    "story_image": "kisewe-05.webp", "cta_image": "cleanup-02.webp",
-}
+HOME_IMAGES = {"hero_image": "kisewe-06.webp", "story_image": "kisewe-05.webp", "cta_image": "cleanup-02.webp"}
 
 ABOUT = {
     "story_eyebrow": "Our story",
-    "story_title": "From one neighbourhood to a national mission",
+    "story_title": "How a neighbourhood clean-up became an NGO",
     "story_text": (
-        "<p>It was an ordinary evening at our local football ground. As we watched the match, we noticed that the "
-        "edges of the pitch — right next to people’s homes — were covered in rubbish. Households near the ground "
-        "had grown used to throwing waste just outside their doors. Local leaders turned a blind eye, and no one "
-        "spoke up.</p>"
-        "<p>A small group of young people who cared about the environment decided that silence was not an option. "
-        "We began going from house to house, talking with families about how to store waste safely and why "
-        "contributing to the waste-collection contractor mattered, so that rubbish could be collected on time. "
-        "We also advised our ward to engage a dedicated waste-collection contractor.</p>"
-        "<p>Slowly, attitudes changed. Residents began storing their waste in ways that made collection easier, and "
-        "the cleanliness of our streets improved dramatically compared with how things had been before.</p>"
-        "<p>That experience taught us a powerful lesson: when people understand the problem and are offered "
-        "practical solutions, communities transform themselves. In 2021 we formalised our work by registering "
-        "<strong>WEMASA — Weka Mazingira Safi</strong> as a non-governmental organisation, and we have been "
-        "growing our reach ever since.</p>"
+        "<p>It was an ordinary evening at our local football ground. While we watched the match, we noticed the "
+        "edges of the pitch, right next to people’s houses, were covered in rubbish. The families living there "
+        "had got used to throwing waste just outside their doors. Local leaders looked the other way, and nobody "
+        "complained.</p>"
+        "<p>A handful of us who cared about the environment decided not to look the other way. We started going "
+        "from house to house. We talked to families about storing their rubbish so it could be collected, and "
+        "about paying the waste contractor so collection would happen on time. We also asked our ward to bring "
+        "in a contractor of its own.</p>"
+        "<p>People changed how they kept their waste, collection became easier, and within months the street "
+        "looked nothing like it had before.</p>"
+        "<p>We learned something from that. When people understand a problem and are given a practical way to "
+        "fix it, they usually do. In 2021 we registered <strong>WEMASA, Weka Mazingira Safi</strong>, as a "
+        "non-governmental organisation so we could take the same approach to other neighbourhoods, schools and "
+        "markets.</p>"
     ),
-    "story_quote": "When people understand why the environment matters, they become its strongest protectors.",
+    "story_caption": "Farmers and WEMASA staff in Dar es Salaam.",
+    "story_quote": "When people understand a problem and are given a practical way to fix it, they usually do.",
     "vision": (
-        "To see the whole community with enough awareness of waste management and everything about keeping our "
-        "surroundings clean — a community that leads its own cleanup."
+        "A community where everyone understands how to manage waste and takes part in keeping their "
+        "surroundings clean."
     ),
     "mission": (
-        "To be a leading organisation providing education and raising community awareness on environmental and "
-        "natural resources management."
+        "To educate and raise awareness in communities on managing the environment and natural resources."
     ),
-    "objectives_title": "Our objectives",
-    "objectives_intro": "As set out in our constitution, WEMASA exists to:",
-    "values_title": "Our core values",
-    "values_intro": "Four principles — in Kiswahili and English — guide every decision we make and every programme we run.",
-    "approach_title": "Education, participation and innovation",
+    "objectives_title": "Objectives",
+    "objectives_intro": "Our constitution sets out four objectives.",
+    "values_title": "Values",
+    "values_intro": "We hold ourselves to four values. We name them in Kiswahili first, because that is how we use them.",
+    "approach_title": "How we work",
     "approach_text": (
-        "<p>We do not believe in quick fixes. Environmental change sticks when communities own it, so our work "
-        "follows a simple, proven approach:</p>"
-        "<ul>"
-        "<li><strong>Listen first.</strong> We start with the realities of each neighbourhood, school or market.</li>"
-        "<li><strong>Educate practically.</strong> Training is hands-on — from making natural pesticides to sorting waste.</li>"
-        "<li><strong>Act together.</strong> Cleanups, tree planting and awareness campaigns bring people and leaders together.</li>"
-        "<li><strong>Measure and share.</strong> We collect data, map challenges and report openly on results.</li>"
-        "</ul>"
+        "<p>We start where people are. Before a training or a cleanup, we talk to the residents, teachers or "
+        "farmers involved and find out what they already do and what gets in their way.</p>"
+        "<p>Our trainings are practical. Farmers make the pesticide themselves. Students plant the tree "
+        "themselves. Households are shown where the rubbish goes, not just told.</p>"
+        "<p>We work alongside local leaders and the municipal council, so that changes last after we leave. "
+        "And we write things down: we map markets and waste collection points, and we report back to the "
+        "people who funded the work.</p>"
     ),
-    "timeline_title": "Our journey so far",
-    "legal_title": "Registration & governance",
+    "approach_caption": "A training session held outdoors, between the vegetable beds.",
+    "timeline_title": "Milestones",
+    "legal_title": "Registration",
     "legal_text": (
         "WEMASA Tanzania Organization is registered under the Non-Governmental Organizations Act of the United "
-        "Republic of Tanzania (Registration No. ooNGO/R/2395, 2021), with a national area of operation. We are "
-        "governed by our constitution and committed to transparency and accountability in the use of every "
-        "resource entrusted to us."
+        "Republic of Tanzania, registration number ooNGO/R/2395 (2021). Our area of operation is national. "
+        "We are governed by our constitution."
     ),
 }
 ABOUT_IMAGES = {"story_image": "kisewe-04.webp", "approach_image": "kisewe-07.webp"}
 
 HEADERS = [
-    ("about", "About us", "Weka Mazingira Safi — keep the environment clean",
-     "A youth-led idea that grew into a registered national NGO, empowering communities to care for the environment they share.", "farming-05.webp"),
-    ("focus", "What we do", "Our focus areas",
-     "Six interconnected areas of work, from waste and climate education to organic farming, clean energy and environmental journalism.", "farming-08.webp"),
-    ("projects", "Our work", "Projects & programmes",
-     "Explore the initiatives through which WEMASA reaches communities, schools, markets, women farmers and journalists.", "kisewe-07.webp"),
-    ("impact", "Results", "Our impact",
-     "Measurable change in awareness, skills and behaviour — documented through figures, milestones and stories.", "trees-school-06.webp"),
-    ("resources", "Library", "Reports & documents",
-     "Project reports, publications and key organisational documents from WEMASA.", ""),
-    ("media", "Press", "WEMASA in the media",
-     "National television, newspapers and online outlets have covered our work across Tanzania.", "workshop-01.webp"),
-    ("news", "Latest from the field", "News & stories",
-     "Updates, events and stories of change from WEMASA programmes.", "kisewe-03.webp"),
-    ("gallery", "Moments", "Photo gallery",
-     "A visual journey through our trainings, cleanups, tree-planting days and community events.", "farming-04.webp"),
-    ("team", "Our people", "Meet the team",
-     "Dedicated founders, officers and community mobilisers who bring WEMASA’s mission to life every day.", "kiburugwa-02.webp"),
-    ("partners", "Collaboration", "Our partners",
-     "We achieve more together. Meet the organisations that support and work alongside WEMASA.", "trees-community-02.webp"),
-    ("sdgs", "Global goals", "Contributing to the SDGs",
-     "Our local action supports the United Nations Sustainable Development Goals for people and planet.", "trees-school-05.webp"),
+    ("about", "About", "About WEMASA",
+     "A small group of neighbours started cleaning up their street. In 2021 they registered as an NGO.",
+     "farming-05.webp", FARMING),
+    ("focus", "Our work", "What we do",
+     "Waste, schools, organic farming, trees, clean cooking and the people who report on all of it.",
+     "farming-08.webp", FARMING),
+    ("projects", "Our work", "Projects",
+     "Everything we have run so far, from school tree planting to a survey of market food vendors.",
+     "kisewe-07.webp", FARMING),
+    ("impact", "Our work", "Results",
+     "What our projects have reached, written down plainly so you can check it.",
+     "", ""),
+    ("resources", "Library", "Reports and documents",
+     "Project reports and organisational documents. More will be added as they are published.",
+     "", ""),
+    ("media", "Press", "In the press",
+     "Headlines from newspapers, television and online outlets that have covered our work.",
+     "workshop-01.webp", "A WEMASA facilitator interviewed by Star TV at the women journalists’ workshop, March 2026."),
+    ("news", "Stories", "Stories from the field",
+     "Notes and news from our projects.",
+     "", ""),
+    ("gallery", "Photographs", "Photographs",
+     "Trainings, cleanups and tree planting days, as they happened.",
+     "", ""),
+    ("team", "People", "The people behind WEMASA",
+     "Founders, officers and mobilisers. Most of us live in the communities we work in.",
+     "", ""),
+    ("partners", "Partners", "Who we work with",
+     "Funders, local government, businesses and community groups.",
+     "trees-community-02.webp", "WEMASA staff and community members at a tree planting day."),
+    ("sdgs", "Our work", "The Sustainable Development Goals",
+     "How our local work lines up with the global goals.",
+     "", ""),
     ("involved", "Join us", "Get involved",
-     "Volunteer, partner, invite us to your school or share our work — there is a role for everyone.", "cleanup-02.webp"),
-    ("donate", "Support WEMASA", "Your support keeps communities clean and green",
-     "Every contribution funds training, cleanups, tree seedlings and school awareness sessions.", "schools-03.webp"),
-    ("contact", "Contact", "Let’s talk",
-     "Questions, partnership ideas or media requests — our team would love to hear from you.", "trees-community-02.webp"),
+     "Volunteer, invite us to your school, partner with us or tell our stories.",
+     "cleanup-01.webp", "Bags of rubbish collected by volunteers during a cleanup."),
+    ("donate", "Support", "Support our work",
+     "Money we receive pays for training materials, seedlings, cleanup equipment and transport to schools.",
+     "schools-03.webp", "Pupils hold up seedlings at a school tree planting day."),
+    ("contact", "Contact", "Get in touch",
+     "Call, write, or send a message using the form below.",
+     "", ""),
 ]
 
 OBJECTIVES = [
-    ("Promote environmental and natural resources management", "recycle",
-     "Equip communities with the knowledge and practical skills to manage waste, conserve resources and keep their surroundings clean."),
-    ("Raise awareness about the importance of biodiversity", "tree",
-     "Help people understand how healthy ecosystems — trees, soils, water and wildlife — sustain livelihoods and wellbeing."),
-    ("Promote peace in the community", "peace",
-     "Foster cooperation and dialogue, recognising that shared responsibility for the environment brings neighbours together."),
-    ("Promote democracy and children’s rights", "child",
-     "Encourage inclusive participation in community decisions and protect every child’s right to grow up in a clean, safe environment."),
+    ("Promote environmental and natural resources management",
+     "Help households, schools and businesses manage waste and use natural resources carefully."),
+    ("Raise awareness about the importance of biodiversity",
+     "Explain why trees, soil, water and wildlife matter to the people who depend on them."),
+    ("Promote peace in the community",
+     "Bring neighbours together around a shared responsibility for the places they live."),
+    ("Promote democracy and children’s rights",
+     "Make sure community decisions include everyone, and that children can grow up in a clean, safe environment."),
 ]
 
 VALUES = [
-    ("Equality", "Usawa", "scale",
-     "We treat every person with fairness and respect, and make sure women, youth and marginalised groups have an equal voice in our work."),
-    ("Transparency", "Uwazi", "eye",
-     "We are open about our plans, finances and results, so partners and communities can see exactly how resources are used."),
-    ("Accountability", "Uwajibikaji", "shield",
-     "We take responsibility for our commitments and measure our results against the promises we make."),
-    ("Diligence", "Bidii", "award",
-     "We work hard and persistently, because protecting the environment takes consistent effort, not one-off events."),
+    ("Equality", "Usawa",
+     "Women, young people and the poorest households get the same voice and the same attention in our work."),
+    ("Transparency", "Uwazi",
+     "We are open about our plans, our money and our results."),
+    ("Accountability", "Uwajibikaji",
+     "We answer for what we promise to communities and to the people who fund us."),
+    ("Diligence", "Bidii",
+     "Clean streets need steady work, week after week, not a single event."),
 ]
 
 MILESTONES = [
-    ("The beginning", "Door to door for cleaner streets",
-     "Young neighbours start educating households near a local football ground on waste storage and collection — and streets become visibly cleaner."),
-    ("2021", "Registered as a national NGO",
-     "WEMASA is formally registered under Tanzania’s NGO Act (Reg. No. ooNGO/R/2395), turning a neighbourhood initiative into a national organisation."),
-    ("Growing reach", "Schools, markets and farms",
-     "Programmes expand to climate awareness in 8 Temeke secondary schools, tree planting in schools, organic farming training and environmental data mapping."),
-    ("2026", "First workshop for women environment journalists",
-     "On 11 March 2026, as part of International Women’s Day, WEMASA hosts its first workshop for young girls and women environment journalists — covered by national TV, newspapers and online media."),
+    ("Before 2021", "The football pitch",
+     "Young neighbours start visiting households near a local football ground to talk about waste storage and collection."),
+    ("2021", "Registered as an NGO",
+     "WEMASA is registered under Tanzania’s NGO Act, registration number ooNGO/R/2395."),
+    ("2021 onwards", "Schools, markets and farms",
+     "Climate change sessions in eight Temeke secondary schools, school tree planting, organic farming training and market surveys."),
+    ("March 2026", "First workshop for women environment journalists",
+     "Held in Dar es Salaam for International Women’s Day and covered by national newspapers and television."),
 ]
 
 FOCUS = [
-    ("Waste Management & Community Cleanups", "recycle", "cleanup-01.webp",
-     "Mobilising neighbourhoods, beaches and public spaces to clean up — and teaching households how to store and dispose of waste responsibly.",
-     "<p>Uncollected waste is one of the most visible environmental challenges in Tanzania’s growing cities. It blocks drains, "
-     "spreads disease and damages the places where people live, work and play.</p>"
-     "<p>WEMASA organises beach and community cleanups with residents, local leaders and partners, and follows them with "
-     "door-to-door education on storing waste properly and supporting reliable collection services. Our goal is not a single "
-     "clean day, but lasting habits that keep neighbourhoods clean.</p>"),
-    ("Environmental & Climate Education", "graduation", "trees-school-04.webp",
-     "Bringing climate change and environmental awareness into secondary schools so young people grow up as champions for the planet.",
-     "<p>Young people will live with the consequences of climate change the longest — and they are powerful messengers in their "
-     "families and communities.</p>"
-     "<p>Through interactive awareness sessions in secondary schools, WEMASA explains the causes and impacts of climate change, "
-     "the link between waste and the environment, and the everyday actions students can take. In Temeke District alone, our "
-     "sessions have reached 3,700 students across 8 secondary schools.</p>"),
-    ("Sustainable & Organic Agriculture", "sprout", "farming-03.webp",
-     "Training women vegetable farmers in organic methods, including natural pesticides, boosters and fungicides made from local plants.",
-     "<p>Many small-scale vegetable farmers depend on costly chemical inputs that can harm soil, water and health.</p>"
-     "<p>WEMASA trains women farmers in practical organic techniques — preparing natural pesticides, plant boosters and "
-     "fungicides from locally available plants. The result is healthier crops, safer food and a farming model that protects the "
-     "environment. Trainings have taken place with farmer groups in Kisewe and Kiburugwa, Dar es Salaam.</p>"),
-    ("Tree Planting & Greening", "tree", "trees-school-06.webp",
-     "Planting trees in schools and communities to restore green cover, provide shade and help fight climate change.",
-     "<p>Trees cool our cities, protect soils, support biodiversity and absorb carbon. Every tree planted with a student or a "
-     "community member is also a lesson in stewardship.</p>"
-     "<p>WEMASA leads tree-planting days in schools — including Kibasila, Kongowe, Lionel and Vingunguti — and in public "
-     "spaces, working with pupils, teachers, local leaders and partners to plant and care for seedlings.</p>"),
-    ("Clean Energy & Environmental Data", "chart", "",
-     "Generating evidence on cooking-fuel use and waste-collection points to guide cleaner energy choices and better waste services.",
-     "<p>Good decisions need good data. WEMASA collects and maps information that helps communities, authorities and partners "
-     "understand environmental challenges.</p>"
-     "<p>We have mapped 78 food vendors across four major Temeke markets — Sterio, Kizuiani, Kampocheo and Mtongani — to "
-     "understand their use of charcoal, gas and firewood, and mapped waste-collection points in the Dar es Salaam Region "
-     "using a digital waste-mapping app.</p>"),
-    ("Women & Media for the Environment", "mic", "workshop-01.webp",
-     "Empowering young women journalists to report accurately and powerfully on environmental issues.",
-     "<p>The media shapes how society understands environmental problems — and women’s voices are essential in that story.</p>"
-     "<p>WEMASA builds the capacity of young girls and women journalists to investigate and report on waste, climate and "
-     "natural resources. Our first workshop, held in March 2026 during International Women’s Day, was itself covered by "
-     "national television, newspapers and online media.</p>"),
+    ("Waste and community cleanups", "cleanup-01.webp", CLEANUP,
+     "Cleanups in streets, markets and on the beach, followed by door-to-door visits on how to store and hand over rubbish.",
+     "<p>Uncollected rubbish blocks drains, spreads disease and makes neighbourhoods miserable to live in. We "
+     "organise cleanups with residents, youth groups and local leaders, and we follow them up.</p>"
+     "<p>After each cleanup we visit households to talk about storing waste so the collector can take it, "
+     "paying the collection fee, and what happens when rubbish is dumped instead. A clean street for a day is "
+     "easy. Keeping it clean is the real work.</p>"),
+    ("Climate change in schools", "trees-school-04.webp", SCHOOL_TREES,
+     "Sessions in secondary schools on what climate change is, why it matters in Dar es Salaam, and what students can do about it.",
+     "<p>Students live with the effects of climate change longest, and they take what they learn home. We run "
+     "sessions in secondary schools that connect climate change to things students already see: flooding, "
+     "heat, rubbish in the drains.</p>"
+     "<p>So far we have held these sessions in eight secondary schools in Temeke District, with about 3,700 "
+     "students taking part.</p>"),
+    ("Organic farming", "farming-03.webp", FARMING,
+     "Training women vegetable farmers to make their own pesticides, plant boosters and fungicides from local plants.",
+     "<p>Small vegetable farmers spend a lot on chemical sprays that are bad for the soil, the water and the "
+     "people handling them. We train women farmers to make natural alternatives from plants that grow nearby.</p>"
+     "<p>The trainings happen in the field, between the vegetable beds. Each farmer prepares the mixtures "
+     "herself. We have trained farmers’ groups in Kisewe and Kiburugwa.</p>"),
+    ("Tree planting", "trees-school-06.webp", SCHOOL_TREES,
+     "Planting trees with pupils and students in school grounds, and with residents in public spaces.",
+     "<p>Trees give shade, hold the soil together and make a school compound a better place to learn. Every "
+     "tree planted by a pupil is also a small lesson in looking after something.</p>"
+     "<p>We have planted trees at Kibasila, Kongowe, Lionel and Vingunguti, working with pupils, teachers, "
+     "local leaders and partners.</p>"),
+    ("Clean cooking and environmental data", "", "",
+     "Surveys and maps that show how food vendors cook and where rubbish is collected, so decisions can be based on facts.",
+     "<p>It is hard to fix a problem nobody has measured. We collect and map information that communities and "
+     "local authorities can use.</p>"
+     "<p>We surveyed 78 food vendors in four large Temeke markets, Sterio, Kizuiani, Kampocheo and Mtongani, "
+     "to find out who cooks with charcoal, gas or firewood. We have also mapped waste collection points in the "
+     "Dar es Salaam Region using a waste-mapping app.</p>"),
+    ("Women journalists and the environment", "workshop-01.webp", WORKSHOP,
+     "Training young women journalists to report on waste, climate and natural resources.",
+     "<p>How the press covers the environment shapes what the public thinks about it, and women reporters are "
+     "under-represented on the environment beat.</p>"
+     "<p>In March 2026 we held our first workshop for young girls and women environment journalists. The "
+     "workshop itself was covered by newspapers, television and online outlets.</p>"),
 ]
 
 PROJECTS = [
     {
-        "title": "Organic Farming Training for Women Vegetable Farmers",
-        "focus": "Sustainable & Organic Agriculture", "status": "completed", "cover": "kisewe-01.webp",
+        "title": "Organic farming training for women vegetable farmers",
+        "focus": "Organic farming", "status": "completed",
+        "cover": "kisewe-01.webp", "cover_caption": "Farmers mixing a natural pesticide from chopped leaves.",
         "location": "Kisewe and Kiburugwa, Dar es Salaam", "beneficiaries": "Women vegetable farmers",
-        "summary": "Hands-on training for women vegetable farmers in Kisewe and Kiburugwa to prepare natural pesticides, plant boosters and fungicides from local plants.",
+        "summary": "Field trainings where women farmers learned to make natural pesticides, plant boosters and fungicides from plants growing around them.",
         "description": (
-            "<p>For many women vegetable growers around Dar es Salaam, pests and plant diseases mean buying expensive chemical "
-            "products — costs that cut into household income and can harm soil, water and health.</p>"
-            "<p>WEMASA organised practical, field-based training for women farmer groups in <strong>Kisewe</strong> and "
-            "<strong>Kiburugwa</strong>. Working directly in the vegetable plots, participants learned step by step how to "
-            "prepare:</p>"
-            "<ul><li><strong>Natural pesticides</strong> from locally available plants and leaves;</li>"
-            "<li><strong>Organic boosters</strong> to strengthen plant growth;</li>"
-            "<li><strong>Natural fungicides</strong> to prevent fungal disease in vegetables.</li></ul>"
-            "<p>Sessions combined demonstrations, group discussion and practice, so every participant left able to make the "
-            "preparations herself — and to share the knowledge with neighbours.</p>"
+            "<p>Most of the women who grow vegetables around Kisewe and Kiburugwa had been buying chemical "
+            "sprays to deal with pests and plant disease. The sprays are expensive, and nobody was sure what "
+            "they were doing to the soil or to the people using them.</p>"
+            "<p>We held the trainings in the farms themselves. Working between the vegetable beds, the farmers "
+            "learned to prepare three things from local plants and leaves:</p>"
+            "<ul><li>a natural pesticide,</li><li>a booster to help plants grow,</li>"
+            "<li>a natural fungicide against fungal disease.</li></ul>"
+            "<p>Each farmer chopped, mixed and prepared the recipes herself and took notes to share with the "
+            "rest of her group.</p>"
         ),
         "outcomes": (
-            "Women farmers practised preparing natural pesticides, boosters and fungicides themselves\n"
-            "Training delivered in two farming communities: Kisewe and Kiburugwa\n"
-            "Participants equipped to reduce reliance on costly chemical inputs"
+            "Farmers prepared each natural mixture themselves during the sessions\n"
+            "Trainings held with groups in two communities, Kisewe and Kiburugwa"
         ),
-        "stats": [("2", "Farming communities trained")],
-        "photos": [("kisewe-0%d.webp" % i) for i in range(1, 8)] + [("kiburugwa-0%d.webp" % i) for i in range(2, 10)]
-                  + [("farming-0%d.webp" % i) for i in range(1, 10)],
-        "album": "Organic farming training",
+        "stats": [("Communities", "Kisewe, Kiburugwa")],
+        "photos": ["kisewe-0%d.webp" % i for i in range(1, 8)] + ["kiburugwa-0%d.webp" % i for i in range(2, 10)]
+                  + ["farming-0%d.webp" % i for i in range(1, 10)],
+        "caption": FARMING, "album": "Organic farming training",
     },
     {
-        "title": "School Climate Change Awareness Programme",
-        "focus": "Environmental & Climate Education", "status": "completed", "cover": "trees-school-04.webp",
+        "title": "Climate change sessions in Temeke secondary schools",
+        "focus": "Climate change in schools", "status": "completed",
+        "cover": "trees-school-04.webp", "cover_caption": "Students and teachers at a WEMASA school activity.",
         "location": "Temeke District, Dar es Salaam", "beneficiaries": "Secondary school students",
-        "summary": "Interactive climate change awareness sessions that reached 3,700 students in 8 secondary schools across Temeke District.",
+        "summary": "Sessions on climate change in eight secondary schools in Temeke District, with about 3,700 students taking part.",
         "description": (
-            "<p>Climate change can feel distant and abstract — until students connect it to the flooding, heat and waste they "
-            "see in their own neighbourhoods.</p>"
-            "<p>WEMASA delivered climate change awareness sessions in <strong>8 secondary schools in Temeke District</strong>, "
-            "reaching <strong>3,700 students</strong>. Sessions explained the causes and impacts of climate change, the role "
-            "of waste and deforestation, and the practical actions young people can lead at school and at home.</p>"
-            "<p>Students are encouraged to become environmental ambassadors — carrying messages about waste management, tree "
-            "planting and conservation back to their families and communities.</p>"
+            "<p>Climate change can sound abstract to a fifteen-year-old until it is connected to the flooding, "
+            "heat and blocked drains in their own neighbourhood. That is where our sessions start.</p>"
+            "<p>We ran them in eight secondary schools across Temeke District, reaching about 3,700 students. "
+            "We covered what causes climate change, how waste and cutting down trees make it worse, and what "
+            "students can actually do at school and at home.</p>"
         ),
-        "outcomes": (
-            "3,700 students reached with climate change awareness sessions\n"
-            "8 secondary schools in Temeke District engaged\n"
-            "Students encouraged to act as environmental ambassadors at home and school"
-        ),
-        "stats": [("3,700", "Students reached"), ("8", "Secondary schools")],
+        "outcomes": "Sessions held in eight secondary schools\nAbout 3,700 students took part",
+        "stats": [("Schools", "8 secondary schools"), ("Students", "About 3,700")],
         "photos": [],
     },
     {
-        "title": "School Tree Planting Programme",
-        "focus": "Tree Planting & Greening", "status": "ongoing", "cover": "schools-03.webp",
-        "location": "Kibasila, Kongowe, Lionel and Vingunguti schools", "beneficiaries": "Pupils, students and teachers",
-        "summary": "Greening school compounds with pupils and students at Kibasila, Kongowe, Lionel and Vingunguti — building a culture of environmental care from a young age.",
+        "title": "Tree planting in schools",
+        "focus": "Tree planting", "status": "ongoing",
+        "cover": "schools-03.webp", "cover_caption": "Pupils hold up seedlings before planting.",
+        "location": "Kibasila, Kongowe, Lionel and Vingunguti", "beneficiaries": "Pupils, students and teachers",
+        "summary": "Pupils and students planting trees in their own school grounds at Kibasila, Kongowe, Lionel and Vingunguti.",
         "description": (
-            "<p>Schools are where lifelong habits begin. Our School Tree Planting Programme brings learners, teachers, local "
-            "leaders and partners together to plant and care for trees on school grounds.</p>"
-            "<p>Tree-planting days have taken place at <strong>Kibasila, Kongowe, Lionel and Vingunguti</strong>. Each "
-            "activity combines a short lesson on why trees matter — shade, clean air, soil protection and climate action — "
-            "with hands-on planting, so every pupil helps a seedling take root.</p>"
+            "<p>A school compound with trees is cooler, greener and a better place to learn. Our tree planting "
+            "days bring pupils, teachers, local leaders and partners together to plant seedlings and look after "
+            "them.</p>"
+            "<p>We have planted at Kibasila, Kongowe, Lionel and Vingunguti. Each day starts with a short talk "
+            "about why trees matter, then every pupil gets their hands in the soil.</p>"
         ),
-        "outcomes": (
-            "Tree planting carried out at four schools\n"
-            "Pupils and students planted seedlings with their own hands\n"
-            "School communities engaged in caring for newly planted trees"
-        ),
-        "stats": [("4", "Schools greened")],
+        "outcomes": "Trees planted at four schools\nPupils planted the seedlings themselves",
+        "stats": [("Schools", "Kibasila, Kongowe, Lionel, Vingunguti")],
         "photos": ["schools-0%d.webp" % i for i in range(1, 5)] + ["trees-school-0%d.webp" % i for i in range(1, 8)],
-        "album": "School tree planting",
+        "caption": SCHOOL_TREES, "album": "Tree planting in schools",
     },
     {
-        "title": "Beach & Community Cleanups",
-        "focus": "Waste Management & Community Cleanups", "status": "ongoing", "cover": "cleanup-02.webp",
-        "location": "Dar es Salaam", "beneficiaries": "Residents, youth and local leaders",
-        "summary": "Mobilising volunteers, residents and partners to clear waste from beaches, streets and public spaces — and to keep them clean.",
+        "title": "Community and beach cleanups",
+        "focus": "Waste and community cleanups", "status": "ongoing",
+        "cover": "cleanup-02.webp", "cover_caption": "Volunteers ready with brooms before a cleanup.",
+        "location": "Dar es Salaam", "beneficiaries": "Residents, youth groups and local leaders",
+        "summary": "Volunteers, residents and partners clearing rubbish from streets, markets and beaches, with follow-up visits to households.",
         "description": (
-            "<p>WEMASA cleanups bring together volunteers, women and youth groups, local leaders and partners to collect and "
-            "remove waste from streets, beaches and public spaces.</p>"
-            "<p>But a cleanup is only the beginning. Each event is paired with awareness on proper waste storage, the "
-            "importance of paying for waste collection and the health risks of dumping — so that communities keep their "
-            "surroundings clean long after the volunteers go home.</p>"
+            "<p>Our cleanups bring together volunteers, women’s and youth groups, local leaders and partners. "
+            "Rubbish is collected, bagged and handed over for proper disposal.</p>"
+            "<p>The follow-up matters as much as the day itself. We talk to households about storing waste, "
+            "paying for collection and the health risks of dumping, so the area stays clean afterwards.</p>"
         ),
-        "outcomes": (
-            "Volunteers mobilised to collect waste from public spaces\n"
-            "Collected waste bagged and handed over for proper disposal\n"
-            "Residents engaged on proper waste storage and collection"
-        ),
+        "outcomes": "Rubbish collected, bagged and handed over for disposal\nHouseholds visited after cleanups",
         "stats": [],
         "photos": ["cleanup-0%d.webp" % i for i in range(1, 4)],
-        "album": "Community cleanups",
+        "caption": CLEANUP, "album": "Cleanups",
     },
     {
-        "title": "1st Workshop for Young Girls and Women Environment Journalists",
-        "focus": "Women & Media for the Environment", "status": "completed", "cover": "workshop-01.webp",
+        "title": "First workshop for young women environment journalists",
+        "focus": "Women journalists and the environment", "status": "completed",
+        "cover": "workshop-01.webp", "cover_caption": "A facilitator speaks to Star TV at the workshop.",
         "location": "Dar es Salaam", "period": "11 March 2026", "beneficiaries": "Young women journalists",
-        "summary": "A capacity-building workshop, held for International Women’s Day 2026, equipping women journalists to report on environmental challenges.",
+        "summary": "A one-day workshop for International Women’s Day 2026 on reporting about waste, climate and clean cooking.",
         "description": (
-            "<p>On <strong>11 March 2026</strong>, as part of International Women’s Day celebrations, WEMASA hosted the "
-            "<strong>1st Workshop for Young Girls and Women Environment Journalists</strong> in Dar es Salaam.</p>"
-            "<p>Women journalists had the opportunity to learn about and analyse environmental challenges — including the "
-            "wide-ranging impacts of waste — and to explore how stronger reporting can drive public awareness and action. "
-            "Discussions also addressed barriers to clean cooking energy for households.</p>"
-            "<p>The workshop received wide coverage from national television, newspapers and online outlets, including "
-            "Nipashe, Tanzania Leo, Mtanzania Leo, Star TV, SMTV, Tanganyika Television and Watetezi TV.</p>"
+            "<p>On 11 March 2026, for International Women’s Day, we held our first workshop for young girls and "
+            "women environment journalists in Dar es Salaam.</p>"
+            "<p>The participants looked at the environmental problems facing Tanzanian communities, including "
+            "the many ways badly managed waste affects health and livelihoods, and talked through how to report "
+            "on them. There was also a long discussion about clean cooking, and why many households still cannot "
+            "afford to switch from charcoal to gas.</p>"
+            "<p>Nipashe, Tanzania Leo, Mtanzania Leo, Star TV, SMTV, Tanganyika Television and Watetezi TV "
+            "were among the outlets that covered it.</p>"
         ),
-        "outcomes": (
-            "Women journalists trained to report on environmental issues\n"
-            "Environmental challenges and clean cooking energy discussed with experts and partners\n"
-            "Coverage across national TV, newspapers and online media"
-        ),
-        "stats": [("1st", "Edition of the workshop"), ("10+", "Media outlets covered it")],
+        "outcomes": "Women journalists trained on environmental reporting\nCovered by national newspapers, TV and online media",
+        "stats": [("Date", "11 March 2026")],
         "photos": ["workshop-01.webp"],
-        "album": "Women journalists workshop",
+        "caption": WORKSHOP, "album": "Women journalists workshop",
     },
     {
-        "title": "Food Vendors Cooking Energy Mapping",
-        "focus": "Clean Energy & Environmental Data", "status": "completed", "cover": "",
+        "title": "Cooking fuel survey of market food vendors",
+        "focus": "Clean cooking and environmental data", "status": "completed",
+        "cover": "", "cover_caption": "",
         "location": "Sterio, Kizuiani, Kampocheo and Mtongani markets, Temeke", "beneficiaries": "Market food vendors",
-        "summary": "Mapping the cooking fuels used by 78 food vendors in four major Temeke markets — charcoal, gas and firewood — to inform cleaner energy solutions.",
+        "summary": "We visited 78 food vendors in four Temeke markets to find out who cooks with charcoal, gas or firewood.",
         "description": (
-            "<p>Food vendors in busy markets cook all day, and their choice of fuel affects their health, their costs and the "
-            "surrounding environment.</p>"
-            "<p>WEMASA visited <strong>78 food vendors</strong> in four of Temeke’s biggest markets — <strong>Sterio, "
-            "Kizuiani, Kampocheo and Mtongani</strong> — to map who uses charcoal, gas and firewood. This evidence helps "
-            "partners and authorities design practical solutions that make clean cooking energy accessible to small "
-            "businesses.</p>"
+            "<p>Food vendors cook all day, and the fuel they use affects their health, their costs and the air "
+            "around the market.</p>"
+            "<p>We visited 78 vendors in four of Temeke’s largest markets, Sterio, Kizuiani, Kampocheo and "
+            "Mtongani, and recorded whether they cook with charcoal, gas or firewood. The results give partners "
+            "and the authorities a starting point for helping small businesses move to cleaner fuel.</p>"
         ),
-        "outcomes": (
-            "78 food vendors visited and their cooking fuels recorded\n"
-            "Four major Temeke markets mapped\n"
-            "Evidence generated to guide clean cooking energy interventions"
-        ),
-        "stats": [("78", "Food vendors mapped"), ("4", "Markets covered")],
+        "outcomes": "78 food vendors visited\nFour markets covered",
+        "stats": [("Vendors visited", "78"), ("Markets", "Sterio, Kizuiani, Kampocheo, Mtongani")],
         "photos": [],
     },
     {
-        "title": "Waste Collection Points Mapping",
-        "focus": "Clean Energy & Environmental Data", "status": "completed", "cover": "",
-        "location": "Dar es Salaam Region", "beneficiaries": "Communities and local authorities",
-        "summary": "Using a digital waste-mapping app to record waste-collection points across Dar es Salaam Region and support better waste services.",
+        "title": "Mapping waste collection points",
+        "focus": "Clean cooking and environmental data", "status": "completed",
+        "cover": "", "cover_caption": "",
+        "location": "Dar es Salaam Region", "beneficiaries": "Residents and local authorities",
+        "summary": "Recording waste collection points across the Dar es Salaam Region with a waste-mapping app.",
         "description": (
-            "<p>Knowing where waste is collected — and where it is not — is the first step to better services.</p>"
-            "<p>WEMASA used a digital waste-mapping application to record waste-collection points across the "
-            "<strong>Dar es Salaam Region</strong>. The resulting data helps identify gaps in collection coverage and "
-            "supports conversations with communities and local authorities about improving waste management.</p>"
+            "<p>Before you can improve waste collection, you need to know where it happens and where it does not.</p>"
+            "<p>We used a waste-mapping app to record collection points across the Dar es Salaam Region. The map "
+            "shows the gaps and gives communities and local authorities something concrete to plan around.</p>"
         ),
-        "outcomes": (
-            "Waste-collection points recorded digitally across Dar es Salaam Region\n"
-            "Data available to support planning of waste services"
-        ),
+        "outcomes": "Collection points recorded across the Dar es Salaam Region",
         "stats": [],
         "photos": [],
     },
 ]
 
-EXTRA_ALBUMS = [("Community tree planting", ["trees-community-0%d.webp" % i for i in range(1, 5)])]
+EXTRA_ALBUMS = [("Tree planting in the community", ["trees-community-0%d.webp" % i for i in range(1, 5)], ROADSIDE)]
 
 IMPACT = [
-    (3700, "+", "Students reached", "Climate change awareness sessions in 8 secondary schools in Temeke", "graduation", True),
-    (8, "", "Secondary schools", "Engaged in our school climate awareness programme", "school", True),
-    (78, "", "Food vendors mapped", "Across 4 major Temeke markets to understand cooking-fuel use", "flame", True),
-    (10, "+", "Media features", "TV, newspaper and online coverage of WEMASA’s work", "mic", True),
-    (4, "", "Schools greened", "Tree planting at Kibasila, Kongowe, Lionel and Vingunguti", "tree", False),
-    (2, "", "Farming communities trained", "Women vegetable farmers in Kisewe and Kiburugwa", "sprout", False),
+    (3700, "", "students took part in climate change sessions", "Eight secondary schools, Temeke District"),
+    (8, "", "secondary schools held climate change sessions", "Temeke District"),
+    (78, "", "food vendors surveyed on cooking fuel", "Sterio, Kizuiani, Kampocheo and Mtongani markets"),
+    (4, "", "schools planted trees with us", "Kibasila, Kongowe, Lionel and Vingunguti"),
+    (2, "", "farming communities trained in organic methods", "Kisewe and Kiburugwa"),
+    (10, "", "media outlets covered the women journalists’ workshop", "Newspapers, television and online, March 2026"),
 ]
 
 SDGS = [
-    (4, "Quality Education", "Climate change awareness in secondary schools and hands-on environmental learning for communities."),
-    (5, "Gender Equality", "Training women farmers and building the skills and voice of young women environment journalists."),
-    (7, "Affordable and Clean Energy", "Mapping cooking-fuel use among food vendors to support the shift to cleaner energy."),
-    (11, "Sustainable Cities and Communities", "Cleanups, waste-collection mapping and better waste services for growing urban communities."),
-    (12, "Responsible Consumption and Production", "Promoting responsible waste storage, disposal and organic farming practices."),
-    (13, "Climate Action", "Raising awareness of climate change and mobilising young people to act."),
-    (15, "Life on Land", "Tree planting in schools and communities to restore green cover and protect biodiversity."),
+    (4, "Quality Education", "Climate change sessions in secondary schools and practical training in communities."),
+    (5, "Gender Equality", "Training for women farmers and for young women environment journalists."),
+    (7, "Affordable and Clean Energy", "Our survey of cooking fuel among market food vendors."),
+    (11, "Sustainable Cities and Communities", "Cleanups and the mapping of waste collection points in Dar es Salaam."),
+    (12, "Responsible Consumption and Production", "Better waste storage and disposal, and organic farming."),
+    (13, "Climate Action", "Climate change awareness with students."),
+    (15, "Life on Land", "Tree planting in schools and public spaces."),
 ]
 
 TEAM = [
     ("Ibrahim Haule", "Co-Founder & Executive Director", "founders", "team/ibrahim-haule.webp",
-     "As Co-Founder and Executive Director, Ibrahim provides strategic leadership for WEMASA — guiding its programmes, "
-     "partnerships and growth from a neighbourhood initiative into a registered national organisation."),
+     "Ibrahim co-founded WEMASA and leads the organisation day to day: its projects, its partnerships and its staff."),
     ("Jackline Ndawila", "Co-Founder & Head of Women Projects", "founders", "team/jackline-ndawila.webp",
-     "Jackline is a Co-Founder of WEMASA and leads its women-focused projects, ensuring that women and girls are at the "
-     "centre of the organisation’s environmental work — from farming communities to the newsroom."),
+     "Jackline co-founded WEMASA and runs its projects with women, from the farmers’ groups to the journalists’ workshop."),
     ("Carlos Mdemu", "Training Officer", "staff", "team/carlos-mdemu.webp",
-     "Carlos designs and facilitates WEMASA’s trainings and awareness sessions, translating environmental knowledge "
-     "into practical learning for communities, students and journalists."),
+     "Carlos plans and leads WEMASA’s trainings and awareness sessions in communities, schools and workshops."),
     ("Frednand Nseso", "Chief Accountant", "staff", "",
-     "Frednand leads WEMASA’s financial management, safeguarding the transparency and accountability that partners "
-     "and communities expect."),
+     "Frednand is responsible for WEMASA’s finances and financial reporting."),
     ("Hashim Mapengo", "Data Officer", "staff", "team/hashim-mapengo.webp",
-     "Hashim manages WEMASA’s data and mapping work — including surveys of market food vendors and the mapping of "
-     "waste-collection points — turning field information into evidence for action."),
+     "Hashim manages WEMASA’s data work, including the market vendor survey and the mapping of waste collection points."),
     ("Jumanne Msumi", "Assistant Accountant", "staff", "team/jumanne-msumi.webp",
-     "Jumanne supports WEMASA’s finance function, keeping accurate records and helping ensure every resource is "
-     "properly accounted for."),
+     "Jumanne supports the finance team and keeps WEMASA’s accounts in order."),
     ("Omary Mgomba", "Safeguarding Officer", "staff", "team/omary-mgomba.webp",
-     "Omary oversees safeguarding across WEMASA’s activities, helping ensure that children, women and every "
-     "participant are safe, respected and protected."),
+     "Omary makes sure that children, women and everyone else taking part in our activities are safe and treated with respect."),
     ("Lamlaty Omary", "Community Outreach Officer", "staff", "team/lamlaty-omary.webp",
-     "Lamlaty connects WEMASA with the communities it serves — mobilising residents, groups and local leaders to take "
-     "part in programmes and environmental action."),
+     "Lamlaty is our link to the communities we work in. She mobilises residents, groups and local leaders to take part."),
 ]
 
 PARTNERS = [
@@ -537,95 +501,89 @@ PARTNERS = [
 ]
 
 MEDIA = [
-    ("Nipashe (IPP Media)", "newspaper", "Waandishi habari wanawake waimarishwa kuripoti mazingira", datetime.date(2026, 3, 11), "Pilly Kigome",
-     "Nipashe reports on how WEMASA’s workshop strengthened the capacity of women journalists to report on environmental issues."),
+    ("Nipashe", "newspaper", "Waandishi habari wanawake waimarishwa kuripoti mazingira", datetime.date(2026, 3, 11), "Pilly Kigome",
+     "Women journalists strengthened to report on the environment."),
     ("Tanzania Leo", "newspaper", "WEMASA watoa elimu ya mazingira wanahabari wanawake nchini", datetime.date(2026, 3, 12), "",
-     "Front-page coverage of WEMASA’s environmental education workshop for women journalists."),
+     "WEMASA gives environmental education to women journalists. Front page."),
     ("Mtanzania Leo", "newspaper", "WEMASA yawanoa wanahabari wanawake utunzaji wa mazingira", datetime.date(2026, 3, 12), "",
-     "Front-page story on WEMASA sharpening women journalists’ skills in environmental conservation reporting."),
+     "WEMASA sharpens women journalists on environmental conservation. Front page."),
     ("Watetezi TV", "tv", "THRDC yashiriki warsha ya kwanza ya wanawake na wasichana wanaoandika habari za mazingira", datetime.date(2026, 3, 14), "",
-     "Coverage of the first workshop for women and girls who write about the environment, with THRDC’s participation."),
+     "THRDC takes part in the first workshop for women and girls who write about the environment."),
     ("Tanganyika Television", "tv", "WEMASA watoa kipaumbele kwa elimu ya mazingira kwa wanahabari wanawake", datetime.date(2026, 3, 11), "",
-     "TTV highlights WEMASA’s focus on environmental education for women journalists during International Women’s Day."),
+     "WEMASA prioritises environmental education for women journalists on International Women’s Day."),
     ("SMTV", "tv", "WEMASA Tanzania yawajengea uwezo waandishi wa habari wanawake kuhusu masuala ya mazingira", datetime.date(2026, 3, 11), "",
-     "SMTV reports on WEMASA building women journalists’ capacity on environmental matters."),
+     "WEMASA builds women journalists’ capacity on environmental issues."),
     ("Star TV", "tv", "Kipato kidogo tatizo matumizi ya gesi nchini", datetime.date(2026, 3, 11), "",
-     "Discussion from the workshop on how low household income limits the use of cooking gas in Tanzania."),
+     "Low income holds back the use of cooking gas in Tanzania."),
     ("W-News", "online", "Changamoto ya matumizi nishati safi ya kupikia kutafutiwa suluhu", datetime.date(2026, 3, 11), "",
-     "Coverage of the search for solutions to clean cooking energy challenges, discussed at the WEMASA workshop."),
-    ("Tanzania Daima", "newspaper", "Coverage of WEMASA’s workshop for women environment journalists", datetime.date(2026, 3, 12), "",
-     "Tanzania Daima covered WEMASA’s first workshop for young girls and women environment journalists."),
-    ("Mwananchi", "newspaper", "Coverage of WEMASA’s workshop for women environment journalists", datetime.date(2026, 3, 12), "",
-     "Mwananchi covered WEMASA’s first workshop for young girls and women environment journalists."),
+     "Solutions sought for the clean cooking energy challenge."),
+    ("Tanzania Daima", "newspaper", "Coverage of the women environment journalists’ workshop", datetime.date(2026, 3, 12), "",
+     ""),
+    ("Mwananchi", "newspaper", "Coverage of the women environment journalists’ workshop", datetime.date(2026, 3, 12), "",
+     ""),
 ]
 
 NEWS = [
     {
-        "title": "WEMASA hosts first workshop for young girls and women environment journalists",
-        "category": "event", "cover": "workshop-01.webp", "featured": True,
+        "title": "Our first workshop for women environment journalists",
+        "category": "event", "cover": "workshop-01.webp", "cover_caption": WORKSHOP, "featured": True,
         "date": datetime.datetime(2026, 3, 11, 18, 0),
-        "project": "1st Workshop for Young Girls and Women Environment Journalists",
-        "excerpt": "As part of International Women’s Day 2026, WEMASA brought women journalists together in Dar es Salaam to learn about and analyse environmental challenges — and how to report on them.",
+        "project": "First workshop for young women environment journalists",
+        "excerpt": "For International Women’s Day 2026 we brought young women journalists together in Dar es Salaam to talk about how to report on the environment.",
         "body": (
-            "<p>On 11 March 2026, WEMASA Tanzania Organization hosted the <strong>1st Workshop for Young Girls and Women "
-            "Environment Journalists</strong> in Dar es Salaam, as part of International Women’s Day celebrations.</p>"
-            "<p>The workshop gave women journalists the opportunity to learn about and analyse the environmental challenges "
-            "facing Tanzanian communities. A session on the impacts of waste, led by environmental conservation specialist "
-            "Carlos Mdemu, explored how poorly managed waste affects health, livelihoods and the climate.</p>"
-            "<h2>Why women journalists?</h2>"
-            "<p>The media shapes how the public understands environmental problems. By strengthening the skills of women "
-            "journalists, WEMASA aims to bring more accurate, more powerful and more diverse environmental stories to "
-            "audiences across the country.</p>"
-            "<p>Discussions also addressed household access to clean cooking energy, including the barriers that low incomes "
-            "create for families who want to switch from charcoal and firewood to gas.</p>"
-            "<h2>Wide media coverage</h2>"
-            "<p>The workshop was covered by national newspapers including Nipashe, Tanzania Leo and Mtanzania Leo, and by "
-            "television and online outlets including Star TV, SMTV, Tanganyika Television, Watetezi TV and W-News.</p>"
-            "<blockquote>This was the first edition of the workshop — and the beginning of a growing network of women "
-            "telling Tanzania’s environmental story.</blockquote>"
+            "<p>On 11 March 2026 we held our first workshop for young girls and women environment journalists, "
+            "in Dar es Salaam, as part of International Women’s Day.</p>"
+            "<p>The day was about the environmental problems Tanzanian communities live with and how to report on "
+            "them well. Carlos Mdemu led a session on the impacts of waste, from blocked drains and disease to "
+            "lost income.</p>"
+            "<h2>Why journalists</h2>"
+            "<p>What the public knows about the environment mostly comes from the press. Women reporters are "
+            "still a minority on the environment beat, and we think the coverage is poorer for it.</p>"
+            "<p>A good part of the afternoon went on clean cooking. Several participants pointed out that many "
+            "families know charcoal is harmful but cannot afford gas, a point Star TV later ran as its headline.</p>"
+            "<h2>Coverage</h2>"
+            "<p>The workshop was reported by Nipashe, Tanzania Leo and Mtanzania Leo, and by Star TV, SMTV, "
+            "Tanganyika Television, Watetezi TV and W-News. We plan to make this an annual event.</p>"
         ),
     },
     {
-        "title": "Women farmers in Kisewe and Kiburugwa learn to make natural pesticides and fertilisers",
-        "category": "story", "cover": "kisewe-06.webp", "featured": False,
+        "title": "Making pesticide from leaves in Kisewe and Kiburugwa",
+        "category": "story", "cover": "kisewe-06.webp", "cover_caption": FARMING, "featured": False,
         "date": None,
-        "project": "Organic Farming Training for Women Vegetable Farmers",
-        "excerpt": "In the vegetable plots of Kisewe and Kiburugwa, women farmers are learning to protect their crops with natural preparations made from local plants.",
+        "project": "Organic farming training for women vegetable farmers",
+        "excerpt": "Women vegetable farmers spent a morning between their beds learning to make natural sprays from plants that grow nearby.",
         "body": (
-            "<p>For women vegetable farmers on the outskirts of Dar es Salaam, every shilling spent on chemical pesticides "
-            "is a shilling that does not reach the family. WEMASA’s organic farming training offers another way.</p>"
-            "<p>Working directly in the fields of <strong>Kisewe</strong> and <strong>Kiburugwa</strong>, WEMASA trainers "
-            "showed farmer groups how to prepare natural pesticides, plant boosters and fungicides using leaves and plants "
-            "that grow locally. Participants chopped, mixed and prepared each recipe themselves, taking notes to share with "
-            "others in their groups.</p>"
-            "<h2>Healthier crops, healthier communities</h2>"
-            "<p>Organic methods protect the soil and water that farming depends on, reduce exposure to harmful chemicals and "
-            "lower production costs. Just as importantly, they put knowledge — and confidence — in the hands of women "
-            "farmers.</p>"
+            "<p>For a woman growing vegetables on the edge of Dar es Salaam, every shilling spent on chemical "
+            "sprays is a shilling that does not go home. Our organic farming trainings offer another option.</p>"
+            "<p>In Kisewe and Kiburugwa we worked with farmers’ groups right in their fields. Our trainers showed "
+            "them how to make a natural pesticide, a plant booster and a fungicide from leaves and plants that "
+            "grow locally. The farmers chopped, mixed and prepared each recipe themselves and wrote the steps down "
+            "to share with others.</p>"
+            "<p>Organic methods are kinder to the soil and the water, and cheaper. They also leave the knowledge "
+            "with the farmers, which is the point.</p>"
         ),
     },
 ]
 
 INVOLVEMENT = [
-    ("Volunteer with us", "hand-heart", "Join cleanups, tree-planting days and community awareness campaigns. No environmental background needed — just energy and commitment.", "Become a volunteer", "/contact/?topic=volunteer"),
-    ("Partner with WEMASA", "handshake", "Development partners, businesses and institutions can co-design, fund or scale programmes with measurable community impact.", "Discuss a partnership", "/contact/?topic=partnership"),
-    ("Donate", "heart", "Your gift funds training materials, cleanup equipment, tree seedlings and school awareness sessions.", "Give today", "/donate/"),
-    ("Invite us to your school", "school", "Bring climate change awareness and tree planting to your students. We work with primary and secondary schools.", "Request a visit", "/contact/?topic=general"),
-    ("Media & storytelling", "megaphone", "Journalists and content creators can help amplify environmental stories and the voices of the communities we serve.", "Media enquiries", "/contact/?topic=media"),
-    ("Spread the word", "send", "Follow WEMASA, share our stories and encourage your network to keep their surroundings clean.", "Subscribe to updates", "#newsletter"),
+    ("Volunteer", "Join a cleanup, a tree planting day or a community visit. You do not need any background in the environment.", "Sign up to volunteer", "/contact/?topic=volunteer"),
+    ("Partner with us", "Funders, businesses and institutions can support a project or design one with us.", "Talk about a partnership", "/contact/?topic=partnership"),
+    ("Invite us to your school", "We run climate change sessions and tree planting days for primary and secondary schools.", "Request a school visit", "/contact/?topic=general"),
+    ("Report on the environment", "Journalists and content creators can help us tell these stories and reach more people.", "Media enquiries", "/contact/?topic=media"),
+    ("Donate", "Money pays for training materials, seedlings, cleanup equipment and transport.", "How to give", "/donate/"),
 ]
 
 FAQS = [
     ("Is WEMASA a registered organisation?",
-     "Yes. WEMASA Tanzania Organization is a non-governmental organisation registered in 2021 under Tanzania’s NGO Act, Registration No. ooNGO/R/2395, with a national area of operation."),
-    ("Where does WEMASA work?",
-     "We are registered to operate nationally. Most of our current programmes take place in Dar es Salaam, especially Temeke District, and we are expanding to new communities with our partners."),
-    ("How are donations used?",
-     "Donations fund programme activities such as training materials, cleanup equipment, tree seedlings, school awareness sessions and community mobilisation. We issue receipts and share reports on results."),
-    ("Can I volunteer without an environmental background?",
-     "Absolutely. Our volunteers include students, professionals and community members. We provide orientation, and there are roles in field activities, communications, data collection and more."),
-    ("Can my school or community request a WEMASA programme?",
-     "Yes. Contact us with your location and what you have in mind, and our team will discuss how we can work together."),
+     "Yes. WEMASA Tanzania Organization was registered in 2021 under Tanzania’s NGO Act, registration number ooNGO/R/2395."),
+    ("Where do you work?",
+     "We are registered to work anywhere in Tanzania. Most of our projects so far have been in Dar es Salaam, especially Temeke District."),
+    ("What does a donation pay for?",
+     "Training materials, seedlings, cleanup equipment, transport to schools and communities, and the time of the people running the activities. We give receipts and report back on what the money did."),
+    ("Do I need experience to volunteer?",
+     "No. We will show you what to do. We also need help with photography, writing and data collection."),
+    ("Can my school or community ask for a project?",
+     "Yes. Send us a message with your location and what you have in mind."),
 ]
 
 
@@ -649,30 +607,26 @@ class Command(BaseCommand):
         fill_singleton(m.HomePage, HOME, HOME_IMAGES)
         fill_singleton(m.AboutPage, ABOUT, ABOUT_IMAGES)
 
-        for page, eyebrow, title, subtitle, image in HEADERS:
+        for page, eyebrow, title, subtitle, image, caption in HEADERS:
             header, created = m.PageHeader.objects.get_or_create(
-                page=page, defaults={"eyebrow": eyebrow, "title": title, "subtitle": subtitle})
+                page=page, defaults={"eyebrow": eyebrow, "title": title, "subtitle": subtitle, "caption": caption})
             if created and set_images(header, image=image):
                 header.save()
 
-        self.seed_simple(m.Objective, "title", [
-            {"title": t, "icon": i, "description": d} for t, i, d in OBJECTIVES])
-        self.seed_simple(m.CoreValue, "name", [
-            {"name": n, "local_name": l, "icon": i, "description": d} for n, l, i, d in VALUES])
-        self.seed_simple(m.Milestone, "title", [
-            {"year": y, "title": t, "description": d} for y, t, d in MILESTONES])
+        self.seed_simple(m.Objective, "title", [{"title": t, "description": d} for t, d in OBJECTIVES])
+        self.seed_simple(m.CoreValue, "name", [{"name": n, "local_name": l, "description": d} for n, l, d in VALUES])
+        self.seed_simple(m.Milestone, "title", [{"year": y, "title": t, "description": d} for y, t, d in MILESTONES])
 
         focus_by_title = {}
-        for order, (title, icon, image, summary, description) in enumerate(FOCUS):
-            area, created = m.FocusArea.objects.get_or_create(
-                title=title, defaults={"icon": icon, "summary": summary, "description": description, "order": order})
+        for order, (title, image, caption, summary, description) in enumerate(FOCUS):
+            area, created = m.FocusArea.objects.get_or_create(title=title, defaults={
+                "summary": summary, "description": description, "image_caption": caption, "order": order})
             if created and set_images(area, image=image):
                 area.save()
             focus_by_title[title] = area
 
-        partners = {}
         for order, (name, category) in enumerate(PARTNERS):
-            partners[name], _ = m.Partner.objects.get_or_create(name=name, defaults={"category": category, "order": order})
+            m.Partner.objects.get_or_create(name=name, defaults={"category": category, "order": order})
 
         projects = {}
         for order, data in enumerate(PROJECTS):
@@ -680,25 +634,26 @@ class Command(BaseCommand):
                 "focus_area": focus_by_title.get(data["focus"]), "status": data["status"], "summary": data["summary"],
                 "description": data["description"], "location": data["location"], "period": data.get("period", ""),
                 "beneficiaries": data["beneficiaries"], "outcomes": data["outcomes"], "order": order,
+                "cover_caption": data["cover_caption"],
             })
             projects[project.title] = project
             if not created:
                 continue
             if set_images(project, cover=data["cover"]):
                 project.save()
-            for i, (value, label) in enumerate(data["stats"]):
-                m.ProjectStat.objects.create(project=project, value=value, label=label, order=i)
+            for i, (label, value) in enumerate(data["stats"]):
+                m.ProjectStat.objects.create(project=project, label=label, value=value, order=i)
             for i, name in enumerate(data["photos"]):
-                self.add_photo(name, project=project, album=data.get("album", ""), order=i)
+                self.add_photo(name, project=project, album=data.get("album", ""), caption=data.get("caption", ""), order=i)
 
-        for album, names in EXTRA_ALBUMS:
+        for album, names, caption in EXTRA_ALBUMS:
             if not m.GalleryImage.objects.filter(album=album).exists():
                 for i, name in enumerate(names):
-                    self.add_photo(name, album=album, order=100 + i)
+                    self.add_photo(name, album=album, caption=caption, order=100 + i)
 
-        for order, (value, suffix, label, desc, icon, home) in enumerate(IMPACT):
+        for order, (value, suffix, label, desc) in enumerate(IMPACT):
             m.ImpactStat.objects.get_or_create(label=label, defaults={
-                "value": value, "suffix": suffix, "description": desc, "icon": icon, "show_on_home": home, "order": order})
+                "value": value, "suffix": suffix, "description": desc, "show_on_home": False, "order": order})
 
         for order, (number, title, desc) in enumerate(SDGS):
             m.SDG.objects.get_or_create(number=number, defaults={"title": title, "description": desc, "order": order})
@@ -718,12 +673,13 @@ class Command(BaseCommand):
                 continue
             date = timezone.make_aware(data["date"]) if data["date"] else timezone.now()
             post = m.NewsPost(title=data["title"], category=data["category"], excerpt=data["excerpt"], body=data["body"],
-                              is_featured=data["featured"], published_at=date, project=projects.get(data["project"]))
+                              cover_caption=data["cover_caption"], is_featured=data["featured"], published_at=date,
+                              project=projects.get(data["project"]))
             set_images(post, cover=data["cover"])
             post.save()
 
         self.seed_simple(m.InvolvementOption, "title", [
-            {"title": t, "icon": i, "description": d, "button_text": b, "button_url": u} for t, i, d, b, u in INVOLVEMENT])
+            {"title": t, "description": d, "button_text": b, "button_url": u} for t, d, b, u in INVOLVEMENT])
         self.seed_simple(m.FAQ, "question", [{"question": q, "answer": a} for q, a in FAQS])
 
         self.stdout.write(self.style.SUCCESS("WEMASA content is ready."))

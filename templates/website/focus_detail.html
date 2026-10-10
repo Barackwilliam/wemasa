@@ -1,55 +1,41 @@
 {% extends "base.html" %}
-{% load site_tags %}
-{% block title %}{{ area.title }} — {{ site.short_name }}{% endblock %}
+{% block title %}{{ area.title }} · {{ site.short_name }}{% endblock %}
 {% block description %}{{ area.summary|truncatechars:160 }}{% endblock %}
 {% block og_image %}{% if area.image %}{{ area.image.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 {% block content %}
-<section class="page-hero{% if not area.image %} no-image{% endif %}">
-  {% if area.image %}<div class="page-hero-media"><img src="{{ area.image.url }}" alt="" fetchpriority="high"></div>{% endif %}
-  <div class="container">
-    <ol class="breadcrumb"><li><a href="{% url 'website:home' %}">Home</a></li><li><a href="{% url 'website:focus_list' %}">Focus areas</a></li><li aria-current="page">{{ area.title }}</li></ol>
-    <span class="eyebrow eyebrow-light">Focus area</span>
-    <h1>{{ area.title }}</h1>
-    <p class="lead">{{ area.summary }}</p>
+<header class="page-head">
+  <div class="wrap">
+    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{% url 'website:home' %}">Home</a><a href="{% url 'website:focus_list' %}">What we do</a><span aria-current="page">{{ area.title }}</span></nav>
+    <h1 class="h1">{{ area.title }}</h1>
+    <p class="standfirst">{{ area.summary }}</p>
   </div>
-  {% include "partials/wave.html" %}
-</section>
+</header>
+{% if area.image %}<figure class="head-photo wrap"><div class="photo"><img src="{{ area.image.url }}" alt="{{ area.image_caption }}" fetchpriority="high"></div>{% if area.image_caption %}<figcaption>{{ area.image_caption }}</figcaption>{% endif %}</figure>{% endif %}
 
-<section class="section">
-  <div class="container detail-layout">
-    <div>
-      {% if area.description %}<div class="prose lead-text reveal">{{ area.description|safe }}</div>{% endif %}
+<section class="section" style="padding-top:0">
+  <div class="wrap article">
+    <div class="main">
+      <div class="prose dropcap">{{ area.description|safe }}</div>
       {% if photos %}
-      <h2 class="block-title">From the field</h2>
-      <div class="photo-grid reveal">
-        {% for ph in photos %}<a class="shot" href="{{ ph.image.url }}" data-lightbox="focus" data-caption="{{ ph.caption }}"><img src="{{ ph.image.url }}" alt="{{ ph.caption }}" loading="lazy"></a>{% endfor %}
-      </div>
+      <h2 class="h3 block-title">Photographs</h2>
+      <div class="sheet">{% for ph in photos %}<a href="{{ ph.image.url }}" data-lightbox="area" data-caption="{{ ph.caption }}"><figure><div class="photo"><img src="{{ ph.image.url }}" alt="{{ ph.caption }}" loading="lazy"></div></figure></a>{% endfor %}</div>
       {% endif %}
     </div>
-    <aside class="sticky-aside">
-      <div class="card facts reveal">
-        <span class="icon-tile lg" style="margin-bottom:18px">{% icon area.icon %}</span>
-        <h3>{{ projects|length }} project{{ projects|length|pluralize }} in this area</h3>
-        <p class="muted" style="font-size:.95rem">Want to support work in {{ area.title|lower }}? We welcome partners, volunteers and donors.</p>
-        <div style="display:grid;gap:10px"><a class="btn btn-sun" href="{% url 'website:donate' %}">{% icon 'heart' %} Support this work</a><a class="btn btn-ghost" href="{% url 'website:contact' %}?topic=partnership">Partner with us</a></div>
-      </div>
-      {% if others %}
-      <div class="card facts reveal">
-        <h3>Other focus areas</h3>
-        {% for o in others %}<a class="fact" href="{{ o.get_absolute_url }}" style="color:inherit"><span class="icon-tile">{% icon o.icon %}</span><span><strong>{{ o.title }}</strong></span></a>{% endfor %}
-      </div>
+    <aside class="aside">
+      {% if projects %}
+      <dl class="facts">{% for p in projects %}<div><dt>{{ p.get_status_display }}</dt><dd><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></dd></div>{% endfor %}</dl>
       {% endif %}
+      <div class="aside-note"><p class="h4">Work with us on this</p>We are looking for partners, volunteers and funders for this area.<br><br><a class="link" href="{% url 'website:contact' %}?topic=partnership">Get in touch →</a></div>
     </aside>
   </div>
 </section>
 
-{% if projects %}
-<section class="section bg-mist">
-  <div class="container">
-    {% section_head "Projects" "Programmes in this focus area" %}
-    <div class="grid grid-3">{% for project in projects %}{% include "partials/project_card.html" with delay=forloop.counter0 %}{% endfor %}</div>
+{% if others %}
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head"><h2 class="h2">Other areas</h2></div>
+    <ul class="index">{% for o in others %}<li><a href="{{ o.get_absolute_url }}"><span class="h3">{{ o.title }}</span><p>{{ o.summary }}</p><span class="arr" aria-hidden="true">→</span></a></li>{% endfor %}</ul>
   </div>
 </section>
 {% endif %}
-{% include "partials/cta.html" %}
 {% endblock %}

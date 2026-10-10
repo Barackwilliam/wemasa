@@ -1,40 +1,25 @@
 {% extends "base.html" %}
-{% load site_tags %}
-{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
+{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_hero.html" %}
+{% include "partials/page_head.html" %}
 {% if options %}
-<section class="section">
-  <div class="container">
-    {% section_head "Ways to help" "Choose how you want to make a difference" "There is a place for everyone in the movement for a cleaner Tanzania — your time, skills, voice or resources all count." %}
-    <div class="grid grid-3">
-      {% for o in options %}
-      <article class="card card-hover focus-card reveal" style="--d:{% widthratio forloop.counter0 1 6 %}0ms">
-        <span class="num-bg">{{ forloop.counter|stringformat:"02d" }}</span>
-        <span class="icon-tile lg">{% icon o.icon %}</span>
-        <h3>{% if o.button_url %}<a class="card-link" href="{{ o.button_url }}">{{ o.title }}</a>{% else %}{{ o.title }}{% endif %}</h3>
-        <p>{{ o.description }}</p>
-        {% if o.button_text %}<div class="card-foot"><span class="count">{{ o.button_text }}</span><span class="go">{% icon 'arrow-up-right' %}</span></div>{% endif %}
-      </article>
-      {% endfor %}
-    </div>
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <ul class="rows">
+      {% for o in options %}<li><h2 class="h3">{{ o.title }}</h2><p>{{ o.description }}</p>{% if o.button_text %}<a class="link end" href="{{ o.button_url }}">{{ o.button_text }} →</a>{% endif %}</li>{% endfor %}
+    </ul>
   </div>
 </section>
 {% endif %}
-<section class="section bg-mist">
-  <div class="container split" style="align-items:start">
-    <div class="reveal">
-      <span class="eyebrow">Volunteer &amp; partner</span>
-      <h2>Tell us how you would like to be involved</h2>
-      <p class="lead-text">Share a little about yourself or your organisation. Our team will reply with opportunities that match your interests — from cleanup days and school visits to research, communications and programme partnerships.</p>
-      {% if faqs %}
-      <div class="faq" style="margin-top:32px">
-        {% for f in faqs %}<details><summary>{{ f.question }} {% icon 'chevron-down' %}</summary><p>{{ f.answer }}</p></details>{% endfor %}
-      </div>
-      {% endif %}
+<section class="section">
+  <div class="wrap contact-grid">
+    <div>
+      <h2 class="h2">Write to us</h2>
+      <p class="muted" style="margin-top:16px">Tell us a little about yourself and how you would like to help. We reply to every message.</p>
+      {% if faqs %}<div class="faq" style="margin-top:36px">{% for f in faqs %}<details><summary>{{ f.question }}</summary><p>{{ f.answer }}</p></details>{% endfor %}</div>{% endif %}
     </div>
-    <div class="reveal" style="--d:.1s">{% include "partials/contact_form.html" with form_title="Get in touch" %}</div>
+    <div>{% include "partials/contact_form.html" %}</div>
   </div>
 </section>
 {% endblock %}

@@ -1,37 +1,26 @@
 {% extends "base.html" %}
 {% load site_tags %}
-{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
+{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_hero.html" %}
-<section class="section">
-  <div class="container">
+{% include "partials/page_head.html" %}
+<section class="section" style="padding-top:0">
+  <div class="wrap">
     {% if categories %}
-    <div class="filters center reveal">
-      <a class="filter {% if not active %}is-active{% endif %}" href="{% query type='' %}">All documents</a>
-      {% for key, label in categories %}<a class="filter {% if active == key %}is-active{% endif %}" href="{% query type=key %}">{{ label }}</a>{% endfor %}
-    </div>
+    <nav class="filters"><a class="{% if not active %}on{% endif %}" href="{% query type='' %}">All</a>{% for key, label in categories %}<a class="{% if active == key %}on{% endif %}" href="{% query type=key %}">{{ label }}</a>{% endfor %}</nav>
     {% endif %}
     {% if resources %}
-    <div class="grid grid-2">
+    <ul class="rows">
       {% for r in resources %}
-      <article class="card card-hover resource-card reveal">
-        <span class="file-badge">{% icon 'file' %}{{ r.extension }}</span>
-        <div>
-          <span class="chip" style="margin-bottom:10px">{{ r.get_category_display }}</span>
-          <h3>{{ r.title }}</h3>
-          {% if r.description %}<p>{{ r.description|truncatewords:28 }}</p>{% endif %}
-          <div class="btn-row" style="align-items:center">
-            <a class="btn btn-primary btn-sm" href="{{ r.file.url }}" target="_blank" rel="noopener">{% icon 'download' %} Download</a>
-            <span class="muted" style="font-size:.88rem">{{ r.published_on|date:"F Y" }}</span>
-          </div>
-        </div>
-      </article>
+      <li>
+        <div><span class="label">{{ r.get_category_display }} · {{ r.published_on|date:"F Y" }}</span><h2 class="h3" style="margin-top:8px">{{ r.title }}</h2></div>
+        <p>{{ r.description }}</p>
+        <a class="link end" href="{{ r.file.url }}" target="_blank" rel="noopener">{{ r.extension }} ↓</a>
+      </li>
       {% endfor %}
-    </div>
+    </ul>
     {% else %}
-      {% url 'website:contact' as contact_url %}
-      {% include "partials/empty.html" with icon_name="file" title="Publications are on their way" text="We are preparing our project reports and organisational documents for publication. Need a specific document now? Contact us and we will share it." link=contact_url link_text="Request a document" %}
+    <div class="empty"><h2 class="h3">Nothing published yet</h2><p>We are preparing our project reports. If you need a document now, ask us and we will send it.</p><a class="link" href="{% url 'website:contact' %}">Ask for a document →</a></div>
     {% endif %}
   </div>
 </section>

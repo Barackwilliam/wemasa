@@ -1,142 +1,79 @@
-/* WEMASA website interactions — small, dependency-free, progressive. */
+/* WEMASA website: menu, search, photo viewer, focus-area previews, copy buttons, newsletter. */
 (function () {
   "use strict";
-  var doc = document, root = doc.documentElement, body = doc.body;
-  var $ = function (sel, ctx) { return (ctx || doc).querySelector(sel); };
+  var doc = document;
   var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || doc).querySelectorAll(sel)); };
-  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* Header: solid background after scrolling, announcement offset */
-  var header = $(".site-header"), announce = $(".announce"), toTop = $(".fab-top");
-  function setAnnounce() { if (announce) root.style.setProperty("--announce-h", (announce.offsetHeight - window.scrollY > 0 ? announce.offsetHeight - window.scrollY : 0) + "px"); }
-  function onScroll() {
-    var y = window.scrollY;
-    if (header) header.classList.toggle("is-scrolled", y > 24);
-    if (toTop) toTop.classList.toggle("is-visible", y > 900);
-    setAnnounce();
-  }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", setAnnounce);
-  onScroll();
-  if (toTop) toTop.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" }); });
-
-  /* Generic open/close for drawer, search and modals */
+  /* Menu and search panels */
   var lastFocus = null;
   function open(el) {
     if (!el) return;
     lastFocus = doc.activeElement;
     el.classList.add("is-open");
-    el.setAttribute("aria-hidden", "false");
-    body.style.overflow = "hidden";
-    var f = $("[autofocus], input, button, a", el.querySelector(".drawer-panel, .search-box, .modal-panel") || el);
-    if (f) setTimeout(function () { f.focus(); }, 60);
+    doc.body.style.overflow = "hidden";
+    var f = el.querySelector("input, a, button");
+    if (f) setTimeout(function () { f.focus(); }, 30);
   }
   function close(el) {
     if (!el) return;
     el.classList.remove("is-open");
-    el.setAttribute("aria-hidden", "true");
-    body.style.overflow = "";
+    doc.body.style.overflow = "";
     if (lastFocus) lastFocus.focus();
   }
   doc.addEventListener("click", function (e) {
-    var opener = e.target.closest("[data-open]");
-    if (opener) { e.preventDefault(); open(doc.getElementById(opener.getAttribute("data-open"))); return; }
-    var closer = e.target.closest("[data-close]");
-    if (closer) { e.preventDefault(); close(closer.closest(".drawer, .search-overlay, .modal")); return; }
-    if (e.target.classList.contains("search-overlay") || e.target.classList.contains("modal")) close(e.target);
+    var o = e.target.closest("[data-open]");
+    if (o) { e.preventDefault(); open(doc.getElementById(o.getAttribute("data-open"))); return; }
+    var c = e.target.closest("[data-close]");
+    if (c) { e.preventDefault(); close(c.closest(".menu, .search-panel")); return; }
+    if (e.target.classList.contains("search-panel")) close(e.target);
   });
   doc.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") $$(".drawer.is-open, .search-overlay.is-open, .modal.is-open").forEach(close);
-    if (e.key === "/" && !/input|textarea|select/i.test(doc.activeElement.tagName)) {
-      var s = doc.getElementById("search"); if (s) { e.preventDefault(); open(s); }
-    }
+    if (e.key === "Escape") $$(".menu.is-open, .search-panel.is-open").forEach(close);
   });
 
-  /* Team biographies in a modal */
-  var bioModal = doc.getElementById("bio-modal");
-  if (bioModal) {
-    $$("[data-bio]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var tpl = doc.getElementById(btn.getAttribute("data-bio"));
-        if (!tpl) return;
-        $(".modal-content", bioModal).innerHTML = tpl.innerHTML;
-        open(bioModal);
+  /* Focus-area list: a small photograph follows the pointer */
+  var peek = doc.querySelector(".peek");
+  if (peek && window.matchMedia("(hover: hover)").matches) {
+    var img = peek.querySelector("img");
+    $$("[data-peek]").forEach(function (a) {
+      a.addEventListener("mouseenter", function () { img.src = a.getAttribute("data-peek"); peek.classList.add("is-on"); });
+      a.addEventListener("mouseleave", function () { peek.classList.remove("is-on"); });
+      a.addEventListener("mousemove", function (e) {
+        peek.style.transform = "translate(" + (e.clientX + 24) + "px," + (e.clientY - 120) + "px)";
       });
     });
   }
 
-  /* Reveal on scroll. Anything already scrolled past is revealed too, so fast
-     scrolling or jumping to an anchor never leaves hidden content behind. */
-  var pending = $$(".reveal");
-  function revealPassed() {
-    if (!pending.length) return;
-    var limit = window.innerHeight * 0.94;
-    pending = pending.filter(function (el) {
-      if (el.getBoundingClientRect().top < limit) { el.classList.add("is-in"); return false; }
-      return true;
-    });
-  }
-  if (reduceMotion) {
-    pending.forEach(function (el) { el.classList.add("is-in"); });
-    pending = [];
-  } else {
-    var ticking = false;
-    window.addEventListener("scroll", function () {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function () { revealPassed(); ticking = false; });
-    }, { passive: true });
-    window.addEventListener("resize", revealPassed);
-    revealPassed();
-  }
-
-  /* Animated counters */
-  var counters = $$("[data-count]");
-  function animateCount(el) {
-    var target = parseInt(el.getAttribute("data-count"), 10) || 0;
-    if (reduceMotion || target < 2) return;
-    var start = null, dur = Math.min(2200, 900 + target / 4);
-    function step(ts) {
-      if (!start) start = ts;
-      var p = Math.min(1, (ts - start) / dur), eased = 1 - Math.pow(1 - p, 4);
-      el.textContent = Math.round(target * eased).toLocaleString("en-US");
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-  if ("IntersectionObserver" in window) {
-    var co = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) { if (en.isIntersecting) { animateCount(en.target); co.unobserve(en.target); } });
-    }, { threshold: 0.4 });
-    counters.forEach(function (el) { co.observe(el); });
-  }
-
-  /* Lightbox for photo groups */
+  /* Photo viewer */
   var lb = doc.getElementById("lightbox");
   if (lb) {
-    var lbImg = $("img", lb), lbCap = $(".lb-caption", lb), lbCount = $(".lb-count", lb), group = [], idx = 0;
-    function show(i) {
+    var lbImg = lb.querySelector("img"), lbCap = lb.querySelector(".lb-caption"), lbCount = lb.querySelector(".lb-count");
+    var group = [], idx = 0;
+    var show = function (i) {
       idx = (i + group.length) % group.length;
       var a = group[idx];
       lbImg.src = a.getAttribute("href");
       lbImg.alt = a.getAttribute("data-caption") || "";
       lbCap.textContent = a.getAttribute("data-caption") || "";
       lbCount.textContent = (idx + 1) + " / " + group.length;
-    }
+    };
     doc.addEventListener("click", function (e) {
       var a = e.target.closest("[data-lightbox]");
       if (!a) return;
       e.preventDefault();
       group = $$('[data-lightbox="' + a.getAttribute("data-lightbox") + '"]');
       show(group.indexOf(a));
-      open(lb);
+      lb.classList.add("is-open");
+      doc.body.style.overflow = "hidden";
     });
-    $(".lb-prev", lb).addEventListener("click", function () { show(idx - 1); });
-    $(".lb-next", lb).addEventListener("click", function () { show(idx + 1); });
-    $(".lb-close", lb).addEventListener("click", function () { close(lb); });
-    lb.addEventListener("click", function (e) { if (e.target === lb) close(lb); });
+    var shut = function () { lb.classList.remove("is-open"); doc.body.style.overflow = ""; };
+    lb.querySelector(".lb-prev").addEventListener("click", function () { show(idx - 1); });
+    lb.querySelector(".lb-next").addEventListener("click", function () { show(idx + 1); });
+    lb.querySelector(".lb-close").addEventListener("click", shut);
+    lb.addEventListener("click", function (e) { if (e.target === lb) shut(); });
     doc.addEventListener("keydown", function (e) {
       if (!lb.classList.contains("is-open")) return;
+      if (e.key === "Escape") shut();
       if (e.key === "ArrowLeft") show(idx - 1);
       if (e.key === "ArrowRight") show(idx + 1);
     });
@@ -150,32 +87,29 @@
     });
   }
 
-  /* Copy buttons (donation details) */
+  /* Copy account numbers */
   doc.addEventListener("click", function (e) {
-    var btn = e.target.closest("[data-copy]");
-    if (!btn) return;
-    var text = btn.getAttribute("data-copy");
-    var done = function () { btn.classList.add("is-done"); setTimeout(function () { btn.classList.remove("is-done"); }, 1600); };
-    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done);
-    else { var t = doc.createElement("textarea"); t.value = text; body.appendChild(t); t.select(); doc.execCommand("copy"); t.remove(); done(); }
+    var b = e.target.closest("[data-copy]");
+    if (!b || !navigator.clipboard) return;
+    navigator.clipboard.writeText(b.getAttribute("data-copy")).then(function () {
+      var t = b.textContent; b.textContent = "Copied"; setTimeout(function () { b.textContent = t; }, 1500);
+    });
   });
 
-  /* Newsletter: submit without leaving the page */
+  /* Newsletter without leaving the page */
   $$("form[data-subscribe]").forEach(function (form) {
     form.addEventListener("submit", function (e) {
       if (!window.fetch) return;
       e.preventDefault();
-      var note = form.parentNode.querySelector(".subscribe-note"), btn = $("button", form);
-      btn.disabled = true;
+      var note = doc.getElementById("letter-note");
       fetch(form.action, { method: "POST", body: new FormData(form), headers: { "X-Requested-With": "fetch" } })
         .then(function (r) { return r.text().then(function (t) { return { ok: r.ok, t: t }; }); })
         .then(function (res) {
-          if (note) note.textContent = res.ok ? "Thank you! You are now subscribed to WEMASA updates." :
-            (res.t === "limit" ? "Too many attempts — please try again later." : "Please enter a valid email address.");
+          note.textContent = res.ok ? "Thank you. You are on the list." :
+            (res.t === "limit" ? "Too many tries. Please wait a few minutes." : "That email address does not look right.");
           if (res.ok) form.reset();
         })
-        .catch(function () { if (note) note.textContent = "Something went wrong. Please try again."; })
-        .finally(function () { btn.disabled = false; });
+        .catch(function () { note.textContent = "Something went wrong. Please try again."; });
     });
   });
 })();

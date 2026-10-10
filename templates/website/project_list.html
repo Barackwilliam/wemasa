@@ -1,26 +1,22 @@
 {% extends "base.html" %}
 {% load site_tags %}
-{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
+{% block title %}{{ header.title }} · {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
-{% include "partials/page_hero.html" %}
-<section class="section">
-  <div class="container">
-    <div class="filters center reveal">
-      <a class="filter {% if not active_focus %}is-active{% endif %}" href="{% query focus='' %}">All projects</a>
-      {% for f in focus_areas %}<a class="filter {% if active_focus == f.slug %}is-active{% endif %}" href="{% query focus=f.slug %}">{% icon f.icon %} {{ f.title }}</a>{% endfor %}
-    </div>
-    <div class="filters center reveal" style="margin-top:-18px">
-      <a class="filter {% if not active_status %}is-active{% endif %}" href="{% query status='' %}">Any status</a>
-      {% for key, label in statuses %}<a class="filter {% if active_status == key %}is-active{% endif %}" href="{% query status=key %}">{{ label }}</a>{% endfor %}
-    </div>
+{% include "partials/page_head.html" %}
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <nav class="filters" aria-label="Filter projects">
+      <a class="{% if not active_focus and not active_status %}on{% endif %}" href="{% url 'website:project_list' %}">All</a>
+      {% for f in focus_areas %}<a class="{% if active_focus == f.slug %}on{% endif %}" href="{% query focus=f.slug %}">{{ f.title }}</a>{% endfor %}
+      <span class="label" style="margin-left:auto">Status:</span>
+      {% for key, label in statuses %}<a class="{% if active_status == key %}on{% endif %}" href="{% if active_status == key %}{% query status='' %}{% else %}{% query status=key %}{% endif %}">{{ label }}</a>{% endfor %}
+    </nav>
     {% if projects %}
-    <div class="grid grid-3">{% for project in projects %}{% include "partials/project_card.html" %}{% endfor %}</div>
+    <div class="entries">{% for project in projects %}{% include "partials/entry.html" %}{% endfor %}</div>
     {% else %}
-      {% url 'website:project_list' as all_url %}
-      {% include "partials/empty.html" with icon_name="layers" title="No projects match this filter" text="Try another focus area or status, or browse all of our work." link=all_url link_text="Show all projects" %}
+    <div class="empty"><h2 class="h3">No projects match</h2><p>Try another filter.</p><a class="link" href="{% url 'website:project_list' %}">Show all projects →</a></div>
     {% endif %}
   </div>
 </section>
-{% include "partials/cta.html" %}
 {% endblock %}

@@ -4,9 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ site.org_name }}{% endblock %}</title>
-  {% block meta %}
-  <meta name="description" content="{% block description %}{{ site.meta_description|default:site.tagline }}{% endblock %}">
-  {% endblock %}
+  {% block meta %}<meta name="description" content="{% block description %}{{ site.meta_description|default:site.tagline }}{% endblock %}">{% endblock %}
   <meta property="og:site_name" content="{{ site.org_name }}">
   <meta property="og:type" content="{% block og_type %}website{% endblock %}">
   <meta property="og:title" content="{% block og_title %}{{ site.org_name }}{% endblock %}">
@@ -15,206 +13,159 @@
   <meta property="og:image" content="{% block og_image %}{% if site.og_image %}{{ site.og_image.url }}{% else %}{{ site_url }}{% static 'img/icon-192.png' %}{% endif %}{% endblock %}">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="{{ site_url }}{{ request.path }}">
-  <meta name="theme-color" content="#0b2a1c">
+  <meta name="theme-color" content="#f3efe6">
   <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
   <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&display=swap">
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
-  {% block preload %}{% endblock %}
-  <script>document.documentElement.classList.add("js")</script>
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"NGO","name":"{{ site.org_name|escapejs }}","alternateName":"{{ site.short_name|escapejs }}","url":"{{ site_url }}/","logo":"{{ site_url }}{% static 'img/icon-192.png' %}"{% if site.email %},"email":"{{ site.email|escapejs }}"{% endif %}{% if site.phone %},"telephone":"{{ site.phone|escapejs }}"{% endif %},"address":{"@type":"PostalAddress","addressLocality":"Dar es Salaam","addressCountry":"TZ"}}
-  </script>
+  {% block head %}{% endblock %}
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"NGO","name":"{{ site.org_name|escapejs }}","alternateName":"{{ site.short_name|escapejs }}","url":"{{ site_url }}/","logo":"{{ site_url }}{% static 'img/icon-192.png' %}"{% if site.email %},"email":"{{ site.email|escapejs }}"{% endif %}{% if site.phone %},"telephone":"{{ site.phone|escapejs }}"{% endif %},"address":{"@type":"PostalAddress","addressLocality":"Dar es Salaam","addressCountry":"TZ"}}</script>
 </head>
-<body class="has-hero{% if site.announcement %} has-announce{% endif %} {% block body_class %}{% endblock %}">
-{% include "partials/icons.html" %}
-<a class="skip-link" href="#main">Skip to content</a>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+{% if site.announcement %}<div class="announce">{{ site.announcement }}{% if site.announcement_link %}<a href="{{ site.announcement_link }}">Read more</a>{% endif %}</div>{% endif %}
 
-{% if site.announcement %}
-<div class="announce">{{ site.announcement }}{% if site.announcement_link %} <a href="{{ site.announcement_link }}">Learn more →</a>{% endif %}</div>
-{% endif %}
+<div class="topline label">
+  <div class="wrap">
+    <span>{{ site.location|default:"Dar es Salaam, Tanzania" }}</span>
+    <span>{% if site.registration_number %}Reg. No. <span class="keep-case">{{ site.registration_number }}</span>{% endif %}{% if site.email %} · <a href="mailto:{{ site.email }}">{{ site.email }}</a>{% endif %}</span>
+  </div>
+</div>
 
-{% with url_name=request.resolver_match.url_name %}
-<header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href="{% url 'website:home' %}" aria-label="{{ site.org_name }} — home">
-      <img class="brand-logo" src="{% if site.logo %}{{ site.logo.url }}{% else %}{% static 'img/logo-160.webp' %}{% endif %}" width="50" height="50" alt="{{ site.short_name }} logo">
-      <span class="brand-text"><strong>{{ site.short_name }}</strong><span>Tanzania Organization</span></span>
+{% with u=request.resolver_match.url_name %}
+<header class="masthead">
+  <div class="wrap">
+    <a class="brand" href="{% url 'website:home' %}">
+      <img src="{% if site.logo %}{{ site.logo.url }}{% else %}{% static 'img/logo-160.webp' %}{% endif %}" width="46" height="46" alt="">
+      <span><b>{{ site.short_name }}</b><small>Weka Mazingira Safi</small></span>
     </a>
-
-    <nav class="main-nav" aria-label="Main">
-      <ul class="nav-list">
-        <li class="nav-item">
-          <a class="nav-link {% if url_name in 'about team partners sdgs' %}is-active{% endif %}" href="{% url 'website:about' %}">About {% icon 'chevron-down' %}</a>
-          <div class="dropdown">
-            <a href="{% url 'website:about' %}"><span class="d-icon">{% icon 'leaf' %}</span><span><strong>Who we are</strong><small>Our story, vision, mission and values</small></span></a>
-            <a href="{% url 'website:team' %}"><span class="d-icon">{% icon 'users' %}</span><span><strong>Our team</strong><small>The people behind the work</small></span></a>
-            <a href="{% url 'website:partners' %}"><span class="d-icon">{% icon 'handshake' %}</span><span><strong>Partners</strong><small>Organisations we work with</small></span></a>
-            <a href="{% url 'website:sdgs' %}"><span class="d-icon">{% icon 'globe' %}</span><span><strong>Global goals</strong><small>How we contribute to the SDGs</small></span></a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if url_name in 'focus_list focus_detail project_list project_detail impact' %}is-active{% endif %}" href="{% url 'website:project_list' %}">Our Work {% icon 'chevron-down' %}</a>
-          <div class="dropdown">
-            <a href="{% url 'website:focus_list' %}"><span class="d-icon">{% icon 'target' %}</span><span><strong>Focus areas</strong><small>Where we concentrate our efforts</small></span></a>
-            <a href="{% url 'website:project_list' %}"><span class="d-icon">{% icon 'layers' %}</span><span><strong>Projects</strong><small>Programmes in communities and schools</small></span></a>
-            <a href="{% url 'website:impact' %}"><span class="d-icon">{% icon 'chart' %}</span><span><strong>Our impact</strong><small>Results, figures and milestones</small></span></a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if url_name in 'news_list news_detail media resources gallery' %}is-active{% endif %}" href="{% url 'website:news_list' %}">Resources {% icon 'chevron-down' %}</a>
-          <div class="dropdown">
-            <a href="{% url 'website:news_list' %}"><span class="d-icon">{% icon 'newspaper' %}</span><span><strong>News &amp; stories</strong><small>Updates from the field</small></span></a>
-            <a href="{% url 'website:media' %}"><span class="d-icon">{% icon 'mic' %}</span><span><strong>In the media</strong><small>Press and TV coverage</small></span></a>
-            <a href="{% url 'website:resources' %}"><span class="d-icon">{% icon 'file' %}</span><span><strong>Reports &amp; documents</strong><small>Publications to download</small></span></a>
-            <a href="{% url 'website:gallery' %}"><span class="d-icon">{% icon 'camera' %}</span><span><strong>Photo gallery</strong><small>Moments from our activities</small></span></a>
-          </div>
-        </li>
-        <li class="nav-item"><a class="nav-link {% if url_name == 'get_involved' %}is-active{% endif %}" href="{% url 'website:get_involved' %}">Get Involved</a></li>
-        <li class="nav-item"><a class="nav-link {% if url_name == 'contact' %}is-active{% endif %}" href="{% url 'website:contact' %}">Contact</a></li>
-      </ul>
+    <nav class="nav" aria-label="Main">
+      <a href="{% url 'website:about' %}" class="{% if u == 'about' or u == 'team' or u == 'partners' %}on{% endif %}">About</a>
+      <a href="{% url 'website:focus_list' %}" class="{% if u == 'focus_list' or u == 'focus_detail' or u == 'sdgs' or u == 'impact' %}on{% endif %}">What we do</a>
+      <a href="{% url 'website:project_list' %}" class="{% if u == 'project_list' or u == 'project_detail' %}on{% endif %}">Projects</a>
+      <a href="{% url 'website:news_list' %}" class="{% if u == 'news_list' or u == 'news_detail' %}on{% endif %}">Stories</a>
+      <a href="{% url 'website:media' %}" class="{% if u == 'media' %}on{% endif %}">Press</a>
+      <a href="{% url 'website:gallery' %}" class="{% if u == 'gallery' %}on{% endif %}">Photos</a>
+      <a href="{% url 'website:contact' %}" class="{% if u == 'contact' or u == 'get_involved' %}on{% endif %}">Contact</a>
     </nav>
-
-    <div class="header-actions">
-      <button class="icon-btn" type="button" data-open="search" aria-label="Search the website">{% icon 'search' %}</button>
-      <a class="btn btn-sun btn-sm btn-donate-desktop" href="{% url 'website:donate' %}">{% icon 'heart' %} {{ site.donate_button_text }}</a>
-      <button class="icon-btn menu-toggle" type="button" data-open="drawer" aria-label="Open menu" aria-controls="drawer">{% icon 'menu' %}</button>
+    <div class="mast-actions">
+      <button class="icon-btn" type="button" data-open="search" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+      <a class="btn" href="{% url 'website:donate' %}">{{ site.donate_button_text }}</a>
+      <button class="icon-btn menu-btn" type="button" data-open="menu" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
     </div>
   </div>
 </header>
-
-<div class="drawer" id="drawer" aria-hidden="true">
-  <div class="drawer-backdrop" data-close></div>
-  <div class="drawer-panel" role="dialog" aria-modal="true" aria-label="Menu">
-    <div class="drawer-head">
-      <a class="brand" href="{% url 'website:home' %}"><img class="brand-logo" src="{% static 'img/logo-160.webp' %}" width="44" height="44" alt=""><span class="brand-text"><strong>{{ site.short_name }}</strong></span></a>
-      <button class="icon-btn" type="button" data-close aria-label="Close menu">{% icon 'x' %}</button>
-    </div>
-    <nav class="drawer-nav" aria-label="Mobile">
-      <a href="{% url 'website:home' %}">Home</a>
-      <details><summary>About {% icon 'chevron-down' %}</summary>
-        <a href="{% url 'website:about' %}">Who we are</a><a href="{% url 'website:team' %}">Our team</a>
-        <a href="{% url 'website:partners' %}">Partners</a><a href="{% url 'website:sdgs' %}">Global goals (SDGs)</a>
-      </details>
-      <details><summary>Our Work {% icon 'chevron-down' %}</summary>
-        <a href="{% url 'website:focus_list' %}">Focus areas</a>
-        {% for area in nav_focus_areas %}<a href="{{ area.get_absolute_url }}">— {{ area.title }}</a>{% endfor %}
-        <a href="{% url 'website:project_list' %}">Projects</a><a href="{% url 'website:impact' %}">Our impact</a>
-      </details>
-      <details><summary>Resources {% icon 'chevron-down' %}</summary>
-        <a href="{% url 'website:news_list' %}">News &amp; stories</a><a href="{% url 'website:media' %}">In the media</a>
-        <a href="{% url 'website:resources' %}">Reports &amp; documents</a><a href="{% url 'website:gallery' %}">Photo gallery</a>
-      </details>
-      <a href="{% url 'website:get_involved' %}">Get Involved</a>
-      <a href="{% url 'website:contact' %}">Contact</a>
-    </nav>
-    <div class="drawer-foot">
-      <a class="btn btn-sun btn-block" href="{% url 'website:donate' %}">{% icon 'heart' %} {{ site.donate_button_text }}</a>
-      {% if site.phone %}<a class="btn btn-ghost btn-block" href="{{ site.phone|tel_link }}">{% icon 'phone' %} {{ site.phone }}</a>{% endif %}
-    </div>
-  </div>
-</div>
 {% endwith %}
 
-<div class="search-overlay" id="search" aria-hidden="true" role="dialog" aria-label="Search">
-  <form class="search-box" action="{% url 'website:search' %}" method="get" role="search">
-    {% icon 'search' %}
-    <input type="search" name="q" placeholder="Search projects, news, reports…" aria-label="Search" autocomplete="off">
-    <button class="btn btn-primary btn-sm" type="submit">Search</button>
-    <button class="icon-btn" type="button" data-close aria-label="Close search">{% icon 'x' %}</button>
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="menu-head">
+    <a class="brand" href="{% url 'website:home' %}"><img src="{% static 'img/logo-160.webp' %}" width="40" height="40" alt=""><span><b>{{ site.short_name }}</b></span></a>
+    <button class="icon-btn" type="button" data-close aria-label="Close menu"><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
+  </div>
+  <nav aria-label="Mobile">
+    <a href="{% url 'website:about' %}">About</a>
+    <a href="{% url 'website:focus_list' %}">What we do</a>
+    <a href="{% url 'website:project_list' %}">Projects</a>
+    <a href="{% url 'website:news_list' %}">Stories</a>
+    <a href="{% url 'website:media' %}">Press</a>
+    <a href="{% url 'website:gallery' %}">Photographs</a>
+    <a href="{% url 'website:team' %}">Team</a>
+    <a href="{% url 'website:get_involved' %}">Get involved</a>
+    <a href="{% url 'website:contact' %}">Contact</a>
+  </nav>
+  <div class="menu-foot">
+    <a class="btn" href="{% url 'website:donate' %}">{{ site.donate_button_text }}</a>
+    {% if site.phone %}<a class="btn btn-line" href="{{ site.phone|tel_link }}">Call {{ site.phone }}</a>{% endif %}
+  </div>
+</div>
+
+<div class="search-panel" id="search" role="dialog" aria-label="Search">
+  <form class="search-form" action="{% url 'website:search' %}" method="get" role="search">
+    <label class="sr-only" for="q">Search</label>
+    <input id="q" type="search" name="q" placeholder="Search the site" autocomplete="off">
+    <button class="btn" type="submit">Search</button>
   </form>
 </div>
 
-<main id="main">
-{% block content %}{% endblock %}
-</main>
+<main id="main">{% block content %}{% endblock %}</main>
 
-{% block newsletter %}
-<section class="newsletter-band" id="newsletter">
-  <div class="container">
-    <div class="newsletter-card reveal">
-      <div>
-        <h2>{{ site.newsletter_title }}</h2>
-        <p>{{ site.newsletter_text|default:"Field stories, project updates and opportunities to take part — straight to your inbox. No spam, ever." }}</p>
-      </div>
-      <div>
-        <form class="subscribe-form" action="{% url 'website:subscribe' %}" method="post" data-subscribe>
-          <input type="hidden" name="next" value="{{ request.path }}">
-          <div class="hp" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
-          <label class="sr-only" for="nl-email">Email address</label>
-          <input id="nl-email" type="email" name="email" placeholder="Your email address" required autocomplete="email">
-          <button class="btn btn-sun" type="submit">Subscribe {% icon 'send' %}</button>
-        </form>
-        <p class="subscribe-note" aria-live="polite">{% if request.GET.subscribed == 'ok' %}Thank you! You are now subscribed to WEMASA updates.{% elif request.GET.subscribed %}Please enter a valid email address.{% endif %}</p>
-      </div>
+<section class="letter" id="newsletter">
+  <div class="wrap">
+    <div class="letter-text">
+      <h2 class="h2">{{ site.newsletter_title }}</h2>
+      {% if site.newsletter_text %}<p>{{ site.newsletter_text }}</p>{% endif %}
+    </div>
+    <div class="letter-form">
+      <form action="{% url 'website:subscribe' %}" method="post" data-subscribe>
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <div class="hp" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
+        <label class="sr-only" for="nl-email">Email address</label>
+        <input id="nl-email" type="email" name="email" placeholder="Your email address" required autocomplete="email">
+        <button class="link" type="submit">Subscribe</button>
+      </form>
+      <p class="note label" id="letter-note" aria-live="polite">{% if request.GET.subscribed == 'ok' %}Thank you. You are on the list.{% elif request.GET.subscribed %}That email address does not look right.{% endif %}</p>
     </div>
   </div>
 </section>
-{% endblock %}
 
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a class="brand" href="{% url 'website:home' %}"><img class="brand-logo" src="{% static 'img/logo-160.webp' %}" width="56" height="56" alt="" loading="lazy"><span class="brand-text"><strong>{{ site.short_name }}</strong><span>Tanzania Organization</span></span></a>
-        <p>{{ site.footer_about|default:site.tagline }}</p>
-        {% if site.social_links %}
-        <div class="socials">{% for s in site.social_links %}<a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="{{ s.name }}">{% icon s.icon %}</a>{% endfor %}</div>
-        {% endif %}
+<footer class="footer">
+  <div class="wrap">
+    <p class="foot-name">Weka Mazingira <em>Safi</em></p>
+    <div class="foot-cols">
+      <div>
+        <span class="label">{{ site.org_name }}</span>
+        <p>{{ site.footer_about }}</p>
       </div>
       <div>
-        <h4>Organisation</h4>
-        <ul class="footer-links">
-          <li><a href="{% url 'website:about' %}">About us</a></li>
-          <li><a href="{% url 'website:team' %}">Our team</a></li>
+        <span class="label">Organisation</span>
+        <ul>
+          <li><a href="{% url 'website:about' %}">About</a></li>
+          <li><a href="{% url 'website:team' %}">Team</a></li>
           <li><a href="{% url 'website:partners' %}">Partners</a></li>
-          <li><a href="{% url 'website:sdgs' %}">Global goals</a></li>
+          <li><a href="{% url 'website:resources' %}">Reports</a></li>
+          <li><a href="{% url 'website:sdgs' %}">The SDGs</a></li>
+        </ul>
+      </div>
+      <div>
+        <span class="label">Work</span>
+        <ul>
+          <li><a href="{% url 'website:project_list' %}">Projects</a></li>
+          <li><a href="{% url 'website:impact' %}">Results</a></li>
+          <li><a href="{% url 'website:news_list' %}">Stories</a></li>
           <li><a href="{% url 'website:get_involved' %}">Get involved</a></li>
           <li><a href="{% url 'website:donate' %}">Donate</a></li>
         </ul>
       </div>
       <div>
-        <h4>Our work</h4>
-        <ul class="footer-links">
-          {% for area in nav_focus_areas|slice:":5" %}<li><a href="{{ area.get_absolute_url }}">{{ area.title }}</a></li>{% endfor %}
-          <li><a href="{% url 'website:project_list' %}">All projects</a></li>
-          <li><a href="{% url 'website:media' %}">In the media</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Get in touch</h4>
-        <ul class="footer-contact">
-          {% if site.location or site.address %}<li>{% icon 'map-pin' %}<span>{% if site.location %}{{ site.location }}<br>{% endif %}{{ site.address }}</span></li>{% endif %}
-          {% if site.phone %}<li>{% icon 'phone' %}<a href="{{ site.phone|tel_link }}">{{ site.phone }}</a></li>{% endif %}
-          {% if site.email %}<li>{% icon 'mail' %}<a href="mailto:{{ site.email }}">{{ site.email }}</a></li>{% endif %}
-          {% if site.office_hours %}<li>{% icon 'clock' %}<span>{{ site.office_hours }}</span></li>{% endif %}
+        <span class="label">Contact</span>
+        <ul>
+          {% if site.location %}<li>{{ site.location }}</li>{% endif %}
+          {% if site.address %}<li>{{ site.address }}</li>{% endif %}
+          {% if site.phone %}<li><a href="{{ site.phone|tel_link }}">{{ site.phone }}</a></li>{% endif %}
+          {% if site.email %}<li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>{% endif %}
+          {% for s in site.social_links %}<li><a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.name }}</a></li>{% endfor %}
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© {% now "Y" %} {{ site.org_name }}. All rights reserved.</span>
-      {% if site.registration_number %}<span class="reg">{% icon 'shield' %} Reg. No. {{ site.registration_number }}{% if site.registration_note %} · {{ site.registration_note }}{% endif %}</span>{% endif %}
+    <div class="foot-base label">
+      <span>© {% now "Y" %} {{ site.org_name }}</span>
+      {% if site.registration_number %}<span>Registered NGO · <span class="keep-case">{{ site.registration_number }}</span></span>{% endif %}
     </div>
   </div>
 </footer>
 
-<div class="float-actions">
-  {% if site.whatsapp %}<a class="fab fab-wa" href="{{ site.whatsapp|whatsapp_link }}" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">{% icon 'whatsapp' %}</a>{% endif %}
-  <button class="fab fab-top" type="button" aria-label="Back to top">{% icon 'arrow-left' cls='rot-up' %}</button>
-</div>
+{% if site.whatsapp %}<a class="wa" href="{{ site.whatsapp|whatsapp_link }}" target="_blank" rel="noopener" aria-label="WhatsApp">WhatsApp <span>us</span></a>{% endif %}
 
-<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Photo viewer">
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Photograph">
   <span class="lb-count"></span>
-  <button class="lb-btn lb-close" type="button" aria-label="Close">{% icon 'x' %}</button>
-  <button class="lb-btn lb-prev" type="button" aria-label="Previous photo">{% icon 'arrow-left' %}</button>
+  <button class="lb-close" type="button" aria-label="Close">✕</button>
+  <button class="lb-prev" type="button" aria-label="Previous">←</button>
   <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="">
-  <button class="lb-btn lb-next" type="button" aria-label="Next photo">{% icon 'arrow-right' %}</button>
+  <button class="lb-next" type="button" aria-label="Next">→</button>
   <p class="lb-caption"></p>
 </div>
-
-{% block modals %}{% endblock %}
 <script src="{% static 'js/site.js' %}" defer></script>
 </body>
 </html>

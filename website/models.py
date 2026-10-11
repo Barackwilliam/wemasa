@@ -512,7 +512,8 @@ class TeamMember(OptimisedImagesMixin, Orderable):
 class Partner(OptimisedImagesMixin, Orderable):
     image_sizes = {"logo": 600}
     CATEGORIES = [
-        ("funding", "Funding partner"), ("government", "Government"), ("corporate", "Corporate partner"),
+        ("funding", "Funding partner"), ("international", "International organisation"), ("government", "Government"),
+        ("corporate", "Corporate partner"),
         ("ngo", "Civil society"), ("community", "Community partner"), ("media", "Media partner"),
     ]
 

@@ -17,10 +17,11 @@ from django.utils import timezone
 from website import models as m
 
 SEED_DIR = Path(settings.BASE_DIR) / "seed" / "images"
+DOCS_DIR = Path(settings.BASE_DIR) / "seed" / "documents"
 
 
-def photo(name):
-    path = SEED_DIR / name
+def photo(name, folder=SEED_DIR):
+    path = folder / name
     if not path.exists():
         return None
     return File(path.open("rb"), name=path.name)
@@ -278,6 +279,8 @@ MILESTONES = [
      "Programmes expand to climate awareness in 8 Temeke secondary schools, tree planting in schools, organic farming training and environmental data mapping."),
     ("2026", "First workshop for women environment journalists",
      "On 11 March 2026, as part of International Women’s Day, WEMASA hosts its first workshop for young girls and women environment journalists — covered by national TV, newspapers and online media."),
+    ("2026", "World Cleanup Day with UNESCO",
+     "On 21 September 2026, WEMASA and UNESCO Tanzania lead a cleanup and a waste and brand audit at Mbezi Beach, Dar es Salaam."),
 ]
 
 FOCUS = [
@@ -335,6 +338,53 @@ WORKSHOP_PHOTOS = [
     ("workshop-09.webp", "Women journalists at the workshop"),
     ("workshop-11.webp", "Participants following a session"),
 ]
+
+# Photos are (file name, caption). An empty caption shows the album name instead.
+COMMUNITY_CLEANUP_PHOTOS = [
+    ("community-01.webp", "Residents sweeping a market street during a community cleanup"),
+    ("community-02.webp", "Clearing waste from a blocked drain"),
+    ("community-03.webp", "Volunteers and residents at a market cleanup"),
+    ("community-04.webp", "Community members joining the cleanup"),
+    ("community-05.webp", "A drain choked with plastic waste"),
+    ("community-06.webp", "Volunteers getting ready for a community cleanup"),
+    ("community-07.webp", "“Weka taka hapa” (put waste here) bins for the community"),
+    ("community-08.webp", "Bags of waste collected by volunteers"),
+]
+
+BEACH_CLEANUP_PHOTOS = [
+    ("beach-01.webp", "Volunteers with the bags of waste they collected"),
+    ("beach-02.webp", "Volunteers after a beach cleanup"),
+    ("beach-03.webp", "Volunteers spread out along the beach"),
+    ("beach-04.webp", "Picking up plastic from the shoreline"),
+] + [("beach-%02d.webp" % i, "") for i in range(5, 17)]
+
+WABA_PHOTOS = [
+    ("waba-01.webp", "Sorting collected waste by type and brand"),
+    ("waba-02.webp", "Syringes found during a waste audit"),
+    ("waba-03.webp", "Volunteers recording the brands found in the waste"),
+    ("waba-04.webp", "Checking a package to record its brand"),
+    ("waba-05.webp", "Sorting beach waste for an audit"),
+    ("waba-06.webp", "Auditing waste on the shore"),
+    ("waba-07.webp", "Plastic containers sorted for counting"),
+    ("waba-08.webp", "Waste laid out by category for the audit"),
+]
+
+WORLD_CLEANUP_DAY_PHOTOS = [
+    ("wcd2026-01.webp", "Volunteers and UNESCO staff sorting a sample of the waste at Mbezi Beach"),
+    ("wcd2026-02.webp", "Sorting waste for the waste and brand audit"),
+    ("wcd2026-03.webp", "A sample of the waste collected on Mbezi Beach"),
+    ("wcd2026-04.webp", "Clearing tangled waste from the beach"),
+    ("wcd2026-05.webp", "Filling bags with waste on Mbezi Beach"),
+]
+
+WORKSHOP_PARTNERS = [
+    "Lake Group", "Taifa Gas", "Nabaki Afrika", "Tanzania Coffee Board", "Kilimani Yetu Organization",
+    "Tanga Women's Gala", "Mazingira Konekti", "Stara Fashion Week", "SB Plastics EPZ Ltd", "UTT AMIS",
+    "Tanzania Human Rights Defenders Coalition (THRDC)",
+]
+
+WORKSHOP_REPORT = "1st Workshop for Young Girls and Women Environment Journalists: Report"
+CLEANUP_DAY_REPORT = "World Cleanup Day 2026: Mbezi Beach Cleanup Report"
 
 PROJECTS = [
     {
@@ -429,6 +479,59 @@ PROJECTS = [
         "album": "Community cleanups",
     },
     {
+        "title": "World Cleanup Day 2026: Mbezi Beach Cleanup",
+        "focus": "Waste Management & Community Cleanups", "status": "completed", "cover": "wcd2026-01.webp",
+        "location": "Rainbow Beach (Mbezi Beach), Dar es Salaam", "period": "21 September 2026",
+        "beneficiaries": "Mbezi Beach community and volunteers",
+        "summary": "With UNESCO Tanzania, more than 45 volunteers cleared 250 kg of waste from Mbezi Beach on World Cleanup Day 2026, then audited it to see what it was and where it came from.",
+        "description": (
+            "<p>On <strong>21 September 2026</strong>, for World Cleanup Day (theme: <em>“Strive for Five: From Clean "
+            "Plates to Clean Cities”</em>), <strong>UNESCO Tanzania</strong> and WEMASA organised a cleanup at Rainbow "
+            "Beach (Mbezi Beach) in Dar es Salaam.</p>"
+            "<p>Over five hours, more than 45 volunteers, working with local community groups, filled "
+            "<strong>50 bags with 250 kg of waste</strong>.</p>"
+            "<p>A waste and brand audit of a 5% sample (5 full bags) found plastic bags were the most common item "
+            "(150), followed by other plastic bottles (67) and baby diapers (35). MeTL, mainly through Mo Extra drinks, "
+            "was the leading brand, followed by Mango Juice by U-Fresh Food Ltd and Tanga Fresh by Tanga Fresh Limited.</p>"
+            "<p>A cleanup alone cannot fix the root causes of waste pollution. WEMASA is building on the day with "
+            "year-round education, community mobilisation and data, so that beaches like Mbezi stay clean.</p>"
+        ),
+        "outcomes": (
+            "50 bags of waste (250 kg) removed from Mbezi Beach\n"
+            "Waste and brand audit carried out on a 5% sample of the waste\n"
+            "Plastic bags identified as the most common item, and MeTL as the leading brand"
+        ),
+        "stats": [("45+", "Volunteers"), ("50", "Bags of waste"), ("250 kg", "Waste collected")],
+        "photos": WORLD_CLEANUP_DAY_PHOTOS,
+        "album": "World Cleanup Day 2026",
+        "partners": ["UNESCO Tanzania"],
+        "report": CLEANUP_DAY_REPORT,
+    },
+    {
+        "title": "Waste and Brand Audits (WABA)",
+        "focus": "Waste Management & Community Cleanups", "status": "ongoing", "cover": "waba-01.webp",
+        "location": "Dar es Salaam", "beneficiaries": "Communities, local authorities and producers",
+        "summary": "After a cleanup we sort and count the waste and record the brand on each item, to show what pollutes our streets and beaches and who produces it.",
+        "description": (
+            "<p>A cleanup removes waste; an audit explains it. In a Waste and Brand Audit (WABA), volunteers take a "
+            "sample of the waste collected, sort it by type and record the brand on every item they can identify.</p>"
+            "<p>The results show which kinds of waste are most common and whose products end up in the environment "
+            "most often. WEMASA uses this evidence in awareness work, in discussions with local authorities and to "
+            "call on producers to take responsibility for their packaging.</p>"
+            "<p>At Mbezi Beach on World Cleanup Day 2026, an audit of 5 sample bags counted 150 plastic bags, 67 other "
+            "plastic bottles and 35 baby diapers. The leading brands were MeTL (mainly Mo Extra drinks), U-Fresh Food Ltd "
+            "(Mango Juice) and Tanga Fresh Limited.</p>"
+        ),
+        "outcomes": (
+            "Collected waste sorted and counted by type\n"
+            "Brands identified on the waste found\n"
+            "Evidence for producers, local authorities and communities"
+        ),
+        "stats": [("150", "Plastic bags in a 5-bag sample at Mbezi Beach"), ("3", "Leading polluting brands named")],
+        "photos": WABA_PHOTOS,
+        "album": "Waste and brand audits",
+    },
+    {
         "title": "1st Workshop for Young Girls and Women Environment Journalists",
         "focus": "Women & Media for the Environment", "status": "completed", "cover": "workshop-01.webp",
         "location": "Dar es Salaam", "period": "11 March 2026", "beneficiaries": "Young women journalists",
@@ -450,6 +553,8 @@ PROJECTS = [
         "stats": [("1st", "Edition of the workshop"), ("10+", "Media outlets covered it")],
         "photos": ["workshop-01.webp"] + WORKSHOP_PHOTOS,
         "album": "Women journalists workshop",
+        "partners": WORKSHOP_PARTNERS,
+        "report": WORKSHOP_REPORT,
     },
     {
         "title": "Food Vendors Cooking Energy Mapping",
@@ -492,7 +597,12 @@ PROJECTS = [
     },
 ]
 
-EXTRA_ALBUMS = [("Community tree planting", ["trees-community-0%d.webp" % i for i in range(1, 5)])]
+# Albums added once, when no photo has that album name yet: (album, project title or "", photos).
+EXTRA_ALBUMS = [
+    ("Community tree planting", "", ["trees-community-0%d.webp" % i for i in range(1, 5)]),
+    ("Community cleanup engagement", "Beach & Community Cleanups", COMMUNITY_CLEANUP_PHOTOS),
+    ("Beach cleanups", "Beach & Community Cleanups", BEACH_CLEANUP_PHOTOS),
+]
 
 IMPACT = [
     (3700, "+", "Students reached", "Climate change awareness sessions in 8 secondary schools in Temeke", "graduation", True),
@@ -540,14 +650,36 @@ TEAM = [
      "part in programmes and environmental action."),
 ]
 
+# (name, category, logo in seed/images/partners/)
 PARTNERS = [
-    ("Global Fund for Women", "funding"),
-    ("Temeke Municipal Council", "government"),
-    ("Taifa Gas", "corporate"),
-    ("Lake Group", "corporate"),
-    ("SP Plastics", "corporate"),
-    ("Nabaki Afrika", "ngo"),
-    ("Tanga Women's Gala", "community"),
+    ("Global Fund for Women", "funding", "global-fund-for-women.webp"),
+    ("UNESCO Tanzania", "international", "unesco.webp"),
+    ("Government of the United Republic of Tanzania", "government", "tanzania-government.webp"),
+    ("National Environment Management Council (NEMC)", "government", "nemc.webp"),
+    ("Temeke Municipal Council", "government", ""),
+    ("Tanzania Coffee Board", "government", ""),
+    ("Taifa Gas", "corporate", ""),
+    ("Lake Group", "corporate", ""),
+    ("SB Plastics EPZ Ltd", "corporate", "sb-plastics.webp"),
+    ("UTT AMIS", "corporate", ""),
+    ("Stara Fashion Week", "corporate", ""),
+    ("Nabaki Afrika", "ngo", ""),
+    ("Tanzania Human Rights Defenders Coalition (THRDC)", "ngo", ""),
+    ("Kilimani Yetu Organization", "ngo", ""),
+    ("Mazingira Konekti", "ngo", ""),
+    ("Tanga Women's Gala", "community", ""),
+]
+
+# (title, category, file in seed/documents/, cover, published on, description)
+RESOURCES = [
+    (WORKSHOP_REPORT, "project", "womens-journalists-workshop-report-2026.pdf",
+     "womens-journalists-workshop-report-2026.webp", datetime.date(2026, 3, 11),
+     "How WEMASA trained 30 young women journalists from more than 25 media houses to report on climate and the "
+     "environment, for International Women’s Day 2026."),
+    (CLEANUP_DAY_REPORT, "project", "world-cleanup-day-2026-report.pdf",
+     "world-cleanup-day-2026-report.webp", datetime.date(2026, 9, 21),
+     "The UNESCO Tanzania and WEMASA cleanup at Mbezi Beach: 45+ volunteers, 250 kg of waste, and what the waste "
+     "and brand audit found."),
 ]
 
 MEDIA = [
@@ -574,6 +706,32 @@ MEDIA = [
 ]
 
 NEWS = [
+    {
+        "title": "WEMASA and UNESCO clean up Mbezi Beach for World Cleanup Day 2026",
+        "category": "event", "cover": "wcd2026-04.webp", "featured": False,
+        "date": datetime.datetime(2026, 9, 21, 16, 0),
+        "project": "World Cleanup Day 2026: Mbezi Beach Cleanup",
+        "excerpt": "More than 45 volunteers collected 50 bags (250 kg) of waste from Mbezi Beach, then audited a sample to find out what it was and which brands it came from.",
+        "body": (
+            "<p>On 21 September 2026, UNESCO Tanzania and WEMASA marked World Cleanup Day with a cleanup at Rainbow Beach "
+            "(Mbezi Beach) in Dar es Salaam. The theme this year was <em>“Strive for Five: From Clean Plates to Clean "
+            "Cities”</em>.</p>"
+            "<p>From 7 am to midday, more than 45 volunteers, UNESCO staff and local community groups combed the beach "
+            "and filled 50 bags with 250 kg of waste.</p>"
+            "<h2>What the audit found</h2>"
+            "<p>Volunteers then carried out a waste and brand audit on a 5% sample of the waste (5 full bags). Plastic "
+            "bags were by far the most common item, with 150 counted, followed by other plastic bottles (67) and baby "
+            "diapers (35).</p>"
+            "<p>The brand count put MeTL first, mainly because of Mo Extra drinks, followed by Mango Juice from U-Fresh "
+            "Food Ltd and Tanga Fresh from Tanga Fresh Limited.</p>"
+            "<h2>Beyond one day</h2>"
+            "<p>Cleanups alone cannot solve waste pollution. Figures like these give communities, local authorities and "
+            "producers evidence to act on, and WEMASA will keep up year-round education, community mobilisation and data "
+            "collection so the movement lasts beyond World Cleanup Day.</p>"
+            "<p>Thank you to UNESCO Tanzania, local government authorities, community leaders, volunteers, youth and media "
+            "partners who made the day a success. Asante sana!</p>"
+        ),
+    },
     {
         "title": "WEMASA hosts first workshop for young girls and women environment journalists",
         "category": "event", "cover": "workshop-01.webp", "featured": True,
@@ -684,9 +842,29 @@ class Command(BaseCommand):
                 area.save()
             focus_by_title[title] = area
 
+        # The first version of this file misspelt SB Plastics.
+        if not m.Partner.objects.filter(name="SB Plastics EPZ Ltd").exists():
+            m.Partner.objects.filter(name="SP Plastics").update(name="SB Plastics EPZ Ltd")
         partners = {}
-        for order, (name, category) in enumerate(PARTNERS):
-            partners[name], _ = m.Partner.objects.get_or_create(name=name, defaults={"category": category, "order": order})
+        for order, (name, category, logo) in enumerate(PARTNERS):
+            partner, _ = m.Partner.objects.get_or_create(name=name, defaults={"category": category, "order": order})
+            if set_images(partner, logo=f"partners/{logo}" if logo else ""):
+                partner.save()
+            partners[name] = partner
+
+        resources = {}
+        for title, category, filename, cover, date, description in RESOURCES:
+            resource = m.Resource.objects.filter(title=title).first()
+            if not resource:
+                f = photo(filename, DOCS_DIR)
+                if not f:
+                    continue
+                resource = m.Resource(title=title, category=category, published_on=date, description=description)
+                resource.file.save(f.name, f, save=False)
+                f.close()
+                set_images(resource, cover=f"../documents/{cover}")
+                resource.save()
+            resources[title] = resource
 
         projects = {}
         for order, data in enumerate(PROJECTS):
@@ -696,6 +874,12 @@ class Command(BaseCommand):
                 "beneficiaries": data["beneficiaries"], "outcomes": data["outcomes"], "order": order,
             })
             projects[project.title] = project
+            # Partners and the report are also filled in on projects that already exist, if still empty.
+            if data.get("partners") and not project.partners.exists():
+                project.partners.set([partners[name] for name in data["partners"]])
+            if data.get("report") in resources and not project.report_id:
+                project.report = resources[data["report"]]
+                project.save(update_fields=["report"])
             if not created:
                 continue
             if set_images(project, cover=data["cover"]):
@@ -706,10 +890,11 @@ class Command(BaseCommand):
                 name, caption = name if isinstance(name, tuple) else (name, "")
                 self.add_photo(name, project=project, album=data.get("album", ""), caption=caption, order=i)
 
-        for album, names in EXTRA_ALBUMS:
+        for album, project_title, names in EXTRA_ALBUMS:
             if not m.GalleryImage.objects.filter(album=album).exists():
                 for i, name in enumerate(names):
-                    self.add_photo(name, album=album, order=100 + i)
+                    name, caption = name if isinstance(name, tuple) else (name, "")
+                    self.add_photo(name, album=album, caption=caption, project=projects.get(project_title), order=100 + i)
 
         for order, (value, suffix, label, desc, icon, home) in enumerate(IMPACT):
             m.ImpactStat.objects.get_or_create(label=label, defaults={

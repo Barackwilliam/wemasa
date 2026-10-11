@@ -1,7 +1,7 @@
 from django.db import migrations
 from django.db.models import Max
 
-from website.management.commands.seed_content import WORKSHOP_PHOTOS, photo
+from website.management.commands.seed_content import WORKSHOP_PHOTOS, photo, upload
 
 PROJECT = "1st Workshop for Young Girls and Women Environment Journalists"
 ALBUM = "Women journalists workshop"
@@ -21,9 +21,8 @@ def add_workshop_photos(apps, schema_editor):
         if not f:
             continue
         img = GalleryImage(project=project, album=ALBUM, caption=caption, order=order + i)
-        img.image.save(f.name, f, save=False)
-        f.close()
-        img.save()
+        if upload(img.image, f):
+            img.save()
 
 
 class Migration(migrations.Migration):

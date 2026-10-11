@@ -322,6 +322,20 @@ FOCUS = [
      "national television, newspapers and online media.</p>"),
 ]
 
+# Photos from the women journalists workshop, 11 March 2026 (name, caption).
+WORKSHOP_PHOTOS = [
+    ("workshop-10.webp", "A WEMASA session marking International Women’s Day 2026"),
+    ("workshop-04.webp", "A session on why so few Tanzanian households cook with gas"),
+    ("workshop-03.webp", "Women journalists during a session on clean cooking energy"),
+    ("workshop-05.webp", "A session on saving and investing"),
+    ("workshop-02.webp", "Participants and facilitators at the workshop"),
+    ("workshop-06.webp", "Women journalists at the workshop"),
+    ("workshop-07.webp", "Women journalists at the workshop"),
+    ("workshop-08.webp", "Participants at the workshop"),
+    ("workshop-09.webp", "Women journalists at the workshop"),
+    ("workshop-11.webp", "Participants following a session"),
+]
+
 PROJECTS = [
     {
         "title": "Organic Farming Training for Women Vegetable Farmers",
@@ -434,7 +448,7 @@ PROJECTS = [
             "Coverage across national TV, newspapers and online media"
         ),
         "stats": [("1st", "Edition of the workshop"), ("10+", "Media outlets covered it")],
-        "photos": ["workshop-01.webp"],
+        "photos": ["workshop-01.webp"] + WORKSHOP_PHOTOS,
         "album": "Women journalists workshop",
     },
     {
@@ -689,7 +703,8 @@ class Command(BaseCommand):
             for i, (value, label) in enumerate(data["stats"]):
                 m.ProjectStat.objects.create(project=project, value=value, label=label, order=i)
             for i, name in enumerate(data["photos"]):
-                self.add_photo(name, project=project, album=data.get("album", ""), order=i)
+                name, caption = name if isinstance(name, tuple) else (name, "")
+                self.add_photo(name, project=project, album=data.get("album", ""), caption=caption, order=i)
 
         for album, names in EXTRA_ALBUMS:
             if not m.GalleryImage.objects.filter(album=album).exists():

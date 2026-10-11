@@ -249,7 +249,7 @@ def team(request):
 def partners(request):
     items = list(Partner.objects.published())
     titles = {
-        "funding": "Funding partners", "government": "Government partners", "corporate": "Corporate partners",
+        "funding": "Funding partners", "international": "International partners", "government": "Government partners", "corporate": "Corporate partners",
         "ngo": "Civil society partners", "community": "Community partners", "media": "Media partners",
     }
     groups = []

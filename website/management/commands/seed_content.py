@@ -6,6 +6,7 @@ overwrites edits made in the dashboard. Use --reset to wipe all website
 content and start again from this file.
 """
 import datetime
+import sys
 from pathlib import Path
 
 from django.conf import settings
@@ -27,15 +28,25 @@ def photo(name, folder=SEED_DIR):
     return File(path.open("rb"), name=path.name)
 
 
+def upload(field_file, f):
+    """Store a seed file. A file the storage refuses is skipped with a warning, so it cannot stop a deploy."""
+    try:
+        field_file.save(f.name, f, save=False)
+        return True
+    except Exception as exc:
+        print(f"Warning: could not upload {f.name} ({exc}); skipped.", file=sys.stderr)
+        return False
+    finally:
+        f.close()
+
+
 def set_images(obj, **images):
     """Attach seed images to empty image fields only."""
     changed = False
     for field, name in images.items():
         if name and not getattr(obj, field):
             f = photo(name)
-            if f:
-                getattr(obj, field).save(f.name, f, save=False)
-                f.close()
+            if f and upload(getattr(obj, field), f):
                 changed = True
     return changed
 
@@ -860,8 +871,8 @@ class Command(BaseCommand):
                 if not f:
                     continue
                 resource = m.Resource(title=title, category=category, published_on=date, description=description)
-                resource.file.save(f.name, f, save=False)
-                f.close()
+                if not upload(resource.file, f):
+                    continue
                 set_images(resource, cover=f"../documents/{cover}")
                 resource.save()
             resources[title] = resource
@@ -938,6 +949,5 @@ class Command(BaseCommand):
         if not f:
             return
         img = m.GalleryImage(order=order, **fields)
-        img.image.save(f.name, f, save=False)
-        f.close()
-        img.save()
+        if upload(img.image, f):
+            img.save()

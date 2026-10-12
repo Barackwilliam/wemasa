@@ -4,23 +4,51 @@
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
 {% include "partials/page_hero.html" %}
-<section class="section">
-  <div class="container" style="display:grid;gap:clamp(40px,5vw,64px)">
-    {% for g in groups %}
-    <div>
-      <h2 class="group-title reveal">{{ g.label }}</h2>
-      <div class="grid grid-3">
-        {% for p in g.partners %}
-        <article class="card card-hover partner-tile reveal" style="justify-content:flex-start">
-          {% if p.logo %}<img src="{{ p.logo.url }}" alt="{{ p.name }}" loading="lazy">{% else %}<span class="monogram">{{ p.initials }}</span>{% endif %}
-          <span class="partner-name">{% if p.website %}<a class="card-link" href="{{ p.website }}" target="_blank" rel="noopener" style="color:inherit">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}<small>{{ p.description|default:g.label }}</small></span>
-        </article>
-        {% endfor %}
+<section class="section pt-section">
+  <div class="container">
+    {% if groups %}
+    <div class="pt-intro reveal">
+      <div>
+        <span class="eyebrow">Our network</span>
+        <h2 class="pt-intro-title"><span class="pt-count">{{ count }}</span> organisations, one shared mission</h2>
+        <p>Government institutions, international bodies, businesses and community groups stand with WEMASA to keep Tanzania clean and green.</p>
+      </div>
+      <div class="pt-filters" role="group" aria-label="Filter partners">
+        <button type="button" class="is-active" data-filter="all" aria-pressed="true">All <span>{{ count }}</span></button>
+        {% for g in groups %}<button type="button" data-filter="{{ g.key }}" aria-pressed="false">{{ g.label|cut:" partners" }} <span>{{ g.partners|length }}</span></button>{% endfor %}
       </div>
     </div>
-    {% empty %}
+    <div class="pt-grid" id="partner-grid">
+      {% for g in groups %}{% for p in g.partners %}
+      <article class="pt-card reveal" data-group="{{ g.key }}">
+        <div class="pt-stage{% if not p.logo %} pt-stage-empty{% endif %}">
+          {% if p.logo %}<img src="{{ p.logo.url }}" alt="{{ p.name }} logo" loading="lazy" decoding="async">{% else %}<span class="pt-monogram" aria-hidden="true">{{ p.initials }}</span>{% endif %}
+        </div>
+        <div class="pt-meta">
+          <span class="pt-tag">{{ g.label|cut:" partners" }}</span>
+          <h3>{% if p.website %}<a class="card-link" href="{{ p.website }}" target="_blank" rel="noopener">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}</h3>
+          {% if p.description %}<p>{{ p.description }}</p>{% endif %}
+          {% if p.website %}<span class="pt-visit">Visit website {% icon 'arrow-right' %}</span>{% endif %}
+        </div>
+      </article>
+      {% endfor %}{% endfor %}
+    </div>
+    <script>
+      (function () {
+        var buttons = document.querySelectorAll(".pt-filters button");
+        var cards = document.querySelectorAll("#partner-grid .pt-card");
+        buttons.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var f = btn.getAttribute("data-filter");
+            buttons.forEach(function (b) { var on = b === btn; b.classList.toggle("is-active", on); b.setAttribute("aria-pressed", on); });
+            cards.forEach(function (c) { c.hidden = f !== "all" && c.getAttribute("data-group") !== f; });
+          });
+        });
+      })();
+    </script>
+    {% else %}
       {% include "partials/empty.html" with icon_name="handshake" title="Partners" text="Our partners will be listed here." %}
-    {% endfor %}
+    {% endif %}
   </div>
 </section>
 <section class="section bg-mist">

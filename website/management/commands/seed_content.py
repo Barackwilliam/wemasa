@@ -644,7 +644,7 @@ TEAM = [
     ("Carlos Mdemu", "Training Officer", "staff", "team/carlos-mdemu.webp",
      "Carlos designs and facilitates WEMASA’s trainings and awareness sessions, translating environmental knowledge "
      "into practical learning for communities, students and journalists."),
-    ("Frednand Nseso", "Chief Accountant", "staff", "",
+    ("Frednand Nseso", "Chief Accountant", "staff", "team/frednand-nseso.jpg",
      "Frednand leads WEMASA’s financial management, safeguarding the transparency and accountability that partners "
      "and communities expect."),
     ("Hashim Mapengo", "Data Officer", "staff", "team/hashim-mapengo.webp",
@@ -924,7 +924,8 @@ class Command(BaseCommand):
         for order, (name, role, group, image, bio) in enumerate(TEAM):
             member, created = m.TeamMember.objects.get_or_create(
                 name=name, defaults={"role": role, "group": group, "bio": bio, "order": order})
-            if created and set_images(member, photo=image):
+            # A photo added here later also reaches members that already exist, if they still have none.
+            if set_images(member, photo=image):
                 member.save()
 
         for order, (outlet, kind, headline, date, reporter, excerpt) in enumerate(MEDIA):

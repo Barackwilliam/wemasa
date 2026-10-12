@@ -663,15 +663,15 @@ TEAM = [
 
 # (name, category, logo in seed/images/partners/)
 PARTNERS = [
-    ("Global Fund for Women", "funding", "global-fund-for-women.webp"),
-    ("UNESCO Tanzania", "international", "unesco.webp"),
+    ("Global Fund for Women", "funding", "global-fund-for-women.png"),
+    ("UNESCO Tanzania", "international", "unesco.png"),
     ("Government of the United Republic of Tanzania", "government", "tanzania-government.webp"),
-    ("National Environment Management Council (NEMC)", "government", "nemc.webp"),
+    ("National Environment Management Council (NEMC)", "government", "nemc.png"),
     ("Temeke Municipal Council", "government", ""),
     ("Tanzania Coffee Board", "government", ""),
     ("Taifa Gas", "corporate", ""),
     ("Lake Group", "corporate", ""),
-    ("SB Plastics EPZ Ltd", "corporate", "sb-plastics.webp"),
+    ("SB Plastics EPZ Ltd", "corporate", "sb-plastics.jpg"),
     ("UTT AMIS", "corporate", ""),
     ("Stara Fashion Week", "corporate", ""),
     ("Nabaki Afrika", "ngo", ""),

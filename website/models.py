@@ -688,6 +688,7 @@ class DonationMethod(Orderable):
     account_name = models.CharField(max_length=150, blank=True)
     account_number = models.CharField("Account / till / phone number", max_length=80, blank=True)
     branch = models.CharField(max_length=120, blank=True)
+    branch_code = models.CharField(max_length=30, blank=True)
     swift_code = models.CharField("SWIFT code", max_length=30, blank=True)
     currency = models.CharField(max_length=20, blank=True)
     instructions = models.TextField(blank=True)

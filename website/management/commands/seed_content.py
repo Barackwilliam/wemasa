@@ -644,7 +644,7 @@ TEAM = [
     ("Carlos Mdemu", "Training Officer", "staff", "team/carlos-mdemu.webp",
      "Carlos designs and facilitates WEMASA’s trainings and awareness sessions, translating environmental knowledge "
      "into practical learning for communities, students and journalists."),
-    ("Frednand Nseso", "Chief Accountant", "staff", "",
+    ("Frednand Nseso", "Chief Accountant", "staff", "team/frednand-nseso.jpg",
      "Frednand leads WEMASA’s financial management, safeguarding the transparency and accountability that partners "
      "and communities expect."),
     ("Hashim Mapengo", "Data Officer", "staff", "team/hashim-mapengo.webp",
@@ -789,6 +789,13 @@ NEWS = [
     },
 ]
 
+# (kind, title, account name, account number, branch, branch code, SWIFT, currency, instructions)
+DONATION_METHODS = [
+    ("bank", "Equity Bank", "WEMASA TANZANIA", "3010211798818", "Temeke Branch", "3010", "EQBLTZTZQ", "TZS",
+     "After your transfer, please send the payment slip or confirmation to us on WhatsApp or by email, so that we can "
+     "send you an official receipt."),
+]
+
 INVOLVEMENT = [
     ("Volunteer with us", "hand-heart", "Join cleanups, tree-planting days and community awareness campaigns. No environmental background needed — just energy and commitment.", "Become a volunteer", "/contact/?topic=volunteer"),
     ("Partner with WEMASA", "handshake", "Development partners, businesses and institutions can co-design, fund or scale programmes with measurable community impact.", "Discuss a partnership", "/contact/?topic=partnership"),
@@ -917,7 +924,8 @@ class Command(BaseCommand):
         for order, (name, role, group, image, bio) in enumerate(TEAM):
             member, created = m.TeamMember.objects.get_or_create(
                 name=name, defaults={"role": role, "group": group, "bio": bio, "order": order})
-            if created and set_images(member, photo=image):
+            # A photo added here later also reaches members that already exist, if they still have none.
+            if set_images(member, photo=image):
                 member.save()
 
         for order, (outlet, kind, headline, date, reporter, excerpt) in enumerate(MEDIA):
@@ -933,6 +941,10 @@ class Command(BaseCommand):
             set_images(post, cover=data["cover"])
             post.save()
 
+        self.seed_simple(m.DonationMethod, "title", [
+            {"kind": k, "title": t, "account_name": n, "account_number": no, "branch": b, "branch_code": bc,
+             "swift_code": sw, "currency": c, "instructions": i}
+            for k, t, n, no, b, bc, sw, c, i in DONATION_METHODS])
         self.seed_simple(m.InvolvementOption, "title", [
             {"title": t, "icon": i, "description": d, "button_text": b, "button_url": u} for t, i, d, b, u in INVOLVEMENT])
         self.seed_simple(m.FAQ, "question", [{"question": q, "answer": a} for q, a in FAQS])

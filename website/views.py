@@ -256,7 +256,7 @@ def partners(request):
     for key, label in Partner.CATEGORIES:
         members = [p for p in items if p.category == key]
         if members:
-            groups.append({"label": titles.get(key, label), "partners": members})
+            groups.append({"key": key, "label": titles.get(key, label), "partners": members})
     return render(request, "website/partners.html", {
         "header": page_header("partners"),
         "groups": groups,

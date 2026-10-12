@@ -1,25 +1,39 @@
 {% extends "base.html" %}
-{% load site_tags %}
+{% load site_tags humanize %}
 {% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
 {% include "partials/page_hero.html" %}
-<section class="section">
-  <div class="container">
-    {% section_head "Your gift at work" "Every shilling keeps a community cleaner" "Donations fund training materials, cleanup equipment, tree seedlings and school awareness sessions. We report transparently on how resources are used." %}
-    <div class="grid grid-3" style="margin-bottom:clamp(40px,5vw,72px)">
-      <article class="card value-card reveal"><span class="icon-tile lg">{% icon 'tree' %}</span><h3>Plant trees</h3><p>Provide seedlings and care for school and community tree-planting days.</p></article>
-      <article class="card value-card reveal" style="--d:.08s"><span class="icon-tile lg blue">{% icon 'graduation' %}</span><h3>Educate students</h3><p>Bring climate change awareness sessions to more secondary schools.</p></article>
-      <article class="card value-card reveal" style="--d:.16s"><span class="icon-tile lg sun">{% icon 'sprout' %}</span><h3>Empower farmers</h3><p>Train women farmers to make natural pesticides, boosters and fungicides.</p></article>
+
+{% if bank or mobile or other %}
+<section class="section give-section">
+  <div class="container give-layout">
+    <div class="give-intro reveal">
+      <span class="eyebrow">Give directly</span>
+      <h2>Your support keeps Tanzania <span class="accent">clean and green</span></h2>
+      <p class="lead-text">Every contribution goes straight to WEMASA’s work in communities: cleanups, school climate lessons, tree seedlings and training for women farmers and journalists.</p>
+      <ol class="give-steps">
+        <li><span class="give-step-num">1</span><div><strong>Make a transfer</strong><p>Send any amount to the account shown here, from your bank or mobile banking app.</p></div></li>
+        <li><span class="give-step-num">2</span><div><strong>Send us your payment slip</strong><p>Share the slip or confirmation message with us on WhatsApp or by email.</p></div></li>
+        <li><span class="give-step-num">3</span><div><strong>Receive your receipt</strong><p>We send an official receipt and keep you updated with reports and photos from the field.</p></div></li>
+      </ol>
+      <div class="btn-row">
+        {% if site.whatsapp %}<a class="btn btn-primary" href="{{ site.whatsapp|whatsapp_link }}?text={{ 'Hello WEMASA, I have made a donation. Here is my payment slip:'|urlencode }}" target="_blank" rel="noopener">{% icon 'whatsapp' %} Send slip on WhatsApp</a>{% endif %}
+        {% if site.email %}<a class="btn btn-ghost" href="mailto:{{ site.email }}?subject=Donation%20to%20WEMASA">{% icon 'mail' %} Email us</a>{% endif %}
+      </div>
     </div>
 
-    {% if bank or mobile or other %}
-    <div class="grid grid-2">
-      {% for m in bank %}{% include "website/_donation_card.html" with icon_name="bank" %}{% endfor %}
-      {% for m in mobile %}{% include "website/_donation_card.html" with icon_name="smartphone" %}{% endfor %}
-      {% for m in other %}{% include "website/_donation_card.html" with icon_name="wallet" %}{% endfor %}
+    <div class="give-methods reveal" style="--d:.1s">
+      {% for m in bank %}{% include "website/_donation_card.html" %}{% endfor %}
+      {% for m in mobile %}{% include "website/_donation_card.html" %}{% endfor %}
+      {% for m in other %}{% include "website/_donation_card.html" %}{% endfor %}
+      <p class="give-secure">{% icon 'shield' %} Payments go only to WEMASA’s registered account{% if site.registration_number %} (NGO Reg. No. {{ site.registration_number }}){% endif %}. We never ask for your card details or PIN.</p>
     </div>
-    {% else %}
+  </div>
+</section>
+{% else %}
+<section class="section">
+  <div class="container">
     <div class="cta-band reveal" style="padding:clamp(32px,5vw,56px)">
       <span class="eyebrow eyebrow-light">How to give</span>
       <h2>Contact us to make a donation</h2>
@@ -29,11 +43,28 @@
         {% if site.email %}<a class="btn btn-glass btn-lg" href="mailto:{{ site.email }}?subject=Donation%20to%20WEMASA">{% icon 'mail' %} Email us</a>{% endif %}
       </div>
     </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section bg-mist">
+  <div class="container">
+    {% section_head "Your gift at work" "Every shilling keeps a community cleaner" "Donations fund training materials, cleanup equipment, tree seedlings and school awareness sessions. We report openly on how every resource is used." %}
+    <div class="grid grid-3">
+      <article class="card value-card reveal"><span class="icon-tile lg">{% icon 'tree' %}</span><h3>Plant trees</h3><p>Provide seedlings and care for school and community tree-planting days.</p></article>
+      <article class="card value-card reveal" style="--d:.08s"><span class="icon-tile lg blue">{% icon 'graduation' %}</span><h3>Educate students</h3><p>Bring climate change awareness sessions to more secondary schools.</p></article>
+      <article class="card value-card reveal" style="--d:.16s"><span class="icon-tile lg sun">{% icon 'sprout' %}</span><h3>Empower farmers</h3><p>Train women farmers to make natural pesticides, boosters and fungicides.</p></article>
+    </div>
+    {% if stats %}
+    <div class="stats-band give-stats reveal">
+      <p class="give-stats-title">What support has already made possible</p>
+      <div class="give-stats-grid">
+        {% for s in stats %}<div class="stat"><div class="stat-num">{{ s.prefix }}<span data-count="{{ s.value }}">{{ s.value|intcomma }}</span><span class="suffix">{{ s.suffix }}</span></div><div class="stat-label">{{ s.label }}</div></div>{% endfor %}
+      </div>
+    </div>
     {% endif %}
   </div>
 </section>
-
-
 
 <section class="section">
   <div class="container split" style="align-items:start">

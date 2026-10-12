@@ -721,7 +721,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .stats-band .grid { grid-template-columns: 1fr 1fr; }
   .stats-band .grid > div { border-left: 0; padding-left: 0; }
-  .brand-text span { display: none; }
+  .brand { gap: 10px; }
+  .brand-text span { font-size: .58rem; letter-spacing: .1em; margin-top: 2px; }
   .brand-logo { width: 44px; height: 44px; }
   .hero { padding-bottom: 110px; min-height: auto; }
   .hero-cards { grid-template-columns: 1fr 1fr; }

@@ -3,11 +3,13 @@
 .hm-hero .slide.is-active { min-height: min(94svh, 880px); }
 .hm-hero .slide::after {
   background:
-    linear-gradient(90deg, rgba(5, 18, 12, .9) 0%, rgba(5, 18, 12, .72) 38%, rgba(5, 18, 12, .2) 72%, rgba(5, 18, 12, .05) 100%),
-    linear-gradient(0deg, rgba(5, 18, 12, .85) 0%, rgba(5, 18, 12, 0) 38%),
-    linear-gradient(180deg, rgba(5, 18, 12, .55) 0%, rgba(5, 18, 12, 0) 22%);
+    radial-gradient(520px 520px at -4% 104%, rgba(52, 171, 75, .32), transparent 70%),
+    radial-gradient(460px 420px at 92% -8%, rgba(0, 173, 239, .2), transparent 70%),
+    linear-gradient(0deg, rgba(6, 24, 15, .55) 0%, rgba(6, 24, 15, 0) 35%),
+    linear-gradient(110deg, rgba(6, 24, 15, .94) 0%, rgba(11, 42, 28, .82) 48%, rgba(6, 24, 15, .7) 100%);
 }
-.hm-hero .slide-bg { animation: hm-drift 22s ease-in-out infinite alternate; }
+/* Dimmed by the overlay above, but a little more saturated so the photo still looks rich. */
+.hm-hero .slide-bg { filter: saturate(1.18) contrast(1.06); animation: hm-drift 22s ease-in-out infinite alternate; }
 @keyframes hm-drift { from { transform: scale(1.02); } to { transform: scale(1.1) translate(-1%, -1%); } }
 .hm-hero .slide-body { padding-top: calc(var(--header-h) + 56px); padding-bottom: 190px; }
 .hm-hero .slide-body h1, .hm-hero .slide-title { font-size: clamp(2.6rem, 5.2vw, 4.6rem); line-height: .98; letter-spacing: -.005em; max-width: 13.5ch; margin-bottom: .32em; text-wrap: balance; text-shadow: 0 2px 30px rgba(0, 0, 0, .25); }
@@ -41,8 +43,8 @@
 .hm-stat:hover .hm-stat-go { background: var(--yellow); color: #13201a; transform: translateX(3px); }
 
 /* Moving band of focus areas */
-.hm-ticker-wrap { position: relative; z-index: 2; overflow: hidden; padding: 46px 0 14px; margin-bottom: -26px; }
-.hm-ticker { padding: 18px 0; background: var(--yellow); color: #13201a; transform: rotate(-1.2deg); margin-inline: -20px; box-shadow: 0 10px 30px -18px rgba(0, 0, 0, .5); }
+.hm-ticker-wrap { overflow: hidden; padding-top: 56px; }
+.hm-ticker { padding: 18px 0; background: var(--yellow); color: #13201a; }
 .hm-ticker-track { display: flex; width: max-content; gap: 28px; align-items: center; animation: hm-marquee 46s linear infinite; }
 .hm-ticker span { font-family: var(--font-display); font-size: clamp(1.3rem, 2vw, 1.75rem); font-weight: 800; text-transform: uppercase; letter-spacing: .03em; white-space: nowrap; }
 .hm-ticker .hm-ticker-dot { font-size: 1.1rem; color: var(--green-700); }
@@ -130,7 +132,7 @@
   .hm-hero, .hm-hero .slide.is-active { min-height: min(88svh, 760px); }
   .hm-hero .slide-body { padding-top: calc(var(--header-h) + 34px); padding-bottom: 150px; }
   .hm-hero .slide-body h1, .hm-hero .slide-title { font-size: clamp(2.3rem, 10.5vw, 3rem); }
-  .hm-hero .slide::after { background: linear-gradient(180deg, rgba(5, 18, 12, .7) 0%, rgba(5, 18, 12, .62) 45%, rgba(5, 18, 12, .9) 100%); }
+  .hm-hero .slide::after { background: radial-gradient(360px 360px at 0% 100%, rgba(52, 171, 75, .3), transparent 70%), linear-gradient(110deg, rgba(6, 24, 15, .94) 0%, rgba(11, 42, 28, .84) 55%, rgba(6, 24, 15, .78) 100%); }
   .hm-hero .hero-lead { font-size: 1rem; }
   .hm-pill { font-size: .66rem; letter-spacing: .1em; }
   .hm-stats-wrap { margin-top: -70px; }
@@ -141,7 +143,7 @@
   .hm-stat-icon { width: 44px; height: 44px; border-radius: 14px; }
   .hm-stat-icon .icon { width: 21px; height: 21px; }
   .hm-stat strong { font-size: 1.3rem; }
-  .hm-ticker-wrap { padding-top: 34px; }
+  .hm-ticker-wrap { padding-top: 40px; }
   .hm-ticker { padding: 14px 0; }
   .hm-vm { grid-template-columns: 1fr; gap: 16px; }
   .hm-focus { grid-template-columns: 1fr; gap: 14px; }

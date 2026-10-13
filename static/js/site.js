@@ -221,3 +221,54 @@
   go(0);
   restart();
 })();
+
+/* Video player: a YouTube video loads only when played (thumbnails until then); uploaded files play in a <video>. */
+(function () {
+  var doc = document, modal, frame, video, lastFocus;
+  function close() {
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    frame.src = "about:blank";
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+    doc.body.style.overflow = "";
+    if (lastFocus) lastFocus.focus();
+  }
+  function open(url, title, kind) {
+    if (!modal) {
+      modal = doc.createElement("div");
+      modal.className = "vid-modal";
+      modal.setAttribute("role", "dialog");
+      modal.setAttribute("aria-modal", "true");
+      modal.innerHTML = '<div class="vid-modal-box"><button class="vid-modal-close" type="button" aria-label="Close video">&times;</button>' +
+        '<div class="vid-modal-frame"><iframe allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>' +
+        '<video controls playsinline></video></div></div>';
+      doc.body.appendChild(modal);
+      frame = modal.querySelector("iframe");
+      video = modal.querySelector("video");
+      modal.addEventListener("click", function (e) { if (e.target === modal || e.target.closest(".vid-modal-close")) close(); });
+      doc.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+    }
+    lastFocus = doc.activeElement;
+    modal.setAttribute("aria-label", title || "Video");
+    var isFile = kind === "file";
+    modal.classList.toggle("is-file", isFile);
+    if (isFile) {
+      video.src = url;
+      video.play().catch(function () {});
+    } else {
+      frame.title = title || "Video";
+      frame.src = url;
+    }
+    modal.classList.add("is-open");
+    doc.body.style.overflow = "hidden";
+    modal.querySelector(".vid-modal-close").focus();
+  }
+  doc.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-video]");
+    if (!btn) return;
+    e.preventDefault();
+    open(btn.getAttribute("data-video"), btn.getAttribute("data-video-title"), btn.getAttribute("data-video-kind"));
+  });
+})();

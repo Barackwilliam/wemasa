@@ -5,11 +5,11 @@
 {% block content %}
 {% include "partials/page_hero.html" %}
 {% if outlets %}
-<section class="press-band">
-  <div class="container press-band-inner">
-    <div class="press-count"><strong>{{ outlets|length }}</strong><span>news outlets have covered<br>WEMASA’s work</span></div>
-    <div class="press-ticker" aria-label="Outlets">
-      <div class="press-track">
+<section class="outlets-band">
+  <div class="container outlets-band-inner">
+    <div class="outlets-count"><strong>{{ outlets|length }}</strong><span>news outlets have covered<br>WEMASA’s work</span></div>
+    <div class="outlets-ticker" aria-label="Outlets">
+      <div class="outlets-track">
         {% for o in outlets %}<span>{{ o }}</span>{% endfor %}
         {% for o in outlets %}<span aria-hidden="true">{{ o }}</span>{% endfor %}
       </div>

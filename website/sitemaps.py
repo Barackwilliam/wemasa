@@ -9,7 +9,7 @@ class StaticSitemap(Sitemap):
 
     def items(self):
         return ["home", "about", "focus_list", "project_list", "impact", "sdgs", "resources", "media",
-                "news_list", "gallery", "team", "partners", "get_involved", "donate", "contact"]
+                "news_list", "gallery", "videos", "team", "partners", "get_involved", "donate", "contact"]
 
     def location(self, item):
         return reverse(f"website:{item}")

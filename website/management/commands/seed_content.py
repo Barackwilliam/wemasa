@@ -245,6 +245,8 @@ HEADERS = [
      "Updates, events and stories of change from WEMASA programmes.", "kisewe-03.webp"),
     ("gallery", "Moments", "Photo gallery",
      "A visual journey through our trainings, cleanups, tree-planting days and community events.", "farming-04.webp"),
+    ("videos", "Watch", "Videos",
+     "See WEMASA’s cleanups, trainings and campaigns in motion, and hear from the people taking part.", "cover-waba-hd.webp"),
     ("team", "Our people", "Meet the team",
      "Dedicated founders, officers and community mobilisers who bring WEMASA’s mission to life every day.", "kiburugwa-02.webp"),
     ("partners", "Collaboration", "Our partners",

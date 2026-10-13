@@ -4,6 +4,9 @@ All website content lives here so it can be edited from the dashboard.
 Singletons (SiteSettings, HomePage, AboutPage, ...) hold page copy; the other
 models are collections (projects, team, news ...).
 """
+import re
+
+from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
@@ -246,7 +249,7 @@ class PageHeader(OptimisedImagesMixin, models.Model):
     PAGES = [
         ("about", "About"), ("focus", "Our Focus"), ("projects", "Projects"), ("impact", "Impact"),
         ("resources", "Reports & Resources"), ("media", "In the Media"), ("news", "News & Stories"),
-        ("gallery", "Gallery"), ("team", "Our Team"), ("partners", "Partners"), ("sdgs", "SDGs"),
+        ("gallery", "Gallery"), ("videos", "Videos"), ("team", "Our Team"), ("partners", "Partners"), ("sdgs", "SDGs"),
         ("involved", "Get Involved"), ("donate", "Donate"), ("contact", "Contact"), ("search", "Search"),
     ]
 
@@ -607,6 +610,81 @@ class NewsPost(OptimisedImagesMixin, models.Model):
     @property
     def reading_minutes(self):
         return max(1, round(len(strip_tags(self.body).split()) / 220))
+
+
+YOUTUBE_ID = re.compile(r"(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/|live/|v/)|youtu\.be/)([\w-]{11})")
+
+
+class Video(OptimisedImagesMixin, Orderable):
+    """A video: either a YouTube link or a short video file uploaded to the site."""
+
+    MAX_UPLOAD_MB = 50
+    image_sizes = {"poster": 1600}
+
+    title = models.CharField(max_length=200)
+    youtube_url = models.URLField(
+        "YouTube link", max_length=300, blank=True,
+        help_text="Best for long videos: paste the address from YouTube, e.g. https://youtu.be/…",
+    )
+    video_file = models.FileField(
+        "Or upload a video file", upload_to=UploadTo("videos"), blank=True,
+        validators=[FileExtensionValidator(["mp4", "webm", "mov", "m4v"])],
+        help_text="For short clips: MP4 up to 50 MB (about 1–3 minutes). Leave the YouTube link empty if you upload a file.",
+    )
+    poster = models.ImageField(
+        "Cover image", upload_to=UploadTo("videos"), blank=True,
+        help_text="Optional for uploaded videos: the picture shown before the video plays.",
+    )
+    description = models.TextField(blank=True)
+    project = models.ForeignKey(
+        Project, on_delete=models.SET_NULL, null=True, blank=True, related_name="videos",
+        help_text="Optional: also show the video on this project's page.",
+    )
+    recorded_on = models.DateField("Date", null=True, blank=True)
+    is_featured = models.BooleanField("Show on home page", default=False)
+
+    objects = PublishedQuerySet.as_manager()
+
+    class Meta(Orderable.Meta):
+        verbose_name = "Video"
+
+    def __str__(self):
+        return self.title
+
+    def clean(self):
+        has_link, has_file = bool(self.youtube_url), bool(self.video_file)
+        if has_link and has_file:
+            raise ValidationError("Use either a YouTube link or an uploaded file, not both.")
+        if not has_link and not has_file:
+            raise ValidationError("Add a YouTube link or upload a video file.")
+        if has_link and not self.youtube_id:
+            raise ValidationError({"youtube_url": "This does not look like a YouTube video link."})
+        if has_file and not getattr(self.video_file, "_committed", True):
+            if self.video_file.size > self.MAX_UPLOAD_MB * 1024 * 1024:
+                raise ValidationError({"video_file": f"This file is {self.video_file.size // (1024 * 1024)} MB. "
+                                       f"Uploaded videos can be at most {self.MAX_UPLOAD_MB} MB: put longer "
+                                       f"videos on YouTube and paste the link instead."})
+
+    @property
+    def is_upload(self):
+        return bool(self.video_file) and not self.youtube_url
+
+    @property
+    def youtube_id(self):
+        match = YOUTUBE_ID.search(self.youtube_url or "")
+        return match.group(1) if match else ""
+
+    @property
+    def thumbnail_url(self):
+        if self.poster:
+            return self.poster.url
+        return f"https://i.ytimg.com/vi/{self.youtube_id}/hqdefault.jpg" if self.youtube_id else ""
+
+    @property
+    def play_url(self):
+        if self.is_upload:
+            return self.video_file.url
+        return f"https://www.youtube-nocookie.com/embed/{self.youtube_id}?autoplay=1&rel=0&modestbranding=1" if self.youtube_id else ""
 
 
 class MediaCoverage(OptimisedImagesMixin, Orderable):

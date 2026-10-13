@@ -22,8 +22,6 @@
 .hm-btn-go { box-shadow: 0 14px 30px -12px rgba(255, 214, 10, .7); }
 .hm-btn-glass { color: #fff; background: rgba(255, 255, 255, .1); border: 1.5px solid rgba(255, 255, 255, .45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .hm-btn-glass:hover { background: #fff; color: var(--green-900); border-color: #fff; }
-.hm-hero .slider-ui { bottom: 130px; justify-content: flex-end; }
-.hm-hero .slider-btn { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 
 /* Ways to take part, floating over the hero edge */
 .hm-stats-wrap { position: relative; z-index: 5; margin-top: -84px; }
@@ -104,27 +102,6 @@
 .hm-news-item strong { display: block; font-family: var(--font-display); font-size: 1.28rem; line-height: 1.1; margin-bottom: 6px; }
 .hm-news-item small { display: block; color: var(--muted); font-size: .9rem; line-height: 1.5; }
 
-/* Join */
-.hm-join { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: stretch; }
-.hm-join-card { --ease: cubic-bezier(.2, .8, .2, 1); position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; padding: clamp(28px, 3vw, 38px); border-radius: 26px; background: #fff; border: 1px solid var(--line); box-shadow: 0 2px 8px rgba(0, 0, 0, .04); transition: transform .4s var(--ease), box-shadow .4s; isolation: isolate; }
-.hm-join-card:hover { transform: translateY(-6px); box-shadow: 0 30px 56px -32px rgba(8, 30, 20, .55); }
-.hm-join-card::before { content: ""; position: absolute; right: -60px; top: -60px; width: 180px; height: 180px; border-radius: 50%; background: var(--green-50); z-index: -1; transition: transform .6s var(--ease); }
-.hm-join-card:hover::before { transform: scale(1.5); }
-.hm-join-icon { width: 60px; height: 60px; border-radius: 20px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--green-500), var(--green-700)); box-shadow: 0 14px 26px -12px var(--green-700); margin-bottom: 24px; }
-.hm-join-icon .icon { width: 28px; height: 28px; }
-.hm-join-card h3 { font-size: 1.7rem; margin-bottom: 10px; }
-.hm-join-card p { color: var(--muted); flex: 1; margin-bottom: 26px; line-height: 1.65; }
-.hm-join-link { display: inline-flex; align-items: center; gap: 12px; font-weight: 800; color: var(--green-800); }
-.hm-join-link span { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--yellow); color: #13201a; transition: transform .3s var(--ease); }
-.hm-join-link span .icon { width: 18px; height: 18px; }
-.hm-join-link:hover span { transform: translateX(4px); }
-.hm-join-card.is-hot { background: radial-gradient(400px 260px at 100% 0%, rgba(143, 227, 159, .22), transparent 70%), linear-gradient(160deg, #1b6f2e, #0b2a1c); border-color: transparent; color: rgba(255, 255, 255, .85); box-shadow: 0 30px 60px -30px rgba(11, 42, 28, .8); }
-.hm-join-card.is-hot::before { background: rgba(255, 255, 255, .06); }
-.hm-join-card.is-hot h3 { color: #fff; }
-.hm-join-card.is-hot p { color: rgba(255, 255, 255, .78); }
-.hm-join-card.is-hot .hm-join-icon { background: var(--yellow); color: #13201a; box-shadow: 0 14px 26px -12px rgba(255, 214, 10, .8); }
-.hm-join-card.is-hot .hm-join-link { color: #fff; }
-
 /* Press marquee */
 .hm-press-band .press-inner { flex-wrap: nowrap; }
 .hm-press { flex: 1; min-width: 0; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
@@ -156,7 +133,6 @@
   .hm-hero .slide::after { background: linear-gradient(180deg, rgba(5, 18, 12, .7) 0%, rgba(5, 18, 12, .62) 45%, rgba(5, 18, 12, .9) 100%); }
   .hm-hero .hero-lead { font-size: 1rem; }
   .hm-pill { font-size: .66rem; letter-spacing: .1em; }
-  .hm-hero .slider-ui { bottom: 104px; }
   .hm-stats-wrap { margin-top: -70px; }
   .hm-stats { grid-template-columns: 1fr; }
   .hm-stat { padding: 16px 18px; }
@@ -176,7 +152,6 @@
   .hm-news-item { grid-template-columns: 112px 1fr; gap: 14px; padding: 10px; }
   .hm-news-thumb { min-height: 0; aspect-ratio: 4 / 3; }
   .hm-news-item small { display: none; }
-  .hm-join { grid-template-columns: 1fr; }
   .hm-press-band .press-inner { flex-wrap: wrap; gap: 16px; }
   .hm-press { flex: 1 1 100%; order: 2; }
   .hm-press-band .link-arrow { order: 3; }

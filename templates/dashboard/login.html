@@ -4,28 +4,63 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
   <title>Sign in · {{ site.short_name }} Dashboard</title>
   <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 </head>
 <body class="login-body">
 {% include "partials/icons.html" %}
-<div class="login-wrap">
-  <div class="login-art">
-    <img src="{% static 'img/logo-160.webp' %}" width="88" height="88" alt="WEMASA logo">
-    <h1>Weka Mazingira Safi</h1>
-    <p>Manage every page, project, story and photo on the WEMASA website — changes go live instantly.</p>
+<div class="login-scene">
+  {% if backdrop %}<img class="login-photo" src="{{ backdrop.url }}" alt="" decoding="async">{% endif %}
+  <div class="login-veil"></div>
+  <div class="login-orb orb-a"></div><div class="login-orb orb-b"></div>
+
+  <div class="login-wrap">
+    <div class="login-art">
+      <img class="login-logo" src="{% static 'img/logo-160.webp' %}" width="84" height="84" alt="WEMASA logo">
+      <span class="login-kicker">{{ site.short_name }} · Content dashboard</span>
+      <h1>Weka <span>Mazingira</span> Safi</h1>
+      <p>Manage every page, project, story, photo and video on the website. Changes go live the moment you save.</p>
+      <ul class="login-points">
+        <li>{% icon 'layers' %} Projects &amp; stories</li>
+        <li>{% icon 'camera' %} Photos &amp; videos</li>
+        <li>{% icon 'mail' %} Messages &amp; subscribers</li>
+      </ul>
+    </div>
+
+    <form class="login-card" method="post">
+      {% csrf_token %}
+      <div class="login-card-head">
+        <span class="login-lock">{% icon 'shield' %}</span>
+        <div><h2>Welcome back</h2><p class="muted">Sign in to continue to the dashboard.</p></div>
+      </div>
+      {% if form.errors %}<div class="toast toast-error">{% icon 'x' %}<span>Your username or password is incorrect. Please try again.</span></div>{% endif %}
+      <label class="login-field">
+        <span>Username or email</span>
+        <span class="login-input">{% icon 'user' %}<input type="text" name="username" autocomplete="username" required autofocus value="{{ form.username.value|default:'' }}" placeholder="e.g. admin"></span>
+      </label>
+      <label class="login-field">
+        <span>Password</span>
+        <span class="login-input">{% icon 'shield' %}<input type="password" name="password" autocomplete="current-password" required placeholder="Your password" id="login-password">
+          <button type="button" class="login-peek" data-peek="login-password" aria-label="Show password">{% icon 'eye' %}</button></span>
+      </label>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="btn btn-primary btn-block btn-glow" type="submit">Sign in {% icon 'arrow-right' %}</button>
+      <a class="back" href="/">{% icon 'arrow-left' %} Back to the website</a>
+    </form>
   </div>
-  <form class="login-card" method="post">
-    {% csrf_token %}
-    <h2>Welcome back</h2>
-    <p class="muted">Sign in to the content dashboard.</p>
-    {% if form.errors %}<div class="toast toast-error">{% icon 'x' %}<span>Your username or password is incorrect. Please try again.</span></div>{% endif %}
-    <label class="field"><span>Username or email</span><input type="text" name="username" autocomplete="username" required autofocus value="{{ form.username.value|default:'' }}"></label>
-    <label class="field"><span>Password</span><input type="password" name="password" autocomplete="current-password" required></label>
-    <input type="hidden" name="next" value="{{ next }}">
-    <button class="btn btn-primary btn-block" type="submit">Sign in {% icon 'arrow-right' %}</button>
-    <a class="back" href="/">{% icon 'arrow-left' %} Back to the website</a>
-  </form>
+  <p class="login-foot">© {% now "Y" %} {{ site.org_name|default:site.short_name }}</p>
 </div>
+<script>
+document.querySelectorAll("[data-peek]").forEach(function (b) {
+  b.addEventListener("click", function () {
+    var i = document.getElementById(b.getAttribute("data-peek"));
+    var show = i.type === "password";
+    i.type = show ? "text" : "password";
+    b.classList.toggle("is-on", show);
+    b.setAttribute("aria-label", show ? "Hide password" : "Show password");
+  });
+});
+</script>
 </body>
 </html>

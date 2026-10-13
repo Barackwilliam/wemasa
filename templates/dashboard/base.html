@@ -6,7 +6,7 @@
   <title>{% block title %}Dashboard{% endblock %} · {{ site.short_name }} Admin</title>
   <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
   {% block head %}{% endblock %}
 </head>
@@ -15,9 +15,10 @@
 <div class="dash">
   <aside class="sidebar" id="sidebar">
     <a class="side-brand" href="{% url 'dashboard:home' %}">
-      <img src="{% static 'img/logo-160.webp' %}" width="40" height="40" alt="">
+      <img src="{% static 'img/logo-160.webp' %}" width="42" height="42" alt="">
       <span><strong>{{ site.short_name }}</strong><small>Content dashboard</small></span>
     </a>
+    <label class="side-search">{% icon 'search' %}<input type="search" placeholder="Find a section…" data-side-filter aria-label="Find a section"></label>
     <nav class="side-nav">
       <a class="side-link {% if not section and request.resolver_match.url_name == 'home' %}is-active{% endif %}" href="{% url 'dashboard:home' %}">{% icon 'chart' %} Overview</a>
       {% for group, items in nav_groups %}
@@ -33,6 +34,11 @@
       <a class="side-link" href="{% url 'admin:auth_user_changelist' %}">{% icon 'shield' %} Users &amp; access</a>
       {% endif %}
     </nav>
+    <div class="side-user">
+      <span class="avatar avatar-glow">{{ user.get_username|slice:":1"|upper }}</span>
+      <span class="side-user-name"><strong>{{ user.get_full_name|default:user.get_username }}</strong><small>{% if user.is_superuser %}Administrator{% else %}Editor{% endif %}</small></span>
+      <form method="post" action="{% url 'dashboard:logout' %}">{% csrf_token %}<button class="icon-btn" type="submit" title="Sign out" aria-label="Sign out">{% icon 'arrow-left' %}</button></form>
+    </div>
   </aside>
   <div class="main">
     <header class="topbar">

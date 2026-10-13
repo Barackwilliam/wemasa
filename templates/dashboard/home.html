@@ -2,24 +2,58 @@
 {% load site_tags %}
 {% block crumbs %}<strong>Overview</strong>{% endblock %}
 {% block content %}
-<div class="page-head">
-  <div><h1>Habari, {{ user.first_name|default:user.get_username }} 👋</h1><p class="muted">Here is what is happening on the WEMASA website.</p></div>
-  <div class="btn-row">
-    <a class="btn btn-ghost" href="{% url 'dashboard:bulk_upload' %}">{% icon 'camera' %} Upload photos</a>
-    <a class="btn btn-primary" href="{% url 'dashboard:create' 'news' %}">{% icon 'newspaper' %} Write a story</a>
+<section class="welcome">
+  {% if hero.hero_image %}<img class="welcome-photo" src="{{ hero.hero_image.url }}" alt="" decoding="async">{% endif %}
+  <div class="welcome-veil"></div>
+  <div class="welcome-body">
+    <span class="welcome-date">{% icon 'calendar' %} {{ now|date:"l, j F Y" }}</span>
+    <h1>{{ greeting }}, <span>{{ user.first_name|default:user.get_username }}</span></h1>
+    <p>{% if unread_count %}You have <strong>{{ unread_count }} unread message{{ unread_count|pluralize }}</strong> waiting. {% endif %}Here is everything happening on the WEMASA website today.</p>
+    <div class="btn-row">
+      <a class="btn btn-sun" href="{% url 'dashboard:create' 'news' %}">{% icon 'newspaper' %} Write a story</a>
+      <a class="btn btn-glass" href="{% url 'dashboard:bulk_upload' %}">{% icon 'camera' %} Upload photos</a>
+      <a class="btn btn-glass" href="/" target="_blank" rel="noopener">{% icon 'external' %} Open website</a>
+    </div>
   </div>
-</div>
+</section>
 
 <div class="kpis">
-  <a class="kpi" href="{% url 'dashboard:list' 'projects' %}"><span class="kpi-icon">{% icon 'layers' %}</span><strong>{{ totals.projects }}</strong><small>Published projects</small></a>
-  <a class="kpi" href="{% url 'dashboard:list' 'gallery' %}"><span class="kpi-icon blue">{% icon 'camera' %}</span><strong>{{ totals.photos }}</strong><small>Photos in gallery</small></a>
-  <a class="kpi" href="{% url 'dashboard:list' 'messages' %}"><span class="kpi-icon sun">{% icon 'mail' %}</span><strong>{{ unread_count }}</strong><small>Unread messages</small></a>
-  <a class="kpi" href="{% url 'dashboard:list' 'subscribers' %}"><span class="kpi-icon">{% icon 'send' %}</span><strong>{{ subscriber_count }}</strong><small>Newsletter subscribers</small></a>
+  <a class="kpi kpi-green" href="{% url 'dashboard:list' 'projects' %}">
+    <span class="kpi-icon">{% icon 'layers' %}</span>
+    <strong data-count="{{ totals.projects }}">{{ totals.projects }}</strong><small>Published projects</small>
+    <span class="kpi-go">{% icon 'arrow-right' %}</span>
+  </a>
+  <a class="kpi kpi-blue" href="{% url 'dashboard:list' 'gallery' %}">
+    <span class="kpi-icon">{% icon 'camera' %}</span>
+    <strong data-count="{{ totals.photos }}">{{ totals.photos }}</strong><small>Photos in gallery</small>
+    <span class="kpi-go">{% icon 'arrow-right' %}</span>
+  </a>
+  <a class="kpi kpi-sun" href="{% url 'dashboard:list' 'messages' %}">
+    <span class="kpi-icon">{% icon 'mail' %}</span>
+    <strong data-count="{{ unread_count }}">{{ unread_count }}</strong><small>Unread messages</small>
+    <span class="kpi-go">{% icon 'arrow-right' %}</span>
+  </a>
+  <a class="kpi kpi-ink" href="{% url 'dashboard:list' 'subscribers' %}">
+    <span class="kpi-icon">{% icon 'send' %}</span>
+    <strong data-count="{{ subscriber_count }}">{{ subscriber_count }}</strong><small>Newsletter subscribers</small>
+    <span class="kpi-go">{% icon 'arrow-right' %}</span>
+  </a>
 </div>
 
 <div class="two-col">
   <section class="panel">
-    <div class="panel-head"><h2>Latest messages</h2><a href="{% url 'dashboard:list' 'messages' %}">View all</a></div>
+    <div class="panel-head"><div><h2>Messages received</h2><p class="panel-sub">Last 6 months · {{ message_trend.total }} in total</p></div><a href="{% url 'dashboard:list' 'messages' %}">Inbox {% icon 'arrow-right' %}</a></div>
+    {% include "dashboard/_bars.html" with trend=message_trend noun="message" %}
+  </section>
+  <section class="panel">
+    <div class="panel-head"><div><h2>New subscribers</h2><p class="panel-sub">Last 6 months · {{ subscriber_trend.total }} in total</p></div><a href="{% url 'dashboard:list' 'subscribers' %}">List {% icon 'arrow-right' %}</a></div>
+    {% include "dashboard/_bars.html" with trend=subscriber_trend noun="subscriber" tone="blue" %}
+  </section>
+</div>
+
+<div class="two-col two-col-wide">
+  <section class="panel">
+    <div class="panel-head"><h2>Latest messages</h2><a href="{% url 'dashboard:list' 'messages' %}">View all {% icon 'arrow-right' %}</a></div>
     {% for m in latest_messages %}
     <a class="msg-row {% if not m.is_read %}is-unread{% endif %}" href="{% url 'dashboard:message' m.pk %}">
       <span class="avatar">{{ m.name|slice:":1"|upper }}</span>
@@ -27,29 +61,55 @@
       <span class="msg-date">{{ m.created_at|timesince }} ago</span>
     </a>
     {% empty %}
-    <p class="muted empty-note">No messages yet. Messages sent through the website’s contact form will appear here.</p>
+    <div class="empty-mini"><span class="kpi-icon">{% icon 'mail' %}</span><p class="muted">No messages yet. Messages sent through the website’s contact form will appear here.</p></div>
     {% endfor %}
   </section>
   <section class="panel">
-    <div class="panel-head"><h2>Quick edit</h2></div>
+    <div class="panel-head"><h2>Quick actions</h2></div>
     <div class="quick">
-      <a href="{% url 'dashboard:singleton' 'home-page' %}">{% icon 'star' %} Home page</a>
-      <a href="{% url 'dashboard:singleton' 'about-page' %}">{% icon 'leaf' %} About page</a>
-      <a href="{% url 'dashboard:singleton' 'site-settings' %}">{% icon 'home' %} Contacts &amp; social</a>
-      <a href="{% url 'dashboard:create' 'projects' %}">{% icon 'layers' %} New project</a>
-      <a href="{% url 'dashboard:create' 'media' %}">{% icon 'mic' %} Add press coverage</a>
-      <a href="{% url 'dashboard:create' 'resources' %}">{% icon 'file' %} Upload a report</a>
-      <a href="{% url 'dashboard:create' 'team' %}">{% icon 'users' %} Add team member</a>
-      <a href="{% url 'dashboard:create' 'partners' %}">{% icon 'handshake' %} Add partner</a>
+      <a href="{% url 'dashboard:singleton' 'home-page' %}"><span class="q-ic">{% icon 'star' %}</span>Home page</a>
+      <a href="{% url 'dashboard:singleton' 'about-page' %}"><span class="q-ic">{% icon 'leaf' %}</span>About page</a>
+      <a href="{% url 'dashboard:create' 'projects' %}"><span class="q-ic">{% icon 'layers' %}</span>New project</a>
+      <a href="{% url 'dashboard:create' 'videos' %}"><span class="q-ic">{% icon 'play' %}</span>Add a video</a>
+      <a href="{% url 'dashboard:create' 'resources' %}"><span class="q-ic">{% icon 'file' %}</span>Upload a report</a>
+      <a href="{% url 'dashboard:create' 'media' %}"><span class="q-ic">{% icon 'mic' %}</span>Press coverage</a>
+      <a href="{% url 'dashboard:create' 'partners' %}"><span class="q-ic">{% icon 'handshake' %}</span>Add partner</a>
+      <a href="{% url 'dashboard:singleton' 'site-settings' %}"><span class="q-ic">{% icon 'home' %}</span>Contacts &amp; social</a>
     </div>
   </section>
 </div>
 
+{% if recent_photos or recent_news %}
+<div class="two-col two-col-even">
+  {% if recent_news %}
+  <section class="panel">
+    <div class="panel-head"><h2>Recent stories</h2><a href="{% url 'dashboard:list' 'news' %}">All stories {% icon 'arrow-right' %}</a></div>
+    <div class="story-list">
+      {% for n in recent_news %}
+      <a class="story-row" href="{% url 'dashboard:update' 'news' n.pk %}">
+        {% if n.cover %}<img src="{{ n.cover.url }}" alt="" loading="lazy">{% else %}<span class="thumb thumb-empty">{% icon 'newspaper' %}</span>{% endif %}
+        <span><strong>{{ n.title|truncatechars:70 }}</strong><small>{{ n.published_at|date:"j M Y" }} · {% if n.is_published %}<b class="dot-on">Published</b>{% else %}<b class="dot-off">Hidden</b>{% endif %}</small></span>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+  {% if recent_photos %}
+  <section class="panel">
+    <div class="panel-head"><h2>Latest photos</h2><a href="{% url 'dashboard:bulk_upload' %}">{% icon 'camera' %} Upload</a></div>
+    <div class="mosaic">
+      {% for ph in recent_photos %}<a href="{% url 'dashboard:update' 'gallery' ph.pk %}" title="{{ ph.caption }}"><img src="{{ ph.image.url }}" alt="" loading="lazy"></a>{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endif %}
+
 <section class="panel">
-  <div class="panel-head"><h2>All content</h2></div>
+  <div class="panel-head"><div><h2>All content</h2><p class="panel-sub">Everything you can edit on the website</p></div></div>
   <div class="content-grid">
     {% for c in counts %}
-    <a class="content-tile" href="{% url 'dashboard:list' c.section.slug %}"><span class="kpi-icon">{% icon c.section.icon %}</span><span><strong>{{ c.section.label }}</strong><small>{{ c.count }} item{{ c.count|pluralize }}</small></span></a>
+    <a class="content-tile" href="{% url 'dashboard:list' c.section.slug %}"><span class="kpi-icon">{% icon c.section.icon %}</span><span><strong>{{ c.section.label }}</strong><small>{{ c.count }} item{{ c.count|pluralize }}</small></span>{% icon 'arrow-right' cls='tile-go' %}</a>
     {% endfor %}
   </div>
 </section>

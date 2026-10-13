@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 from functools import wraps
 
 from django.contrib import messages
@@ -14,7 +15,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
 from website.cache import bump_content_version
-from website.models import ContactMessage, GalleryImage, NewsPost, Project, Subscriber, TeamMember
+from website.models import ContactMessage, GalleryImage, HomePage, NewsPost, Project, Subscriber, TeamMember
 
 from .forms import INLINE_FORMSETS, INLINE_TITLES, BulkPhotoForm, fieldsets_for, form_for
 from .registry import BY_SLUG, SECTIONS, grouped
@@ -57,9 +58,48 @@ def cell(obj, name):
     return {"text": "" if value is None else str(value)}
 
 
+def monthly(qs, months=6):
+    """Counts per calendar month for the last `months` months, oldest first."""
+    today = timezone.localdate()
+    starts = []
+    y, mth = today.year, today.month
+    for _ in range(months):
+        starts.append((y, mth))
+        y, mth = (y, mth - 1) if mth > 1 else (y - 1, 12)
+    starts.reverse()
+    first = timezone.make_aware(datetime(starts[0][0], starts[0][1], 1))
+    tally = {}
+    for dt in qs.filter(created_at__gte=first).values_list("created_at", flat=True):
+        dt = timezone.localtime(dt)
+        tally[(dt.year, dt.month)] = tally.get((dt.year, dt.month), 0) + 1
+    rows = [{"label": datetime(yy, mm, 1).strftime("%b"), "full": datetime(yy, mm, 1).strftime("%B %Y"),
+             "value": tally.get((yy, mm), 0)} for yy, mm in starts]
+    top = max([r["value"] for r in rows] + [1])
+    for r in rows:
+        r["pct"] = round(r["value"] / top * 100)
+    return {"rows": rows, "total": sum(r["value"] for r in rows), "top": top}
+
+
+def greeting():
+    hour = timezone.localtime().hour
+    if hour < 12:
+        return "Habari za asubuhi"
+    if hour < 16:
+        return "Habari za mchana"
+    return "Habari za jioni"
+
+
 class LoginView(auth_views.LoginView):
     template_name = "dashboard/login.html"
     redirect_authenticated_user = True
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Django adds the request's "site"; drop it so the site settings from the context processor show through.
+        context.pop("site", None)
+        home = HomePage.objects.filter(pk=1).only("hero_image").first()
+        context["backdrop"] = home.hero_image if home and home.hero_image else None
+        return context
 
 
 class PasswordChangeView(auth_views.PasswordChangeView):
@@ -95,6 +135,12 @@ def home(request):
             "news": NewsPost.objects.filter(is_published=True).count(),
             "team": TeamMember.objects.filter(is_published=True).count(),
         },
+        message_trend=monthly(ContactMessage.objects.all()),
+        subscriber_trend=monthly(Subscriber.objects.all()),
+        recent_news=NewsPost.objects.order_by("-published_at")[:4],
+        recent_photos=GalleryImage.objects.order_by("-pk")[:8],
+        hero=HomePage.load(),
+        greeting=greeting(),
         now=timezone.now(),
     ))
 
@@ -126,7 +172,7 @@ def object_list(request, slug):
         qs = qs.select_related(*[f.name for f in section.model._meta.fields if f.name in ("project", "focus_area")])
     page = Paginator(qs, 30).get_page(request.GET.get("page"))
     columns = [section.model._meta.get_field(n).verbose_name for n in section.list_display]
-    rows = [{"obj": o, "cells": [cell(o, n) for n in section.list_display],
+    rows = [{"obj": o, "cells": [{**cell(o, n), "label": label} for n, label in zip(section.list_display, columns)],
              "thumb": getattr(o, section.thumb, None) if section.thumb else None,
              "toggle": hasattr(o, "is_published")} for o in page]
     return render(request, "dashboard/list.html", base_context(

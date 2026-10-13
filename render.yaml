@@ -44,3 +44,6 @@ services:
         sync: false
       - key: SITE_URL
         sync: false
+      # The single address Google should index, e.g. www.wemasatanzania.org (other hosts redirect here)
+      - key: CANONICAL_HOST
+        sync: false

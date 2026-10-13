@@ -43,6 +43,8 @@ for var in ("RENDER_EXTERNAL_HOSTNAME", "RAILWAY_PUBLIC_DOMAIN"):
         CSRF_TRUSTED_ORIGINS.append(f"https://{host}")
 
 SITE_URL = os.getenv("SITE_URL", "").rstrip("/")
+# The one address search engines should index, e.g. www.wemasatanzania.org. Other hosts redirect to it.
+CANONICAL_HOST = os.getenv("CANONICAL_HOST", "").strip().lower()
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -61,6 +63,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "website.middleware.CanonicalHostMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

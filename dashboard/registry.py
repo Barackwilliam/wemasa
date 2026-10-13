@@ -47,7 +47,7 @@ SECTIONS = [
             ("Social media", ["facebook", "instagram", "x_twitter", "linkedin", "youtube", "tiktok"]),
             ("Announcement bar", ["announcement", "announcement_link"]),
             ("Buttons & newsletter", ["donate_button_text", "newsletter_title", "newsletter_text"]),
-            ("Search engines & sharing", ["meta_description", "og_image"]),
+            ("Search engines & sharing", ["meta_description", "og_image", "google_site_verification"]),
         ],
     ),
     Section(

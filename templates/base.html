@@ -24,9 +24,12 @@
   <link rel="stylesheet" href="{% asset 'css/site.css' %}">
   {% block preload %}{% endblock %}
   <script>document.documentElement.classList.add("js")</script>
+  {% if site.google_site_verification %}<meta name="google-site-verification" content="{{ site.google_site_verification }}">{% endif %}
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"NGO","name":"{{ site.org_name|escapejs }}","alternateName":"{{ site.short_name|escapejs }}","url":"{{ site_url }}/","logo":"{{ site_url }}{% static 'img/icon-192.png' %}"{% if site.email %},"email":"{{ site.email|escapejs }}"{% endif %}{% if site.phone %},"telephone":"{{ site.phone|escapejs }}"{% endif %},"address":{"@type":"PostalAddress","addressLocality":"Dar es Salaam","addressCountry":"TZ"}}
+  [{"@context":"https://schema.org","@type":"NGO","@id":"{{ site_url }}/#organization","name":"{{ site.org_name|escapejs }}","alternateName":["{{ site.short_name|escapejs }}","Weka Mazingira Safi"],"url":"{{ site_url }}/","logo":"{{ site_url }}{% static 'img/icon-192.png' %}"{% if site.meta_description %},"description":"{{ site.meta_description|escapejs }}"{% endif %}{% if site.registration_year %},"foundingDate":"{{ site.registration_year|escapejs }}"{% endif %}{% if site.email %},"email":"{{ site.email|escapejs }}"{% endif %}{% if site.phone %},"telephone":"{{ site.phone|escapejs }}"{% endif %},"areaServed":{"@type":"Country","name":"Tanzania"},"address":{"@type":"PostalAddress",{% if site.address %}"streetAddress":"{{ site.address|escapejs }}",{% endif %}"addressLocality":"Dar es Salaam","addressCountry":"TZ"}{% if site.social_links %},"sameAs":[{% for l in site.social_links %}"{{ l.url|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% endif %}},
+   {"@context":"https://schema.org","@type":"WebSite","@id":"{{ site_url }}/#website","name":"{{ site.org_name|escapejs }}","alternateName":"{{ site.short_name|escapejs }}","url":"{{ site_url }}/","publisher":{"@id":"{{ site_url }}/#organization"},"inLanguage":"en"}]
   </script>
+  {% block structured_data %}{% endblock %}
 </head>
 <body class="has-hero{% if site.announcement %} has-announce{% endif %} {% block body_class %}{% endblock %}">
 {% include "partials/icons.html" %}

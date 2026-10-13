@@ -4,6 +4,9 @@ All website content lives here so it can be edited from the dashboard.
 Singletons (SiteSettings, HomePage, AboutPage, ...) hold page copy; the other
 models are collections (projects, team, news ...).
 """
+import re
+
+from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
@@ -246,7 +249,7 @@ class PageHeader(OptimisedImagesMixin, models.Model):
     PAGES = [
         ("about", "About"), ("focus", "Our Focus"), ("projects", "Projects"), ("impact", "Impact"),
         ("resources", "Reports & Resources"), ("media", "In the Media"), ("news", "News & Stories"),
-        ("gallery", "Gallery"), ("team", "Our Team"), ("partners", "Partners"), ("sdgs", "SDGs"),
+        ("gallery", "Gallery"), ("videos", "Videos"), ("team", "Our Team"), ("partners", "Partners"), ("sdgs", "SDGs"),
         ("involved", "Get Involved"), ("donate", "Donate"), ("contact", "Contact"), ("search", "Search"),
     ]
 
@@ -607,6 +610,51 @@ class NewsPost(OptimisedImagesMixin, models.Model):
     @property
     def reading_minutes(self):
         return max(1, round(len(strip_tags(self.body).split()) / 220))
+
+
+YOUTUBE_ID = re.compile(r"(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/|live/|v/)|youtu\.be/)([\w-]{11})")
+
+
+class Video(Orderable):
+    """A video hosted on YouTube: the dashboard only needs its link."""
+
+    title = models.CharField(max_length=200)
+    youtube_url = models.URLField(
+        "YouTube link", max_length=300,
+        help_text="Paste the video's address from YouTube, e.g. https://www.youtube.com/watch?v=… or https://youtu.be/…",
+    )
+    description = models.TextField(blank=True)
+    project = models.ForeignKey(
+        Project, on_delete=models.SET_NULL, null=True, blank=True, related_name="videos",
+        help_text="Optional: also show the video on this project's page.",
+    )
+    recorded_on = models.DateField("Date", null=True, blank=True)
+    is_featured = models.BooleanField("Show on home page", default=False)
+
+    objects = PublishedQuerySet.as_manager()
+
+    class Meta(Orderable.Meta):
+        verbose_name = "Video"
+
+    def __str__(self):
+        return self.title
+
+    def clean(self):
+        if self.youtube_url and not self.youtube_id:
+            raise ValidationError({"youtube_url": "This does not look like a YouTube video link."})
+
+    @property
+    def youtube_id(self):
+        match = YOUTUBE_ID.search(self.youtube_url or "")
+        return match.group(1) if match else ""
+
+    @property
+    def thumbnail_url(self):
+        return f"https://i.ytimg.com/vi/{self.youtube_id}/hqdefault.jpg" if self.youtube_id else ""
+
+    @property
+    def embed_url(self):
+        return f"https://www.youtube-nocookie.com/embed/{self.youtube_id}?autoplay=1&rel=0&modestbranding=1" if self.youtube_id else ""
 
 
 class MediaCoverage(OptimisedImagesMixin, Orderable):

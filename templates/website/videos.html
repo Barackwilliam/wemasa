@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load site_tags %}
+{% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
+{% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
+{% block content %}
+{% include "partials/page_hero.html" %}
+<section class="section vid-section">
+  <div class="container">
+    {% if featured %}
+    <article class="vid-feature reveal">
+      <button class="vid-feature-player" type="button" data-video="{{ featured.embed_url }}" data-video-title="{{ featured.title }}" aria-label="Play video: {{ featured.title }}">
+        <img src="{{ featured.thumbnail_url }}" alt="" decoding="async">
+        <span class="vid-play vid-play-lg" aria-hidden="true">{% icon 'play' %}</span>
+      </button>
+      <div class="vid-feature-body">
+        <span class="eyebrow">Featured video</span>
+        <h2>{{ featured.title }}</h2>
+        {% if featured.description %}<p>{{ featured.description }}</p>{% endif %}
+        <div class="vid-feature-meta">
+          {% if featured.recorded_on %}<span>{% icon 'calendar' %} {{ featured.recorded_on|date:"j F Y" }}</span>{% endif %}
+          {% if featured.project %}<a href="{{ featured.project.get_absolute_url }}">{% icon 'arrow-right' %} {{ featured.project.title }}</a>{% endif %}
+        </div>
+      </div>
+    </article>
+    {% if videos %}
+    <h2 class="vid-more-title reveal">More videos</h2>
+    <div class="vid-grid">{% for v in videos %}{% include "partials/video_card.html" %}{% endfor %}</div>
+    {% endif %}
+    {% else %}
+      {% include "partials/empty.html" with icon_name="play" title="Videos are on their way" text="We are preparing videos of our cleanups, trainings and campaigns. In the meantime, follow us on social media for the latest from the field." %}
+    {% endif %}
+    {% if site.youtube %}
+    <div class="vid-channel reveal">
+      <span class="vid-channel-icon">{% icon 'youtube' %}</span>
+      <div><h3>Subscribe on YouTube</h3><p>Get every new WEMASA video as soon as it is published.</p></div>
+      <a class="btn btn-primary" href="{{ site.youtube }}" target="_blank" rel="noopener">Visit our channel {% icon 'arrow-up-right' %}</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

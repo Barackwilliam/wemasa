@@ -18,6 +18,7 @@ urlpatterns = [
     path("news/", views.news_list, name="news_list"),
     path("news/<slug:slug>/", views.news_detail, name="news_detail"),
     path("gallery/", views.gallery, name="gallery"),
+    path("videos/", views.videos, name="videos"),
     path("team/", views.team, name="team"),
     path("partners/", views.partners, name="partners"),
     path("get-involved/", views.get_involved, name="get_involved"),

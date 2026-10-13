@@ -45,6 +45,11 @@
       </div>
       {% endif %}
 
+      {% if videos %}
+      <h2 class="block-title reveal">Videos</h2>
+      <div class="vid-grid vid-grid-2">{% for v in videos %}{% include "partials/video_card.html" %}{% endfor %}</div>
+      {% endif %}
+
       {% if testimonials %}
       <h2 class="block-title reveal">What participants say</h2>
       <div class="grid grid-2">{% for t in testimonials %}<figure class="card testimonial reveal" style="margin:0">{% icon 'quote' %}<blockquote>“{{ t.quote }}”</blockquote><figcaption class="person">{% if t.photo %}<img src="{{ t.photo.url }}" alt="">{% else %}<span class="avatar">{{ t.name|initials }}</span>{% endif %}<span><strong>{{ t.name }}</strong><small>{{ t.role }}</small></span></figcaption></figure>{% endfor %}</div>

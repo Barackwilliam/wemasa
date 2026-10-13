@@ -64,12 +64,13 @@
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if url_name in 'news_list news_detail media resources gallery' %}is-active{% endif %}" href="{% url 'website:news_list' %}">Resources {% icon 'chevron-down' %}</a>
+          <a class="nav-link {% if url_name in 'news_list news_detail media resources gallery videos' %}is-active{% endif %}" href="{% url 'website:news_list' %}">Resources {% icon 'chevron-down' %}</a>
           <div class="dropdown">
             <a href="{% url 'website:news_list' %}"><span class="d-icon">{% icon 'newspaper' %}</span><span><strong>News &amp; stories</strong><small>Updates from the field</small></span></a>
             <a href="{% url 'website:media' %}"><span class="d-icon">{% icon 'mic' %}</span><span><strong>In the media</strong><small>Press and TV coverage</small></span></a>
             <a href="{% url 'website:resources' %}"><span class="d-icon">{% icon 'file' %}</span><span><strong>Reports &amp; documents</strong><small>Publications to download</small></span></a>
             <a href="{% url 'website:gallery' %}"><span class="d-icon">{% icon 'camera' %}</span><span><strong>Photo gallery</strong><small>Moments from our activities</small></span></a>
+            <a href="{% url 'website:videos' %}"><span class="d-icon">{% icon 'play' %}</span><span><strong>Videos</strong><small>Our work in motion</small></span></a>
           </div>
         </li>
         <li class="nav-item"><a class="nav-link {% if url_name == 'get_involved' %}is-active{% endif %}" href="{% url 'website:get_involved' %}">Get Involved</a></li>
@@ -110,11 +111,11 @@
           <a href="{% url 'website:impact' %}">{% icon 'award' %}Our impact</a>
         </div>
       </details>
-      <details class="dn-group" style="--i:3" {% if url_name in 'news_list news_detail media resources gallery' %}open{% endif %}>
-        <summary class="dn-item {% if url_name in 'news_list news_detail media resources gallery' %}is-active{% endif %}"><span class="dn-icon">{% icon 'book' %}</span><span class="dn-label">Resources</span><span class="dn-caret">{% icon 'chevron-down' %}</span></summary>
+      <details class="dn-group" style="--i:3" {% if url_name in 'news_list news_detail media resources gallery videos' %}open{% endif %}>
+        <summary class="dn-item {% if url_name in 'news_list news_detail media resources gallery videos' %}is-active{% endif %}"><span class="dn-icon">{% icon 'book' %}</span><span class="dn-label">Resources</span><span class="dn-caret">{% icon 'chevron-down' %}</span></summary>
         <div class="dn-sub">
           <a href="{% url 'website:news_list' %}">{% icon 'newspaper' %}News &amp; stories</a><a href="{% url 'website:media' %}">{% icon 'tv' %}In the media</a>
-          <a href="{% url 'website:resources' %}">{% icon 'file' %}Reports</a><a href="{% url 'website:gallery' %}">{% icon 'camera' %}Gallery</a>
+          <a href="{% url 'website:resources' %}">{% icon 'file' %}Reports</a><a href="{% url 'website:gallery' %}">{% icon 'camera' %}Gallery</a><a href="{% url 'website:videos' %}">{% icon 'play' %}Videos</a>
         </div>
       </details>
       <a class="dn-item {% if url_name == 'get_involved' %}is-active{% endif %}" style="--i:4" href="{% url 'website:get_involved' %}"><span class="dn-icon">{% icon 'hand-heart' %}</span><span class="dn-label">Get Involved</span><span class="dn-num">05</span></a>

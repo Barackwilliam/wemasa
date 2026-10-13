@@ -1,0 +1,12 @@
+{% load site_tags %}
+<article class="vid-card reveal">
+  <button class="vid-thumb" type="button" data-video="{{ v.embed_url }}" data-video-title="{{ v.title }}" aria-label="Play video: {{ v.title }}">
+    <img src="{{ v.thumbnail_url }}" alt="" loading="lazy" decoding="async">
+    <span class="vid-play" aria-hidden="true">{% icon 'play' %}</span>
+  </button>
+  <div class="vid-meta">
+    {% if v.project %}<a class="vid-project" href="{{ v.project.get_absolute_url }}">{{ v.project.title }}</a>{% endif %}
+    <h3>{{ v.title }}</h3>
+    {% if v.recorded_on %}<time datetime="{{ v.recorded_on|date:'Y-m-d' }}">{{ v.recorded_on|date:"j F Y" }}</time>{% endif %}
+  </div>
+</article>

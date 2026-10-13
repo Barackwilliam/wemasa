@@ -105,6 +105,12 @@ SECTIONS = [
         filter_field="project", thumb="image",
     ),
     Section(
+        "videos", m.Video, "Videos", "play", "Our work", singular="Video",
+        help="Upload the video to WEMASA's YouTube channel, then paste its link here. The thumbnail is taken from YouTube.",
+        list_display=["title", "project", "is_featured", "order", "is_published"], search_fields=["title", "description"],
+        filter_field="project",
+    ),
+    Section(
         "impact", m.ImpactStat, "Impact figures", "chart", "Our work", singular="Impact figure",
         list_display=["label", "value", "suffix", "show_on_home", "order", "is_published"], search_fields=["label"],
     ),

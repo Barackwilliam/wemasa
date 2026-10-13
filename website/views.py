@@ -15,7 +15,7 @@ from django.views.decorators.http import require_POST
 from .cache import cached_page
 from .forms import ContactForm, SubscribeForm
 from .models import (
-    FAQ, SDG, AboutPage, CoreValue, DonationMethod, FocusArea, GalleryImage, HomePage, ImpactStat,
+    FAQ, SDG, Video, AboutPage, CoreValue, DonationMethod, FocusArea, GalleryImage, HomePage, ImpactStat,
     InvolvementOption, MediaCoverage, Milestone, NewsPost, Objective, PageHeader, Partner, Project,
     Resource, Subscriber, TeamMember, Testimonial,
 )
@@ -74,6 +74,7 @@ def home(request):
         "about": AboutPage.load(),
         "options": InvolvementOption.objects.published()[:3],
         "slides": [p for p in projects if p.cover][:3],
+        "featured_video": Video.objects.published().filter(is_featured=True).first(),
     })
 
 
@@ -140,6 +141,7 @@ def project_detail(request, slug):
         "project": project,
         "stats": project.stats.all(),
         "photos": project.photos.filter(is_published=True),
+        "videos": project.videos.filter(is_published=True),
         "partners": project.partners.filter(is_published=True),
         "testimonials": project.testimonials.filter(is_published=True),
         "news": NewsPost.objects.published().filter(project=project)[:3],
@@ -265,6 +267,17 @@ def partners(request):
     })
 
 
+@cached_page
+def videos(request):
+    items = list(Video.objects.published().select_related("project"))
+    featured = next((v for v in items if v.is_featured), items[0] if items else None)
+    return render(request, "website/videos.html", {
+        "header": page_header("videos"),
+        "featured": featured,
+        "videos": [v for v in items if v is not featured],
+    })
+
+
 # Gallery albums whose first photo illustrates an involvement option (matched on a word in its title).
 INVOLVEMENT_PHOTOS = [
     ("volunteer", "Beach cleanups"), ("partner", "World Cleanup Day 2026"), ("school", "School tree planting"),
@@ -384,6 +397,8 @@ def search(request):
                 Q(title__icontains=q) | Q(description__icontains=q))[:10]],
             "In the media": [(c.headline, c.outlet, media_url) for c in MediaCoverage.objects.published().filter(
                 Q(headline__icontains=q) | Q(outlet__icontains=q))[:10]],
+            "Videos": [(v.title, v.description, reverse("website:videos")) for v in Video.objects.published().filter(
+                Q(title__icontains=q) | Q(description__icontains=q))[:10]],
             "Team": [(t.name, t.role, team_url) for t in TeamMember.objects.published().filter(
                 Q(name__icontains=q) | Q(role__icontains=q))[:10]],
         }

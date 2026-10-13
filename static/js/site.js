@@ -221,3 +221,42 @@
   go(0);
   restart();
 })();
+
+/* Video player: YouTube loads only when a video is played (thumbnails until then). */
+(function () {
+  var doc = document, modal, frame, lastFocus;
+  function close() {
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    frame.src = "about:blank";
+    doc.body.style.overflow = "";
+    if (lastFocus) lastFocus.focus();
+  }
+  function open(url, title) {
+    if (!modal) {
+      modal = doc.createElement("div");
+      modal.className = "vid-modal";
+      modal.setAttribute("role", "dialog");
+      modal.setAttribute("aria-modal", "true");
+      modal.innerHTML = '<div class="vid-modal-box"><button class="vid-modal-close" type="button" aria-label="Close video">&times;</button>' +
+        '<div class="vid-modal-frame"><iframe allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div></div>';
+      doc.body.appendChild(modal);
+      frame = modal.querySelector("iframe");
+      modal.addEventListener("click", function (e) { if (e.target === modal || e.target.closest(".vid-modal-close")) close(); });
+      doc.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+    }
+    lastFocus = doc.activeElement;
+    frame.title = title || "Video";
+    modal.setAttribute("aria-label", title || "Video");
+    frame.src = url;
+    modal.classList.add("is-open");
+    doc.body.style.overflow = "hidden";
+    modal.querySelector(".vid-modal-close").focus();
+  }
+  doc.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-video]");
+    if (!btn) return;
+    e.preventDefault();
+    open(btn.getAttribute("data-video"), btn.getAttribute("data-video-title"));
+  });
+})();

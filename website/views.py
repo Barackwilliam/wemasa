@@ -73,7 +73,6 @@ def home(request):
         "milestones": Milestone.objects.published(),
         "about": AboutPage.load(),
         "options": InvolvementOption.objects.published()[:3],
-        "slides": [p for p in projects if p.cover][:3],
         "featured_video": Video.objects.published().filter(is_featured=True).first(),
     })
 
@@ -202,14 +201,20 @@ def media_coverage(request):
 def news_list(request):
     posts = NewsPost.objects.published()
     category = request.GET.get("category", "")
+    featured = None
     if category in dict(NewsPost.CATEGORIES):
         posts = posts.filter(category=category)
+    else:
+        # The featured story sits in its own banner, so it is left out of the grid below.
+        featured = posts.filter(is_featured=True).first()
+        if featured:
+            posts = posts.exclude(pk=featured.pk)
     page = Paginator(posts, 9).get_page(request.GET.get("page"))
     used = set(NewsPost.objects.published().values_list("category", flat=True))
     return render(request, "website/news_list.html", {
         "header": page_header("news"),
         "page_obj": page,
-        "featured": None if category or page.number > 1 else NewsPost.objects.published().filter(is_featured=True).first(),
+        "featured": featured if page.number == 1 else None,
         "categories": [c for c in NewsPost.CATEGORIES if c[0] in used],
         "active": category,
     })

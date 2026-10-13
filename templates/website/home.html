@@ -4,7 +4,7 @@
 {% block preload %}<link rel="stylesheet" href="{% asset 'css/home.css' %}">{% if page.hero_image %}<link rel="preload" as="image" href="{{ page.hero_image.url }}" fetchpriority="high">{% endif %}{% endblock %}
 
 {% block content %}
-<!-- Hero slider: the home page message first, then featured projects -->
+<!-- Hero: the home page message (projects are shown once, in the cards further down) -->
 <section class="hero hero-slider hm-hero" data-slider>
   <div class="slides">
     <article class="slide is-active">
@@ -19,25 +19,7 @@
         </div>
       </div>
     </article>
-    {% for p in slides %}
-    <article class="slide" aria-hidden="true">
-      <img class="slide-bg" src="{{ p.cover.url }}" alt="" loading="lazy">
-      <div class="container slide-body">
-        <p class="hm-pill"><span class="hm-pulse" aria-hidden="true"></span>{% if p.focus_area %}{{ p.focus_area.title }}{% else %}Our work{% endif %}</p>
-        <h2 class="slide-title">{{ p.title }}</h2>
-        <p class="hero-lead">{{ p.summary|truncatewords:32 }}</p>
-        <div class="btn-row"><a class="btn btn-yellow btn-lg hm-btn-go" href="{{ p.get_absolute_url }}" tabindex="-1">See the project {% icon 'arrow-right' %}</a></div>
-      </div>
-    </article>
-    {% endfor %}
   </div>
-  {% if slides %}
-  <div class="slider-ui container">
-    <button class="slider-btn" type="button" data-prev aria-label="Previous slide">{% icon 'arrow-left' %}</button>
-    <div class="slider-dots" data-dots></div>
-    <button class="slider-btn" type="button" data-next aria-label="Next slide">{% icon 'arrow-right' %}</button>
-  </div>
-  {% endif %}
 </section>
 
 {% if options %}
@@ -209,25 +191,6 @@
     <div class="quotes">
       {% for t in testimonials|slice:":3" %}
       <figure class="quote"><blockquote>“{{ t.quote }}”</blockquote><figcaption>{% if t.photo %}<img src="{{ t.photo.url }}" alt="" loading="lazy">{% endif %}<span><strong>{{ t.name }}</strong>{{ t.role }}</span></figcaption></figure>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
-
-<!-- Join us -->
-{% if options %}
-<section class="section section-warm">
-  <div class="container">
-    <div class="center-head"><p class="kicker">Get involved</p><h2>There is a place for you</h2></div>
-    <div class="hm-join">
-      {% for o in options %}
-      <article class="hm-join-card reveal{% if forloop.counter == 2 %} is-hot{% endif %}" style="--d:{% widthratio forloop.counter0 1 8 %}0ms">
-        <span class="hm-join-icon">{% icon o.icon %}</span>
-        <h3>{{ o.title }}</h3>
-        <p>{{ o.description|truncatewords:26 }}</p>
-        {% if o.button_text %}<a class="hm-join-link" href="{{ o.button_url }}">{{ o.button_text }} <span>{% icon 'arrow-right' %}</span></a>{% endif %}
-      </article>
       {% endfor %}
     </div>
   </div>

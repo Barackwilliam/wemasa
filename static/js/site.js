@@ -272,3 +272,39 @@
     open(btn.getAttribute("data-video"), btn.getAttribute("data-video-title"), btn.getAttribute("data-video-kind"));
   });
 })();
+
+/* Staff shortcut: press and hold the header logo for 1.5 s to open the dashboard login.
+   A normal tap or click still goes to the home page. */
+(function () {
+  var brand = document.querySelector(".brand[data-staff]");
+  if (!brand) return;
+  var HOLD = 1500, timer = null, frame = null, fired = false, startX = 0, startY = 0;
+  function cancel() {
+    clearTimeout(timer); timer = null;
+    cancelAnimationFrame(frame);
+    brand.classList.remove("is-holding");
+    brand.style.removeProperty("--hold");
+  }
+  brand.addEventListener("pointerdown", function (e) {
+    if (e.button !== undefined && e.button !== 0) return;
+    fired = false; startX = e.clientX; startY = e.clientY;
+    brand.classList.add("is-holding");
+    timer = setTimeout(function () {
+      fired = true;
+      cancel();
+      if (navigator.vibrate) navigator.vibrate(30);
+      window.location.href = brand.getAttribute("data-staff");
+    }, HOLD);
+    var t0 = performance.now();
+    (function tick(now) {
+      brand.style.setProperty("--hold", Math.min(100, (now - t0) / HOLD * 100).toFixed(1));
+      if (timer) frame = requestAnimationFrame(tick);
+    })(t0);
+  });
+  brand.addEventListener("pointermove", function (e) {
+    if (timer && Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) > 12) cancel();
+  });
+  ["pointerup", "pointerleave", "pointercancel"].forEach(function (ev) { brand.addEventListener(ev, cancel); });
+  brand.addEventListener("click", function (e) { if (fired) { e.preventDefault(); fired = false; } });
+  brand.addEventListener("contextmenu", function (e) { if (timer || fired) e.preventDefault(); });
+})();

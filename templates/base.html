@@ -39,8 +39,8 @@
 {% with url_name=request.resolver_match.url_name %}
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="{% url 'website:home' %}" aria-label="{{ site.org_name }} — home">
-      <img class="brand-logo" src="{% if site.logo %}{{ site.logo.url }}{% else %}{% static 'img/logo-160.webp' %}{% endif %}" width="50" height="50" alt="{{ site.short_name }} logo">
+    <a class="brand" href="{% url 'website:home' %}" aria-label="{{ site.org_name }} — home" data-staff="{% url 'dashboard:login' %}">
+      <img class="brand-logo" draggable="false" src="{% if site.logo %}{{ site.logo.url }}{% else %}{% static 'img/logo-160.webp' %}{% endif %}" width="50" height="50" alt="{{ site.short_name }} logo">
       <span class="brand-text"><strong>{{ site.short_name }}</strong><span>Tanzania Organization</span></span>
     </a>
 

@@ -1,0 +1,1 @@
+{% if v.thumbnail_url %}<img src="{{ v.thumbnail_url }}" alt="" loading="lazy" decoding="async">{% elif v.is_upload %}<video src="{{ v.play_url }}#t=1" preload="metadata" muted playsinline tabindex="-1" aria-hidden="true"></video>{% endif %}

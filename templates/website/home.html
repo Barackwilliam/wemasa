@@ -203,8 +203,8 @@
       {% if featured_video.description %}<p>{{ featured_video.description|truncatewords:40 }}</p>{% endif %}
       <a class="link-arrow" href="{% url 'website:videos' %}">All videos {% icon 'arrow-right' %}</a>
     </div>
-    <button class="vid-feature-player" type="button" data-video="{{ featured_video.embed_url }}" data-video-title="{{ featured_video.title }}" aria-label="Play video: {{ featured_video.title }}">
-      <img src="{{ featured_video.thumbnail_url }}" alt="" loading="lazy" decoding="async">
+    <button class="vid-feature-player" type="button" data-video="{{ featured_video.play_url }}" data-video-kind="{% if featured_video.is_upload %}file{% else %}youtube{% endif %}" data-video-title="{{ featured_video.title }}" aria-label="Play video: {{ featured_video.title }}">
+        {% include "partials/video_thumb.html" with v=featured_video %}
       <span class="vid-play vid-play-lg" aria-hidden="true">{% icon 'play' %}</span>
     </button>
   </div>

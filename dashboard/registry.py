@@ -106,9 +106,14 @@ SECTIONS = [
     ),
     Section(
         "videos", m.Video, "Videos", "play", "Our work", singular="Video",
-        help="Upload the video to WEMASA's YouTube channel, then paste its link here. The thumbnail is taken from YouTube.",
+        help="Paste a YouTube link (best for long videos), or upload a short MP4 of up to 50 MB.",
         list_display=["title", "project", "is_featured", "order", "is_published"], search_fields=["title", "description"],
-        filter_field="project",
+        filter_field="project", thumb="poster",
+        fieldsets=[
+            ("Video", ["title", "youtube_url", "video_file", "poster"]),
+            ("Details", ["description", "project", "recorded_on"]),
+            ("Display", ["is_featured", "is_published", "order"]),
+        ],
     ),
     Section(
         "impact", m.ImpactStat, "Impact figures", "chart", "Our work", singular="Impact figure",

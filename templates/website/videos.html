@@ -8,8 +8,8 @@
   <div class="container">
     {% if featured %}
     <article class="vid-feature reveal">
-      <button class="vid-feature-player" type="button" data-video="{{ featured.embed_url }}" data-video-title="{{ featured.title }}" aria-label="Play video: {{ featured.title }}">
-        <img src="{{ featured.thumbnail_url }}" alt="" decoding="async">
+      <button class="vid-feature-player" type="button" data-video="{{ featured.play_url }}" data-video-kind="{% if featured.is_upload %}file{% else %}youtube{% endif %}" data-video-title="{{ featured.title }}" aria-label="Play video: {{ featured.title }}">
+        {% include "partials/video_thumb.html" with v=featured %}
         <span class="vid-play vid-play-lg" aria-hidden="true">{% icon 'play' %}</span>
       </button>
       <div class="vid-feature-body">

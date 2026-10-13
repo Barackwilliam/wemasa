@@ -615,13 +615,25 @@ class NewsPost(OptimisedImagesMixin, models.Model):
 YOUTUBE_ID = re.compile(r"(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/|live/|v/)|youtu\.be/)([\w-]{11})")
 
 
-class Video(Orderable):
-    """A video hosted on YouTube: the dashboard only needs its link."""
+class Video(OptimisedImagesMixin, Orderable):
+    """A video: either a YouTube link or a short video file uploaded to the site."""
+
+    MAX_UPLOAD_MB = 50
+    image_sizes = {"poster": 1600}
 
     title = models.CharField(max_length=200)
     youtube_url = models.URLField(
-        "YouTube link", max_length=300,
-        help_text="Paste the video's address from YouTube, e.g. https://www.youtube.com/watch?v=… or https://youtu.be/…",
+        "YouTube link", max_length=300, blank=True,
+        help_text="Best for long videos: paste the address from YouTube, e.g. https://youtu.be/…",
+    )
+    video_file = models.FileField(
+        "Or upload a video file", upload_to=UploadTo("videos"), blank=True,
+        validators=[FileExtensionValidator(["mp4", "webm", "mov", "m4v"])],
+        help_text="For short clips: MP4 up to 50 MB (about 1–3 minutes). Leave the YouTube link empty if you upload a file.",
+    )
+    poster = models.ImageField(
+        "Cover image", upload_to=UploadTo("videos"), blank=True,
+        help_text="Optional for uploaded videos: the picture shown before the video plays.",
     )
     description = models.TextField(blank=True)
     project = models.ForeignKey(
@@ -640,8 +652,22 @@ class Video(Orderable):
         return self.title
 
     def clean(self):
-        if self.youtube_url and not self.youtube_id:
+        has_link, has_file = bool(self.youtube_url), bool(self.video_file)
+        if has_link and has_file:
+            raise ValidationError("Use either a YouTube link or an uploaded file, not both.")
+        if not has_link and not has_file:
+            raise ValidationError("Add a YouTube link or upload a video file.")
+        if has_link and not self.youtube_id:
             raise ValidationError({"youtube_url": "This does not look like a YouTube video link."})
+        if has_file and not getattr(self.video_file, "_committed", True):
+            if self.video_file.size > self.MAX_UPLOAD_MB * 1024 * 1024:
+                raise ValidationError({"video_file": f"This file is {self.video_file.size // (1024 * 1024)} MB. "
+                                       f"Uploaded videos can be at most {self.MAX_UPLOAD_MB} MB: put longer "
+                                       f"videos on YouTube and paste the link instead."})
+
+    @property
+    def is_upload(self):
+        return bool(self.video_file) and not self.youtube_url
 
     @property
     def youtube_id(self):
@@ -650,10 +676,14 @@ class Video(Orderable):
 
     @property
     def thumbnail_url(self):
+        if self.poster:
+            return self.poster.url
         return f"https://i.ytimg.com/vi/{self.youtube_id}/hqdefault.jpg" if self.youtube_id else ""
 
     @property
-    def embed_url(self):
+    def play_url(self):
+        if self.is_upload:
+            return self.video_file.url
         return f"https://www.youtube-nocookie.com/embed/{self.youtube_id}?autoplay=1&rel=0&modestbranding=1" if self.youtube_id else ""
 
 

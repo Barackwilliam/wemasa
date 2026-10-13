@@ -1,10 +1,16 @@
+from django.conf import settings
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 
 from .models import FocusArea, NewsPost, Project
 
 
-class StaticSitemap(Sitemap):
+class BaseSitemap(Sitemap):
+    # Google should see https:// addresses on the live site.
+    protocol = None if settings.DEBUG else "https"
+
+
+class StaticSitemap(BaseSitemap):
     changefreq = "weekly"
 
     def items(self):
@@ -15,10 +21,12 @@ class StaticSitemap(Sitemap):
         return reverse(f"website:{item}")
 
     def priority(self, item):
-        return 1.0 if item == "home" else 0.7
+        if item == "home":
+            return 1.0
+        return 0.9 if item in ("about", "project_list", "focus_list", "news_list") else 0.7
 
 
-class FocusSitemap(Sitemap):
+class FocusSitemap(BaseSitemap):
     changefreq = "monthly"
     priority = 0.7
 
@@ -36,7 +44,7 @@ class ProjectSitemap(FocusSitemap):
         return Project.objects.published()
 
 
-class NewsSitemap(Sitemap):
+class NewsSitemap(BaseSitemap):
     changefreq = "monthly"
     priority = 0.6
 

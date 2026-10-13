@@ -162,3 +162,36 @@ class ImageOptimisationTests(TestCase):
         self.assertNotIn("script", post.body)
         self.assertNotIn("onclick", post.body)
         self.assertTrue(post.slug)
+
+
+@override_settings(STORAGES=TEST_STORAGES, CACHES=TEST_CACHES, PAGE_CACHE_ENABLED=False)
+class SearchEngineTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_content", verbosity=0)
+
+    @override_settings(DEBUG=False, CANONICAL_HOST="www.wemasatanzania.org", SECURE_SSL_REDIRECT=False,
+                       ALLOWED_HOSTS=["www.wemasatanzania.org", "wemasa.onrender.com", "wemasatanzania.org"])
+    def test_other_hosts_redirect_to_the_main_address(self):
+        response = self.client.get("/about/?x=1", HTTP_HOST="wemasa.onrender.com")
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response["Location"], "https://www.wemasatanzania.org/about/?x=1")
+        self.assertEqual(self.client.get("/health/", HTTP_HOST="wemasa.onrender.com").status_code, 200)
+        self.assertEqual(self.client.get("/about/", HTTP_HOST="www.wemasatanzania.org").status_code, 200)
+
+    def test_sitemap_and_robots(self):
+        sitemap = self.client.get(reverse("sitemap")).content.decode()
+        self.assertIn("/projects/", sitemap)
+        self.assertIn(Project.objects.published().first().get_absolute_url(), sitemap)
+        robots = self.client.get(reverse("website:robots")).content.decode()
+        self.assertIn("Sitemap: ", robots)
+        self.assertIn("Disallow: /dashboard/", robots)
+
+    def test_search_console_code_accepts_the_whole_meta_tag(self):
+        site = SiteSettings.load()
+        site.google_site_verification = '<meta name="google-site-verification" content="abc123XYZ" />'
+        site.save()
+        self.assertEqual(SiteSettings.load().google_site_verification, "abc123XYZ")
+        html = self.client.get(reverse("website:home")).content.decode()
+        self.assertIn('<meta name="google-site-verification" content="abc123XYZ">', html)
+        self.assertIn('"@type":"NGO"', html)

@@ -124,12 +124,23 @@ class SiteSettings(OptimisedImagesMixin, Singleton):
         help_text="Shown by Google and when the site is shared on social media.",
     )
     og_image = models.ImageField("Social sharing image", upload_to=UploadTo("brand"), blank=True)
+    google_site_verification = models.CharField(
+        "Google Search Console code", max_length=120, blank=True,
+        help_text="From Google Search Console → Add property → HTML tag. Paste only the content value, "
+                  "e.g. abc123XYZ (or paste the whole <meta> tag; the code is taken from it).",
+    )
 
     class Meta:
         verbose_name = verbose_name_plural = "Site settings"
 
     def __str__(self):
         return "Site settings"
+
+    def save(self, *args, **kwargs):
+        code = (self.google_site_verification or "").strip()
+        match = re.search(r'content=["\']([^"\']+)["\']', code)
+        self.google_site_verification = match.group(1) if match else code
+        super().save(*args, **kwargs)
 
     @property
     def social_links(self):

@@ -425,7 +425,7 @@ def health(request):
 
 def robots_txt(request):
     lines = ["User-agent: *", "Disallow: /dashboard/", "Disallow: /system-admin/", "Disallow: /search/",
-             f"Sitemap: {request.build_absolute_uri(reverse('sitemap'))}"]
+             f"Sitemap: {(settings.SITE_URL or request.build_absolute_uri('/').rstrip('/'))}{reverse('sitemap')}"]
     return HttpResponse("\n".join(lines) + "\n", content_type="text/plain")
 
 

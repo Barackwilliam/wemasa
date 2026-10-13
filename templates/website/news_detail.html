@@ -5,6 +5,9 @@
 {% block og_type %}article{% endblock %}
 {% block og_title %}{{ post.title }}{% endblock %}
 {% block og_image %}{% if post.cover %}{{ post.cover.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block structured_data %}<script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"NewsArticle","headline":"{{ post.title|escapejs }}","description":"{{ post.summary|striptags|truncatechars:160|escapejs }}","datePublished":"{{ post.published_at|date:'c' }}","dateModified":"{{ post.updated_at|date:'c' }}"{% if post.cover %},"image":["{{ post.cover.url|escapejs }}"]{% endif %},"author":{"@type":"Organization","name":"{{ post.author|default:site.org_name|escapejs }}"},"publisher":{"@id":"{{ site_url }}/#organization"},"mainEntityOfPage":"{{ site_url }}{{ request.path }}"}
+  </script>{% endblock %}
 {% block content %}
 <section class="page-hero no-image" style="padding-bottom:clamp(120px,14vw,190px)">
   <div class="container container-narrow">

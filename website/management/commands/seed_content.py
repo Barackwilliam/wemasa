@@ -645,7 +645,7 @@ TEAM = [
     ("Jackline Ndawila", "Co-Founder & Head of Women Projects", "founders", "team/jackline-ndawila.webp",
      "Jackline is a Co-Founder of WEMASA and leads its women-focused projects, ensuring that women and girls are at the "
      "centre of the organisation’s environmental work — from farming communities to the newsroom."),
-    ("Carlos Mdemu", "Training Officer", "staff", "team/carlos-mdemu.webp",
+    ("Carlos Mdemu", "Training Officer", "staff", "",
      "Carlos designs and facilitates WEMASA’s trainings and awareness sessions, translating environmental knowledge "
      "into practical learning for communities, students and journalists."),
     ("Frednand Nseso", "Chief Accountant", "staff", "team/frednand-nseso.jpg",

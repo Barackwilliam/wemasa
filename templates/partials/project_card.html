@@ -1,7 +1,7 @@
 {% load site_tags %}
 <article class="card card-hover project-card reveal" style="--d:{{ delay|default:0 }}00ms">
   <div class="media ratio-4x3">
-    {% if project.cover %}<img src="{{ project.cover.url }}" alt="{{ project.title }}" loading="lazy" decoding="async">{% else %}<div class="media-placeholder">{% icon 'image' %}</div>{% endif %}
+    {% if project.cover %}<img src="{{ project.cover.url }}" alt="{{ project.title }}" loading="lazy" decoding="async">{% else %}<div class="data-cover">{% if project.focus_area %}{% icon project.focus_area.icon cls='data-cover-icon' %}{% endif %}{% with st=project.stats.all.0 %}{% if st %}<div class="data-cover-stat"><strong>{{ st.value }}</strong><span>{{ st.label }}</span></div>{% endif %}{% endwith %}</div>{% endif %}
     <div class="media-chips">
       {% if project.focus_area %}<span class="chip chip-white">{% icon project.focus_area.icon %} {{ project.focus_area.title }}</span>{% endif %}
       <span class="chip chip-dark">{{ project.get_status_display }}</span>

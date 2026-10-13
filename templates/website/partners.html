@@ -18,17 +18,15 @@
         {% for g in groups %}<button type="button" data-filter="{{ g.key }}" aria-pressed="false">{{ g.label|cut:" partners" }} <span>{{ g.partners|length }}</span></button>{% endfor %}
       </div>
     </div>
-    <div class="pt-grid" id="partner-grid">
+    <div class="pt-wall" id="partner-grid">
       {% for g in groups %}{% for p in g.partners %}
-      <article class="pt-card reveal" data-group="{{ g.key }}">
-        <div class="pt-stage{% if not p.logo %} pt-stage-empty{% endif %}">
-          {% if p.logo %}<img src="{{ p.logo.url }}" alt="{{ p.name }} logo" loading="lazy" decoding="async">{% else %}<span class="pt-monogram" aria-hidden="true">{{ p.initials }}</span>{% endif %}
+      <article class="pt-tile reveal" data-group="{{ g.key }}">
+        <div class="pt-logo">
+          {% if p.logo %}<img src="{{ p.logo.url }}" alt="{{ p.name }} logo" loading="lazy" decoding="async">{% else %}<span class="pt-wordmark">{{ p.name }}</span>{% endif %}
         </div>
-        <div class="pt-meta">
-          <span class="pt-tag">{{ g.label|cut:" partners" }}</span>
-          <h3>{% if p.website %}<a class="card-link" href="{{ p.website }}" target="_blank" rel="noopener">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}</h3>
-          {% if p.description %}<p>{{ p.description }}</p>{% endif %}
-          {% if p.website %}<span class="pt-visit">Visit website {% icon 'arrow-right' %}</span>{% endif %}
+        <div class="pt-caption">
+          {% if p.logo %}<h3>{% if p.website %}<a class="card-link" href="{{ p.website }}" target="_blank" rel="noopener">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}</h3>{% elif p.website %}<a class="card-link" href="{{ p.website }}" target="_blank" rel="noopener" aria-label="{{ p.name }} website"></a>{% endif %}
+          <span>{{ g.label|cut:" partners" }}</span>
         </div>
       </article>
       {% endfor %}{% endfor %}
@@ -36,7 +34,18 @@
     <script>
       (function () {
         var buttons = document.querySelectorAll(".pt-filters button");
-        var cards = document.querySelectorAll("#partner-grid .pt-card");
+        var cards = document.querySelectorAll("#partner-grid .pt-tile");
+        // Give every logo the same visual area: wide logos get less height, square ones more.
+        document.querySelectorAll(".pt-logo img").forEach(function (img) {
+          function size() {
+            if (!img.naturalWidth) return;
+            var ratio = img.naturalWidth / img.naturalHeight;
+            var base = window.innerWidth < 761 ? 74 : 104;
+            img.style.height = Math.round(Math.min(base, Math.max(base * 0.42, base / Math.sqrt(ratio)))) + "px";
+          }
+          if (img.complete) size(); else img.addEventListener("load", size);
+          window.addEventListener("resize", size);
+        });
         buttons.forEach(function (btn) {
           btn.addEventListener("click", function () {
             var f = btn.getAttribute("data-filter");

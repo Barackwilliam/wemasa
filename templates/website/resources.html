@@ -4,35 +4,71 @@
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
 {% include "partials/page_hero.html" %}
-<section class="section">
+<section class="section rs-section">
   <div class="container">
-    {% if categories %}
-    <div class="filters center reveal">
-      <a class="filter {% if not active %}is-active{% endif %}" href="{% query type='' %}">All documents</a>
-      {% for key, label in categories %}<a class="filter {% if active == key %}is-active{% endif %}" href="{% query type=key %}">{{ label }}</a>{% endfor %}
-    </div>
-    {% endif %}
     {% if resources %}
-    <div class="grid grid-2">
-      {% for r in resources %}
-      <article class="card card-hover resource-card reveal">
-        <span class="file-badge">{% icon 'file' %}{{ r.extension }}</span>
-        <div>
-          <span class="chip" style="margin-bottom:10px">{{ r.get_category_display }}</span>
-          <h3>{{ r.title }}</h3>
-          {% if r.description %}<p>{{ r.description|truncatewords:28 }}</p>{% endif %}
-          <div class="btn-row" style="align-items:center">
-            <a class="btn btn-primary btn-sm" href="{{ r.file.url }}" target="_blank" rel="noopener">{% icon 'download' %} Download</a>
-            <span class="muted" style="font-size:.88rem">{{ r.published_on|date:"F Y" }}</span>
-          </div>
+    <div class="rs-head reveal">
+      <div>
+        <span class="eyebrow">Publications</span>
+        <h2>Reports and documents</h2>
+        <p>Programme reports, findings and organisational documents from WEMASA’s work across Tanzania, free to download and share.</p>
+      </div>
+      {% if categories|length > 1 %}
+      <nav class="rs-filters" aria-label="Filter documents">
+        <a class="{% if not active %}is-active{% endif %}" href="{% query type='' %}">All</a>
+        {% for key, label in categories %}<a class="{% if active == key %}is-active{% endif %}" href="{% query type=key %}">{{ label }}</a>{% endfor %}
+      </nav>
+      {% endif %}
+    </div>
+
+    {% with r=resources.0 %}
+    <article class="rs-spotlight reveal">
+      <a class="rs-spotlight-cover" href="{{ r.file.url }}" target="_blank" rel="noopener" aria-label="Open {{ r.title }}">
+        {% if r.cover %}<img src="{{ r.cover.url }}" alt="Cover of {{ r.title }}" loading="lazy" decoding="async">{% else %}<span class="rs-cover-blank">{% icon 'file' %}<b>{{ r.extension }}</b></span>{% endif %}
+      </a>
+      <div class="rs-spotlight-body">
+        <div class="rs-meta"><span class="rs-badge">Latest</span><span>{{ r.get_category_display }}</span><span aria-hidden="true">·</span><time datetime="{{ r.published_on|date:'Y-m-d' }}">{{ r.published_on|date:"j F Y" }}</time></div>
+        <h3>{{ r.title }}</h3>
+        {% if r.description %}<p>{{ r.description }}</p>{% endif %}
+        <div class="rs-actions">
+          <a class="btn btn-primary" href="{{ r.file.url }}" target="_blank" rel="noopener">{% icon 'download' %} Download {{ r.extension }}{% if r.file_size %} <span class="rs-size">{{ r.file_size|filesizeformat }}</span>{% endif %}</a>
+          {% with p=r.projects.all.0 %}{% if p %}<a class="btn btn-ghost" href="{{ p.get_absolute_url }}">View the project {% icon 'arrow-right' cls='icon-move' %}</a>{% endif %}{% endwith %}
+        </div>
+      </div>
+    </article>
+    {% endwith %}
+
+    {% if resources|length > 1 %}
+    <h3 class="rs-more-title reveal">More publications</h3>
+    <div class="rs-grid">
+      {% for r in resources|slice:"1:" %}
+      <article class="rs-card reveal">
+        <a class="rs-card-cover" href="{{ r.file.url }}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+          {% if r.cover %}<img src="{{ r.cover.url }}" alt="" loading="lazy" decoding="async">{% else %}<span class="rs-cover-blank">{% icon 'file' %}<b>{{ r.extension }}</b></span>{% endif %}
+        </a>
+        <div class="rs-card-body">
+          <div class="rs-meta"><span>{{ r.get_category_display }}</span><span aria-hidden="true">·</span><time datetime="{{ r.published_on|date:'Y-m-d' }}">{{ r.published_on|date:"M Y" }}</time></div>
+          <h3><a href="{{ r.file.url }}" target="_blank" rel="noopener">{{ r.title }}</a></h3>
+          {% if r.description %}<p>{{ r.description|truncatewords:26 }}</p>{% endif %}
+          <a class="rs-download" href="{{ r.file.url }}" target="_blank" rel="noopener">{% icon 'download' %} {{ r.extension }}{% if r.file_size %} · {{ r.file_size|filesizeformat }}{% endif %}</a>
         </div>
       </article>
       {% endfor %}
     </div>
+    {% endif %}
     {% else %}
       {% url 'website:contact' as contact_url %}
       {% include "partials/empty.html" with icon_name="file" title="Publications are on their way" text="We are preparing our project reports and organisational documents for publication. Need a specific document now? Contact us and we will share it." link=contact_url link_text="Request a document" %}
     {% endif %}
+
+    <div class="rs-request reveal">
+      <span class="icon-tile lg">{% icon 'mail' %}</span>
+      <div>
+        <h3>Looking for something else?</h3>
+        <p>Partners, donors, researchers and journalists can ask us for documents that are not listed here.</p>
+      </div>
+      <a class="btn btn-ghost" href="{% url 'website:contact' %}?topic=general">Request a document {% icon 'arrow-right' cls='icon-move' %}</a>
+    </div>
   </div>
 </section>
 {% endblock %}

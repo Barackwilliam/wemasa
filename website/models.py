@@ -674,6 +674,13 @@ class Resource(OptimisedImagesMixin, models.Model):
     def extension(self):
         return self.file.name.rsplit(".", 1)[-1].upper() if self.file else ""
 
+    @property
+    def file_size(self):
+        try:
+            return self.file.size if self.file else None
+        except Exception:  # file missing from storage
+            return None
+
 
 # ==========================================================================
 # Giving and getting involved

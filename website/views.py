@@ -166,7 +166,7 @@ def sdgs(request):
 
 @cached_page
 def resources(request):
-    items = Resource.objects.published()
+    items = Resource.objects.published().prefetch_related("projects")
     category = request.GET.get("type", "")
     if category in dict(Resource.CATEGORIES):
         items = items.filter(category=category)

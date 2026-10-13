@@ -170,7 +170,7 @@ HOME = {
     "cta_secondary_url": "/get-involved/",
 }
 HOME_IMAGES = {
-    "hero_image": "farming-09.webp", "intro_image": "kisewe-06.webp", "intro_image_2": "trees-school-04.webp",
+    "hero_image": "hero-hd.webp", "intro_image": "kisewe-06.webp", "intro_image_2": "trees-school-04.webp",
     "story_image": "kisewe-05.webp", "cta_image": "cleanup-02.webp",
 }
 
@@ -397,6 +397,10 @@ WORKSHOP_PARTNERS = [
 WORKSHOP_REPORT = "1st Workshop for Young Girls and Women Environment Journalists: Report"
 CLEANUP_DAY_REPORT = "World Cleanup Day 2026: Mbezi Beach Cleanup Report"
 
+LEAD_PROJECTS = [
+    "World Cleanup Day 2026: Mbezi Beach Cleanup", "Waste and Brand Audits (WABA)", "Beach & Community Cleanups",
+]
+
 PROJECTS = [
     {
         "title": "Organic Farming Training for Women Vegetable Farmers",
@@ -470,7 +474,7 @@ PROJECTS = [
     },
     {
         "title": "Beach & Community Cleanups",
-        "focus": "Waste Management & Community Cleanups", "status": "ongoing", "cover": "cleanup-02.webp",
+        "focus": "Waste Management & Community Cleanups", "status": "ongoing", "cover": "cover-beach-cleanup-hd.webp",
         "location": "Dar es Salaam", "beneficiaries": "Residents, youth and local leaders",
         "summary": "Mobilising volunteers, residents and partners to clear waste from beaches, streets and public spaces — and to keep them clean.",
         "description": (
@@ -491,7 +495,7 @@ PROJECTS = [
     },
     {
         "title": "World Cleanup Day 2026: Mbezi Beach Cleanup",
-        "focus": "Waste Management & Community Cleanups", "status": "completed", "cover": "wcd2026-01.webp",
+        "focus": "Waste Management & Community Cleanups", "status": "completed", "cover": "cover-world-cleanup-day-hd.webp",
         "location": "Rainbow Beach (Mbezi Beach), Dar es Salaam", "period": "21 September 2026",
         "beneficiaries": "Mbezi Beach community and volunteers",
         "summary": "With UNESCO Tanzania, more than 45 volunteers cleared 250 kg of waste from Mbezi Beach on World Cleanup Day 2026, then audited it to see what it was and where it came from.",
@@ -520,7 +524,7 @@ PROJECTS = [
     },
     {
         "title": "Waste and Brand Audits (WABA)",
-        "focus": "Waste Management & Community Cleanups", "status": "ongoing", "cover": "waba-01.webp",
+        "focus": "Waste Management & Community Cleanups", "status": "ongoing", "cover": "cover-waba-hd.webp",
         "location": "Dar es Salaam", "beneficiaries": "Communities, local authorities and producers",
         "summary": "After a cleanup we sort and count the waste and record the brand on each item, to show what pollutes our streets and beaches and who produces it.",
         "description": (
@@ -885,7 +889,9 @@ class Command(BaseCommand):
             resources[title] = resource
 
         projects = {}
-        for order, data in enumerate(PROJECTS):
+        # The latest work, with HD cover photos, comes first: the home page slider shows the first three.
+        ordered = sorted(PROJECTS, key=lambda d: (d["title"] not in LEAD_PROJECTS, LEAD_PROJECTS.index(d["title"]) if d["title"] in LEAD_PROJECTS else 0))
+        for order, data in enumerate(ordered):
             project, created = m.Project.objects.get_or_create(title=data["title"], defaults={
                 "focus_area": focus_by_title.get(data["focus"]), "status": data["status"], "summary": data["summary"],
                 "description": data["description"], "location": data["location"], "period": data.get("period", ""),

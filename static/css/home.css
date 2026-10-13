@@ -3,9 +3,10 @@
 .hm-hero .slide.is-active { min-height: min(94svh, 880px); }
 .hm-hero .slide::after {
   background:
-    linear-gradient(90deg, rgba(5, 18, 12, .92) 0%, rgba(5, 18, 12, .8) 38%, rgba(5, 18, 12, .5) 70%, rgba(5, 18, 12, .38) 100%),
-    linear-gradient(0deg, rgba(5, 18, 12, .88) 0%, rgba(5, 18, 12, 0) 40%),
-    linear-gradient(180deg, rgba(5, 18, 12, .6) 0%, rgba(5, 18, 12, 0) 24%);
+    radial-gradient(520px 520px at -4% 104%, rgba(52, 171, 75, .32), transparent 70%),
+    radial-gradient(460px 420px at 92% -8%, rgba(0, 173, 239, .2), transparent 70%),
+    linear-gradient(0deg, rgba(6, 24, 15, .55) 0%, rgba(6, 24, 15, 0) 35%),
+    linear-gradient(110deg, rgba(6, 24, 15, .94) 0%, rgba(11, 42, 28, .82) 48%, rgba(6, 24, 15, .7) 100%);
 }
 /* Dimmed by the overlay above, but a little more saturated so the photo still looks rich. */
 .hm-hero .slide-bg { filter: saturate(1.18) contrast(1.06); animation: hm-drift 22s ease-in-out infinite alternate; }
@@ -131,7 +132,7 @@
   .hm-hero, .hm-hero .slide.is-active { min-height: min(88svh, 760px); }
   .hm-hero .slide-body { padding-top: calc(var(--header-h) + 34px); padding-bottom: 150px; }
   .hm-hero .slide-body h1, .hm-hero .slide-title { font-size: clamp(2.3rem, 10.5vw, 3rem); }
-  .hm-hero .slide::after { background: linear-gradient(180deg, rgba(5, 18, 12, .76) 0%, rgba(5, 18, 12, .7) 45%, rgba(5, 18, 12, .92) 100%); }
+  .hm-hero .slide::after { background: radial-gradient(360px 360px at 0% 100%, rgba(52, 171, 75, .3), transparent 70%), linear-gradient(110deg, rgba(6, 24, 15, .94) 0%, rgba(11, 42, 28, .84) 55%, rgba(6, 24, 15, .78) 100%); }
   .hm-hero .hero-lead { font-size: 1rem; }
   .hm-pill { font-size: .66rem; letter-spacing: .1em; }
   .hm-stats-wrap { margin-top: -70px; }

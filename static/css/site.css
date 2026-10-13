@@ -659,6 +659,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .footer-bottom { border-top: 1px solid rgba(255, 255, 255, .1); padding: 24px 0 28px; display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; align-items: center; font-size: .88rem; color: rgba(255, 255, 255, .55); }
 .footer-bottom .reg { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .1); color: rgba(255, 255, 255, .75); }
 .footer-bottom .reg .icon { color: var(--green-300); width: 16px; height: 16px; }
+.footer-bottom .credit { color: rgba(255, 255, 255, .6); transition: color .2s; }
+.footer-bottom .credit strong { color: #fff; font-weight: 800; letter-spacing: .01em; transition: color .2s; }
+.footer-bottom .credit:hover, .footer-bottom .credit:hover strong { color: var(--yellow, #ffd60a); }
 
 /* Floating actions */
 .float-actions { position: fixed; right: 18px; bottom: 18px; z-index: 40; display: grid; gap: 10px; }

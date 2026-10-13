@@ -8,12 +8,22 @@
   <div class="container">
     {% if sdgs %}
     <div class="grid grid-3">
+      <article class="sdg-intro reveal">
+        <span class="eyebrow eyebrow-light">Global Goals</span>
+        <h2><span class="sdg-intro-num">{{ sdgs|length }}</span> of the 17 goals</h2>
+        <p>Local action in Tanzanian communities, schools and markets adds up to progress on the United Nations Sustainable Development Goals.</p>
+      </article>
       {% for g in sdgs %}
       <article class="card card-hover sdg-card reveal" id="sdg-{{ g.number }}" style="--sdg:{{ g.colour }};--d:{% widthratio forloop.counter0 1 6 %}0ms">
         <div class="sdg-head"><span class="sdg-num">{{ g.number|stringformat:"02d" }}</span><h3>{{ g.title }}</h3></div>
         <div class="card-body"><p>{{ g.description }}</p></div>
       </article>
       {% endfor %}
+      <a class="sdg-outro reveal" href="https://sdgs.un.org/goals" target="_blank" rel="noopener">
+        <span class="sdg-outro-ring" aria-hidden="true"></span>
+        <strong>Explore all 17 goals</strong>
+        <span>United Nations, sdgs.un.org {% icon 'arrow-up-right' %}</span>
+      </a>
     </div>
     {% else %}
       {% include "partials/empty.html" with icon_name="globe" title="Coming soon" text="Our SDG alignment will be published here." %}

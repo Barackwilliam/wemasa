@@ -4,6 +4,19 @@
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
 {% include "partials/page_hero.html" %}
+{% if outlets %}
+<section class="press-band">
+  <div class="container press-band-inner">
+    <div class="press-count"><strong>{{ outlets|length }}</strong><span>news outlets have covered<br>WEMASA’s work</span></div>
+    <div class="press-ticker" aria-label="Outlets">
+      <div class="press-track">
+        {% for o in outlets %}<span>{{ o }}</span>{% endfor %}
+        {% for o in outlets %}<span aria-hidden="true">{{ o }}</span>{% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
 <section class="section">
   <div class="container">
     {% if types %}

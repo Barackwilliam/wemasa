@@ -9,6 +9,26 @@
     {% for g in groups %}
     <div>
       <h2 class="group-title reveal">{{ g.label }}</h2>
+      {% if g.key == "founders" %}
+      <div class="lead-grid">
+        {% for m in g.members %}
+        <article class="lead-card reveal" style="--d:{% widthratio forloop.counter0 1 8 %}0ms">
+          <div class="lead-photo">{% if m.photo %}<img src="{{ m.photo.url }}" alt="{{ m.name }}" loading="lazy" decoding="async">{% else %}<span class="initials">{{ m.initials }}</span>{% endif %}</div>
+          <div class="lead-body">
+            <span class="lead-role">{{ m.role }}</span>
+            <h3>{{ m.name }}</h3>
+            {% if m.bio %}<p>{{ m.bio }}</p>{% endif %}
+            {% if m.email or m.linkedin %}
+            <div class="socials">
+              {% if m.email %}<a href="mailto:{{ m.email }}" aria-label="Email {{ m.name }}">{% icon 'mail' %}</a>{% endif %}
+              {% if m.linkedin %}<a href="{{ m.linkedin }}" target="_blank" rel="noopener" aria-label="{{ m.name }} on LinkedIn">{% icon 'linkedin' %}</a>{% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
       <div class="grid grid-4">
         {% for m in g.members %}
         <article class="card card-hover team-card reveal" style="--d:{% widthratio forloop.counter0 1 6 %}0ms">
@@ -33,6 +53,7 @@
         {% endif %}
         {% endfor %}
       </div>
+      {% endif %}
     </div>
     {% empty %}
       {% include "partials/empty.html" with icon_name="users" title="Team profiles coming soon" text="Meet the people behind WEMASA here soon." %}

@@ -1,40 +1,83 @@
 {% extends "base.html" %}
-{% load site_tags %}
+{% load site_tags humanize %}
 {% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
 {% include "partials/page_hero.html" %}
+
 {% if options %}
-<section class="section">
+<section class="section gi-section">
   <div class="container">
-    {% section_head "Ways to help" "Choose how you want to make a difference" "There is a place for everyone in the movement for a cleaner Tanzania — your time, skills, voice or resources all count." %}
-    <div class="grid grid-3">
+    <div class="gi-head reveal">
+      <div>
+        <span class="eyebrow">Ways to help</span>
+        <h2>There is a place for you in the movement for a <span class="accent">cleaner Tanzania</span></h2>
+      </div>
+      <p>Your time, skills, voice or resources all count. Pick the way that suits you, and our team will take it from there.</p>
+    </div>
+
+    <div class="gi-bento">
       {% for o in options %}
-      <article class="card card-hover focus-card reveal" style="--d:{% widthratio forloop.counter0 1 6 %}0ms">
-        <span class="num-bg">{{ forloop.counter|stringformat:"02d" }}</span>
-        <span class="icon-tile lg">{% icon o.icon %}</span>
-        <h3>{% if o.button_url %}<a class="card-link" href="{{ o.button_url }}">{{ o.title }}</a>{% else %}{{ o.title }}{% endif %}</h3>
-        <p>{{ o.description }}</p>
-        {% if o.button_text %}<div class="card-foot"><span class="count">{{ o.button_text }}</span><span class="go">{% icon 'arrow-up-right' %}</span></div>{% endif %}
+      <article class="gi-tile gi-tile-{{ forloop.counter }}{% if o.photo %} has-photo{% endif %} reveal" style="--d:{% widthratio forloop.counter0 1 6 %}0ms">
+        {% if o.photo %}<img class="gi-tile-bg" src="{{ o.photo.image.url }}" alt="" loading="lazy" decoding="async">{% endif %}
+        <div class="gi-tile-top">
+          <span class="gi-tile-icon">{% icon o.icon %}</span>
+          <span class="gi-tile-num">{{ forloop.counter|stringformat:"02d" }}</span>
+        </div>
+        <div class="gi-tile-body">
+          <h3>{% if o.button_url %}<a class="card-link" href="{{ o.button_url }}">{{ o.title }}</a>{% else %}{{ o.title }}{% endif %}</h3>
+          <p>{{ o.description }}</p>
+          {% if o.button_text %}<span class="gi-tile-cta">{{ o.button_text }} {% icon 'arrow-right' %}</span>{% endif %}
+        </div>
       </article>
       {% endfor %}
     </div>
   </div>
 </section>
 {% endif %}
-<section class="section bg-mist">
-  <div class="container split" style="align-items:start">
-    <div class="reveal">
-      <span class="eyebrow">Volunteer &amp; partner</span>
-      <h2>Tell us how you would like to be involved</h2>
-      <p class="lead-text">Share a little about yourself or your organisation. Our team will reply with opportunities that match your interests — from cleanup days and school visits to research, communications and programme partnerships.</p>
-      {% if faqs %}
-      <div class="faq" style="margin-top:32px">
-        {% for f in faqs %}<details><summary>{{ f.question }} {% icon 'chevron-down' %}</summary><p>{{ f.answer }}</p></details>{% endfor %}
-      </div>
-      {% endif %}
+
+<section class="section gi-steps-section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow eyebrow-light">How it works</span>
+      <h2>From sign-up to impact in three steps</h2>
+      <p>No experience needed. We match you with an activity, give you what you need on the day and show you the difference it made.</p>
     </div>
-    <div class="reveal" style="--d:.1s">{% include "partials/contact_form.html" with form_title="Get in touch" %}</div>
+    <ol class="gi-steps">
+      <li class="reveal"><span class="gi-step-num">1</span><div class="gi-step-icon">{% icon 'send' %}</div><h3>Tell us about you</h3><p>Send the short form below, or message us on WhatsApp. Tell us your interests and when you are free.</p></li>
+      <li class="reveal" style="--d:.08s"><span class="gi-step-num">2</span><div class="gi-step-icon">{% icon 'calendar' %}</div><h3>Join an activity</h3><p>We invite you to the next cleanup, school visit, training or campaign that fits, with gloves, bags and guidance provided.</p></li>
+      <li class="reveal" style="--d:.16s"><span class="gi-step-num">3</span><div class="gi-step-icon">{% icon 'sparkles' %}</div><h3>See the change</h3><p>Every activity is recorded. You receive photos, figures and stories showing what your effort achieved.</p></li>
+    </ol>
+    {% if stats %}
+    <div class="gi-stats reveal">
+      {% for s in stats %}<div class="gi-stat"><div class="gi-stat-num">{{ s.prefix }}<span data-count="{{ s.value }}">{{ s.value|intcomma }}</span><span class="suffix">{{ s.suffix }}</span></div><div class="gi-stat-label">{{ s.label }}</div></div>{% endfor %}
+    </div>
+    {% endif %}
   </div>
 </section>
+
+<section class="section gi-join" id="join">
+  <div class="container gi-join-layout">
+    <div class="gi-join-intro reveal">
+      <span class="eyebrow">Volunteer &amp; partner</span>
+      <h2>Tell us how you would like to be involved</h2>
+      <p class="lead-text">Share a little about yourself or your organisation. We reply with opportunities that match your interests, from cleanup days and school visits to research, communications and programme partnerships.</p>
+      <div class="gi-channels">
+        {% if site.whatsapp %}<a class="gi-channel" href="{{ site.whatsapp|whatsapp_link }}" target="_blank" rel="noopener"><span class="gi-channel-icon wa">{% icon 'whatsapp' %}</span><span><strong>WhatsApp</strong><small>Fastest reply</small></span>{% icon 'arrow-up-right' cls='gi-channel-go' %}</a>{% endif %}
+        {% if site.email %}<a class="gi-channel" href="mailto:{{ site.email }}?subject=Getting%20involved%20with%20WEMASA"><span class="gi-channel-icon">{% icon 'mail' %}</span><span><strong>Email</strong><small>{{ site.email }}</small></span>{% icon 'arrow-up-right' cls='gi-channel-go' %}</a>{% endif %}
+        {% if site.phone %}<a class="gi-channel" href="{{ site.phone|tel_link }}"><span class="gi-channel-icon">{% icon 'phone' %}</span><span><strong>Call us</strong><small>{{ site.phone }}</small></span>{% icon 'arrow-up-right' cls='gi-channel-go' %}</a>{% endif %}
+      </div>
+    </div>
+    <div class="gi-join-form reveal" style="--d:.1s">{% include "partials/contact_form.html" with form_title="Get in touch" %}</div>
+  </div>
+</section>
+
+{% if faqs %}
+<section class="section bg-mist">
+  <div class="container">
+    {% section_head "Questions" "Before you join" "Answers to what volunteers, partners and schools ask us most often." %}
+    <div class="faq gi-faq reveal">{% for f in faqs %}<details><summary>{{ f.question }} {% icon 'chevron-down' %}</summary><p>{{ f.answer }}</p></details>{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
 {% endblock %}

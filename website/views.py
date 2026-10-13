@@ -265,11 +265,24 @@ def partners(request):
     })
 
 
+# Gallery albums whose first photo illustrates an involvement option (matched on a word in its title).
+INVOLVEMENT_PHOTOS = [
+    ("volunteer", "Beach cleanups"), ("partner", "World Cleanup Day 2026"), ("school", "School tree planting"),
+    ("media", "Women journalists workshop"),
+]
+
+
 @cached_page
 def get_involved(request):
+    options = list(InvolvementOption.objects.published())
+    photos = GalleryImage.objects.published().order_by("order", "id")
+    for o in options:
+        album = next((a for word, a in INVOLVEMENT_PHOTOS if word in o.title.lower()), None)
+        o.photo = photos.filter(album=album).first() if album else None
     return render(request, "website/get_involved.html", {
         "header": page_header("involved"),
-        "options": InvolvementOption.objects.published(),
+        "options": options,
+        "stats": ImpactStat.objects.published().filter(show_on_home=True)[:4],
         "faqs": FAQ.objects.published(),
         "form": ContactForm(initial={"topic": "volunteer"}),
     })

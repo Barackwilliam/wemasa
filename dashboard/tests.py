@@ -35,6 +35,18 @@ class DashboardTests(TestCase):
         response = self.client.get(reverse("dashboard:home"))
         self.assertRedirects(response, reverse("dashboard:login") + "?next=/dashboard/")
 
+    def test_login_page_shows_the_site_name(self):
+        self.client.logout()
+        response = self.client.get(reverse("dashboard:login"))
+        self.assertContains(response, "<title>Sign in · WEMASA Dashboard</title>", html=False)
+
+    def test_overview_shows_activity_charts(self):
+        ContactMessage.objects.create(name="Asha", email="asha@example.com", message="Hello")
+        response = self.client.get(reverse("dashboard:home"))
+        self.assertContains(response, 'class="bars"')
+        self.assertEqual(response.context["message_trend"]["total"], 1)
+        self.assertEqual(len(response.context["message_trend"]["rows"]), 6)
+
     def test_non_staff_are_refused(self):
         self.client.force_login(self.visitor)
         self.assertEqual(self.client.get(reverse("dashboard:home")).status_code, 403)

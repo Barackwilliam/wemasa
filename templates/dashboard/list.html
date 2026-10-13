@@ -31,9 +31,9 @@
     <tbody>
       {% for row in rows %}
       <tr class="{% if row.obj.is_read is False %}is-unread{% endif %}">
-        {% if section.thumb %}<td>{% if row.thumb %}<img class="thumb" src="{{ row.thumb.url }}" alt="" loading="lazy">{% else %}<span class="thumb thumb-empty">{% icon section.icon %}</span>{% endif %}</td>{% endif %}
+        {% if section.thumb %}<td class="cell-thumb">{% if row.thumb %}<img class="thumb" src="{{ row.thumb.url }}" alt="" loading="lazy">{% else %}<span class="thumb thumb-empty">{% icon section.icon %}</span>{% endif %}</td>{% endif %}
         {% for c in row.cells %}
-        <td>{% if forloop.first %}<a class="row-title" href="{% url 'dashboard:update' section.slug row.obj.pk %}">{{ c.text|default:"(untitled)"|truncatechars:80 }}</a>
+        <td{% if forloop.first %} class="cell-title"{% else %} data-label="{{ c.label|capfirst }}"{% endif %}>{% if forloop.first %}<a class="row-title" href="{% url 'dashboard:update' section.slug row.obj.pk %}">{{ c.text|default:"(untitled)"|truncatechars:80 }}</a>
             {% elif c.bool is not None %}{% if c.bool %}<span class="pill pill-on">Yes</span>{% else %}<span class="pill">No</span>{% endif %}
             {% else %}{{ c.text|truncatechars:60 }}{% endif %}</td>
         {% endfor %}

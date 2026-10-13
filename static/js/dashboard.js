@@ -47,6 +47,46 @@
     window.addEventListener("beforeunload", function (e) { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
   }
 
+  // Sidebar: filter sections as you type
+  var filter = doc.querySelector("[data-side-filter]");
+  if (filter) {
+    filter.addEventListener("input", function () {
+      var q = filter.value.trim().toLowerCase();
+      var group = null, groupHas = false;
+      doc.querySelectorAll(".side-nav > *").forEach(function (el) {
+        if (el.classList.contains("side-group")) {
+          if (group) group.hidden = !groupHas;
+          group = el; groupHas = false;
+        } else {
+          var hit = !q || el.textContent.toLowerCase().indexOf(q) > -1;
+          el.hidden = !hit;
+          if (hit) groupHas = true;
+        }
+      });
+      if (group) group.hidden = !groupHas;
+    });
+    filter.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter") return;
+      var first = doc.querySelector(".side-nav > .side-link:not([hidden])");
+      if (first) window.location.href = first.href;
+    });
+  }
+
+  // Count up the overview figures
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    doc.querySelectorAll(".kpi [data-count]").forEach(function (el) {
+      var end = parseInt(el.getAttribute("data-count"), 10) || 0, t0 = null;
+      if (end < 2) return;
+      el.textContent = "0";
+      requestAnimationFrame(function step(t) {
+        if (!t0) t0 = t;
+        var p = Math.min(1, (t - t0) / 900);
+        el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(step);
+      });
+    });
+  }
+
   // Fade out success messages
   setTimeout(function () {
     doc.querySelectorAll(".toasts .toast-success").forEach(function (t) { t.style.transition = "opacity .5s"; t.style.opacity = "0"; setTimeout(function () { t.remove(); }, 500); });

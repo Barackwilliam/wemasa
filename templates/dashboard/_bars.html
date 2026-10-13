@@ -1,0 +1,9 @@
+<div class="bars{% if tone %} bars-{{ tone }}{% endif %}" role="img" aria-label="{% for r in trend.rows %}{{ r.full }}: {{ r.value }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+  {% for r in trend.rows %}
+  <div class="bar-col" tabindex="0">
+    <span class="bar-tip">{{ r.full }}<b>{{ r.value }} {{ noun }}{{ r.value|pluralize }}</b></span>
+    <div class="bar-track"><span class="bar{% if forloop.last %} is-now{% endif %}" style="--h:{{ r.pct }}%"></span></div>
+    <span class="bar-label">{{ r.label }}</span>
+  </div>
+  {% endfor %}
+</div>

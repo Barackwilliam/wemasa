@@ -1,6 +1,8 @@
+import hashlib
 from urllib.parse import urlencode
 
 from django import template
+from django.contrib.staticfiles import finders
 from django.templatetags.static import static
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
@@ -8,6 +10,25 @@ from django.utils.safestring import mark_safe
 register = template.Library()
 
 SOCIAL_ICONS = {"x": "x-logo"}
+_asset_versions = {}
+
+
+@register.simple_tag
+def asset(path):
+    """Static URL ending in a fingerprint of the file, so browsers fetch a changed CSS or JS file at once.
+
+    Static files are cached by browsers for 30 days; without DEBUG=False (hashed file names) a
+    changed stylesheet would otherwise keep its old URL and visitors would keep the old version.
+    """
+    if path not in _asset_versions:
+        found = finders.find(path)
+        try:
+            with open(found, "rb") as f:
+                _asset_versions[path] = hashlib.md5(f.read()).hexdigest()[:10]
+        except (OSError, TypeError):
+            _asset_versions[path] = ""
+    url = static(path)
+    return f"{url}?v={_asset_versions[path]}" if _asset_versions[path] else url
 
 
 @register.simple_tag

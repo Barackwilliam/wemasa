@@ -513,6 +513,11 @@ class SDG(Orderable):
     def colour(self):
         return self.COLOURS.get(self.number, "#27963C")
 
+    @property
+    def icon(self):
+        """Path (for {% static %}) of the official UN icon for this goal."""
+        return f"img/sdg/goal-{self.number}.svg"
+
 
 # ==========================================================================
 # People and partners

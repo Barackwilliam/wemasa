@@ -15,7 +15,7 @@ from django.views.decorators.http import require_POST
 from .cache import cached_page
 from .forms import ContactForm, SubscribeForm
 from .models import (
-    FAQ, SDG, Video, AboutPage, CoreValue, DonationMethod, FocusArea, GalleryImage, HomePage, ImpactStat,
+    FAQ, SDG, Video, AboutPage, Certificate, CoreValue, DonationMethod, FocusArea, GalleryImage, HomePage, ImpactStat,
     InvolvementOption, MediaCoverage, Milestone, NewsPost, Objective, PageHeader, Partner, Project,
     Resource, Subscriber, TeamMember, Testimonial,
 )
@@ -74,6 +74,7 @@ def home(request):
         "about": AboutPage.load(),
         "options": InvolvementOption.objects.published()[:3],
         "featured_video": Video.objects.published().filter(is_featured=True).first(),
+        "certificates": Certificate.objects.published()[:5],
     })
 
 
@@ -86,6 +87,7 @@ def about(request):
         "values": CoreValue.objects.published(),
         "milestones": Milestone.objects.published(),
         "leaders": TeamMember.objects.published().filter(group="founders")[:4],
+        "certificates": Certificate.objects.published(),
         "stats": ImpactStat.objects.published()[:4],
     })
 

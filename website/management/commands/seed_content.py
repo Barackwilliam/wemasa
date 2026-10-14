@@ -19,6 +19,7 @@ from website import models as m
 
 SEED_DIR = Path(settings.BASE_DIR) / "seed" / "images"
 DOCS_DIR = Path(settings.BASE_DIR) / "seed" / "documents"
+CERT_DIR = Path(settings.BASE_DIR) / "seed" / "certificates"
 
 
 def photo(name, folder=SEED_DIR):
@@ -809,6 +810,31 @@ DONATION_METHODS = [
      "send you an official receipt."),
 ]
 
+# Certificates supplied by WEMASA (photos of the originals, stored unchanged).
+CERTIFICATES = [
+    ("Certificate of Registration as a Non-Governmental Organisation", "United Republic of Tanzania — Registrar of NGOs",
+     "registration", datetime.date(2021, 10, 8), "Registered under the Non-Governmental Organizations Act, 2002 (No. ooNGO/R/2395).",
+     "ngo-registration-2021.jpg"),
+    ("Taxpayer Identification Number (TIN) Registration", "Tanzania Revenue Authority (TRA)",
+     "registration", datetime.date(2024, 8, 27), "Registered with the Tanzania Revenue Authority, Temeke tax office.",
+     "tra-tin-registration-2024.jpg"),
+    ("Cheti cha Shukrani — Siku ya Upandaji Miti Kitaifa", "Halmashauri ya Manispaa ya Temeke",
+     "appreciation", datetime.date(2022, 4, 1), "For planting trees and protecting the environment on National Tree Planting Day.",
+     "temeke-tree-planting-2022.jpg"),
+    ("Certificate of Appreciation — World Cleanup Day 2022", "Nipe Fagio · Let's Do It! Tanzania",
+     "appreciation", datetime.date(2022, 9, 17), "For dedicated contribution and support to World Cleanup Day.",
+     "world-cleanup-day-2022.jpg"),
+    ("Certificate of Participation — Earth Day Tree Plantation", "Tanzania Cleanup and Conservation Initiative (TCCI)",
+     "participation", datetime.date(2022, 4, 22), "Earth Day tree planting at Lioness – Miburani Primary School, Temeke.",
+     "tcci-earth-day-2022.jpg"),
+    ("Certificate of Participation — Global Zero Waste Cities Summit", "GAIA — Global Alliance for Incinerator Alternatives",
+     "participation", datetime.date(2023, 5, 31), "Global Zero Waste Cities Summit: Local Leadership for Climate Resilience.",
+     "gaia-zero-waste-summit-2023.jpg"),
+    ("Siku ya Usafi Duniani 2018", "Nipe Fagio · Let's Do It! Tanzania",
+     "appreciation", datetime.date(2018, 9, 15), "Asante kwa kufanya dunia yetu safi na yenye afya — World Cleanup Day 2018.",
+     "world-cleanup-day-2018.jpg"),
+]
+
 INVOLVEMENT = [
     ("Volunteer with us", "hand-heart", "Join cleanups, tree-planting days and community awareness campaigns. No environmental background needed — just energy and commitment.", "Become a volunteer", "/contact/?topic=volunteer"),
     ("Partner with WEMASA", "handshake", "Development partners, businesses and institutions can co-design, fund or scale programmes with measurable community impact.", "Discuss a partnership", "/contact/?topic=partnership"),
@@ -960,6 +986,16 @@ class Command(BaseCommand):
             {"kind": k, "title": t, "account_name": n, "account_number": no, "branch": b, "branch_code": bc,
              "swift_code": sw, "currency": c, "instructions": i}
             for k, t, n, no, b, bc, sw, c, i in DONATION_METHODS])
+        for order, (title, issuer, kind, issued, text, image) in enumerate(CERTIFICATES):
+            if m.Certificate.objects.filter(title=title).exists():
+                continue
+            f = photo(image, CERT_DIR)
+            if not f:
+                continue
+            cert = m.Certificate(title=title, issuer=issuer, kind=kind, issued_on=issued, description=text, order=order)
+            if upload(cert.image, f):
+                cert.save()
+
         self.seed_simple(m.InvolvementOption, "title", [
             {"title": t, "icon": i, "description": d, "button_text": b, "button_url": u} for t, i, d, b, u in INVOLVEMENT])
         self.seed_simple(m.FAQ, "question", [{"question": q, "answer": a} for q, a in FAQS])

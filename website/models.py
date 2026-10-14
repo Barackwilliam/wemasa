@@ -315,6 +315,31 @@ class CoreValue(Orderable):
         return self.name
 
 
+class Certificate(Orderable):
+    """Registration documents and certificates of recognition, shown as polaroids on the About page."""
+
+    KINDS = [("registration", "Registration"), ("appreciation", "Appreciation"), ("participation", "Participation"),
+             ("award", "Award")]
+
+    title = models.CharField(max_length=200)
+    issuer = models.CharField("Issued by", max_length=200)
+    kind = models.CharField(max_length=20, choices=KINDS, default="appreciation")
+    issued_on = models.DateField("Date", null=True, blank=True)
+    description = models.CharField(max_length=300, blank=True, help_text="One short sentence about what it was for.")
+    image = models.ImageField(
+        "Certificate photo or scan", upload_to=UploadTo("certificates"),
+        help_text="A clear, straight photo or scan. It is shown exactly as uploaded, without cropping.",
+    )
+
+    objects = PublishedQuerySet.as_manager()
+
+    class Meta(Orderable.Meta):
+        verbose_name = "Certificate"
+
+    def __str__(self):
+        return self.title
+
+
 class Milestone(Orderable):
     year = models.CharField(max_length=20)
     title = models.CharField(max_length=200)

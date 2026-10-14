@@ -215,3 +215,21 @@ class ShareButtonTests(TestCase):
         site.save()
         html = self.client.get(reverse("website:home")).content.decode()
         self.assertIn('href="https://www.threads.net/@example"', html)
+
+
+@override_settings(STORAGES=TEST_STORAGES, CACHES=TEST_CACHES, PAGE_CACHE_ENABLED=False)
+class CertificateTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_content", verbosity=0)
+
+    def test_certificates_are_seeded_and_shown(self):
+        from .models import Certificate
+        self.assertEqual(Certificate.objects.count(), 7)
+        about = self.client.get(reverse("website:about")).content.decode()
+        self.assertIn('id="certificates"', about)
+        self.assertIn("Tanzania Revenue Authority (TRA)", about)
+        self.assertEqual(about.count('class="cert-pol"'), 7)
+        home = self.client.get(reverse("website:home")).content.decode()
+        self.assertEqual(home.count('class="cert-pol"'), 5)
+        self.assertIn("/about/#certificates", home)

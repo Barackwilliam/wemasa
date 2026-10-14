@@ -126,6 +126,8 @@
 </section>
 {% endif %}
 
+{% if certificates %}{% include "partials/certificates.html" with certs=certificates %}{% endif %}
+
 <!-- Legal -->
 {% if page.legal_text %}
 <section class="section-tight">

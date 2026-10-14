@@ -228,6 +228,9 @@
 </section>
 {% endif %}
 
+<!-- Certificates -->
+{% if certificates %}{% url 'website:about' as about_url %}{% with more=about_url|add:"#certificates" %}{% include "partials/certificates.html" with certs=certificates more_url=more %}{% endwith %}{% endif %}
+
 <!-- Partners -->
 {% if partners %}
 <section class="section partners-band">

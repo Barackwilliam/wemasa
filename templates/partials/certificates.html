@@ -1,0 +1,20 @@
+{% load site_tags %}
+{# Certificates as scattered polaroid photos on a blue band. `limit` shows a teaser with a link to the About page. #}
+<section class="cert-band" id="certificates">
+  <div class="container">
+    <div class="cert-head reveal">
+      <p class="kicker kicker-sun">Certificates &amp; recognition</p>
+      <h2>Registered, recognised and trusted</h2>
+      <p>WEMASA is a registered NGO in Tanzania, and our work has been recognised by local government, national campaigns and international networks. Tap a certificate to view it in full.</p>
+    </div>
+    <div class="cert-wall reveal">
+      {% for c in certs %}
+      <a class="cert-pol" href="{{ c.image.url }}" data-lightbox="certificates" data-caption="{{ c.title }} — {{ c.issuer }}{% if c.issued_on %}, {{ c.issued_on|date:'j F Y' }}{% endif %}">
+        <img src="{{ c.image.url }}" alt="{{ c.title }}, issued by {{ c.issuer }}" loading="lazy" decoding="async">
+        <span class="cert-cap"><strong>{{ c.title }}</strong><small>{{ c.issuer }}{% if c.issued_on %} · {{ c.issued_on|date:"Y" }}{% endif %}</small></span>
+      </a>
+      {% endfor %}
+    </div>
+    {% if more_url %}<div class="cert-more"><a class="btn btn-yellow" href="{{ more_url }}">See all certificates {% icon 'arrow-right' %}</a></div>{% endif %}
+  </div>
+</section>

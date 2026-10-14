@@ -44,7 +44,7 @@ SECTIONS = [
             ("Organisation", ["org_name", "short_name", "tagline", "logo", "footer_about"]),
             ("Registration", ["registration_number", "registration_year", "registration_note"]),
             ("Contact details", ["email", "phone", "phone_alt", "whatsapp", "location", "address", "office_hours", "map_embed_url"]),
-            ("Social media", ["facebook", "instagram", "x_twitter", "linkedin", "youtube", "tiktok"]),
+            ("Social media", ["facebook", "instagram", "threads", "x_twitter", "linkedin", "youtube", "tiktok"]),
             ("Announcement bar", ["announcement", "announcement_link"]),
             ("Buttons & newsletter", ["donate_button_text", "newsletter_title", "newsletter_text"]),
             ("Search engines & sharing", ["meta_description", "og_image", "google_site_verification"]),

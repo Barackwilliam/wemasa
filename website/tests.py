@@ -195,3 +195,23 @@ class SearchEngineTests(TestCase):
         html = self.client.get(reverse("website:home")).content.decode()
         self.assertIn('<meta name="google-site-verification" content="abc123XYZ">', html)
         self.assertIn('"@type":"NGO"', html)
+
+
+@override_settings(STORAGES=TEST_STORAGES, CACHES=TEST_CACHES, PAGE_CACHE_ENABLED=False)
+class ShareButtonTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_content", verbosity=0)
+
+    def test_story_has_threads_and_instagram_share(self):
+        post = NewsPost.objects.published().first()
+        html = self.client.get(post.get_absolute_url()).content.decode()
+        self.assertIn("https://www.threads.net/intent/post?", html)
+        self.assertIn('aria-label="Share on Instagram"', html)
+
+    def test_threads_profile_appears_in_social_links(self):
+        site = SiteSettings.load()
+        site.threads = "https://www.threads.net/@example"
+        site.save()
+        html = self.client.get(reverse("website:home")).content.decode()
+        self.assertIn('href="https://www.threads.net/@example"', html)

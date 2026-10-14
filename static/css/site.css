@@ -479,8 +479,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .article-cover img { width: 100%; height: 100%; object-fit: cover; }
 .share { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 28px; margin-top: 40px; border-top: 1px solid var(--line); }
 .share strong { margin-right: 6px; color: var(--ink); }
-.share a { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--mist); color: var(--green-700); }
-.share a:hover { background: var(--green-600); color: #fff; }
+.share a, .share-native { position: relative; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--mist); color: var(--green-700); border: 0; padding: 0; cursor: pointer; font: inherit; }
+.share a:hover, .share-native:hover { background: var(--green-600); color: #fff; }
+.share-tip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); white-space: nowrap; padding: 6px 10px; border-radius: 8px; background: var(--ink); color: #fff; font-size: .78rem; font-weight: 700; pointer-events: none; opacity: 0; transition: opacity .2s; }
+.share-tip:not(:empty) { opacity: 1; }
 .share .icon { width: 18px; height: 18px; }
 
 /* Resources */

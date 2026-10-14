@@ -92,6 +92,13 @@ SITE = {
         "WEMASA Tanzania Organization (Weka Mazingira Safi) empowers communities, schools, women and young people "
         "in Tanzania to manage waste, protect natural resources and act on climate change."
     ),
+    # Official WEMASA social media accounts (supplied by WEMASA, October 2026).
+    "facebook": "https://www.facebook.com/share/16Lm4YYzMtX/",
+    "instagram": "https://www.instagram.com/wemasatanzania_organization",
+    "threads": "https://www.threads.com/@wemasatanzania_organization",
+    "x_twitter": "https://x.com/WemasaTanzania",
+    "linkedin": "https://www.linkedin.com/in/wemasa-tanzania-b28908235",
+    "tiktok": "https://www.tiktok.com/@wemasatanzania",
 }
 
 HOME = {

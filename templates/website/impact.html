@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load site_tags %}
+{% load static site_tags %}
 {% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
@@ -36,7 +36,7 @@
   <div class="container">
     {% section_head "Global goals" "Contributing to the Sustainable Development Goals" "Our local action adds up to global progress. These are the UN goals our programmes advance most directly." %}
     <div class="sdg-pills" style="justify-content:center">
-      {% for g in sdgs %}<a class="sdg-pill reveal" style="--sdg:{{ g.colour }}" href="{% url 'website:sdgs' %}#sdg-{{ g.number }}"><b>{{ g.number }}</b>{{ g.title }}</a>{% endfor %}
+      {% for g in sdgs %}<a class="sdg-pill reveal" style="--sdg:{{ g.colour }}" href="{% url 'website:sdgs' %}#sdg-{{ g.number }}"><img src="{% static g.icon %}" alt="" width="34" height="34" loading="lazy">{{ g.title }}</a>{% endfor %}
     </div>
   </div>
 </section>

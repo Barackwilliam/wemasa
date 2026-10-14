@@ -639,13 +639,17 @@ IMPACT = [
 ]
 
 SDGS = [
+    (1, "No Poverty", "Organic farming skills that cut the cost of fertilisers and pesticides for women vegetable farmers."),
+    (2, "Zero Hunger", "Helping farming communities grow healthier vegetables with natural, low-cost inputs."),
+    (3, "Good Health and Well-being", "Clean streets, beaches and markets mean fewer breeding grounds for disease and healthier neighbourhoods."),
     (4, "Quality Education", "Climate change awareness in secondary schools and hands-on environmental learning for communities."),
     (5, "Gender Equality", "Training women farmers and building the skills and voice of young women environment journalists."),
     (7, "Affordable and Clean Energy", "Mapping cooking-fuel use among food vendors to support the shift to cleaner energy."),
     (11, "Sustainable Cities and Communities", "Cleanups, waste-collection mapping and better waste services for growing urban communities."),
-    (12, "Responsible Consumption and Production", "Promoting responsible waste storage, disposal and organic farming practices."),
     (13, "Climate Action", "Raising awareness of climate change and mobilising young people to act."),
+    (14, "Life Below Water", "Beach cleanups and waste-and-brand audits that stop plastic from reaching the ocean."),
     (15, "Life on Land", "Tree planting in schools and communities to restore green cover and protect biodiversity."),
+    (17, "Partnerships for the Goals", "Working with UNESCO, NEMC, local government, schools, the media and businesses to deliver our programmes."),
 ]
 
 TEAM = [

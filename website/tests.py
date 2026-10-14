@@ -195,6 +195,7 @@ class SearchEngineTests(TestCase):
         html = self.client.get(reverse("website:home")).content.decode()
         self.assertIn('<meta name="google-site-verification" content="abc123XYZ">', html)
         self.assertIn('"@type":"NGO"', html)
+        self.assertIn('"creator":{"@type":"Organization","@id":"https://www.jamiitek.com/#organization"', html)
 
 
 @override_settings(STORAGES=TEST_STORAGES, CACHES=TEST_CACHES, PAGE_CACHE_ENABLED=False)

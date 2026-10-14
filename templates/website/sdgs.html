@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load site_tags %}
+{% load static site_tags %}
 {% block title %}{{ header.title }} — {{ site.short_name }}{% endblock %}
 {% block description %}{{ header.meta_description|default:header.subtitle }}{% endblock %}
 {% block content %}
@@ -15,7 +15,7 @@
       </article>
       {% for g in sdgs %}
       <article class="card card-hover sdg-card reveal" id="sdg-{{ g.number }}" style="--sdg:{{ g.colour }};--d:{% widthratio forloop.counter0 1 6 %}0ms">
-        <div class="sdg-head"><span class="sdg-num">{{ g.number|stringformat:"02d" }}</span><h3>{{ g.title }}</h3></div>
+        <div class="sdg-head"><img class="sdg-icon" src="{% static g.icon %}" alt="SDG {{ g.number }}: {{ g.title }}" width="112" height="112" loading="lazy"><h3>{{ g.title }}</h3></div>
         <div class="card-body"><p>{{ g.description }}</p></div>
       </article>
       {% endfor %}

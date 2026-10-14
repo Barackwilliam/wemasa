@@ -58,7 +58,7 @@
       <div class="share">
         <strong>Share this project</strong>
         {% share_links request.build_absolute_uri project.title as shares %}
-        {% for s in shares %}<a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="Share on {{ s.name }}">{% icon s.icon %}</a>{% endfor %}
+        {% for s in shares %}{% if s.native %}<button type="button" class="share-native" data-share-url="{{ s.url }}" data-share-title="{{ s.title }}" aria-label="Share on {{ s.name }}" title="Share on {{ s.name }}">{% icon s.icon %}<span class="share-tip" role="status"></span></button>{% else %}<a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="Share on {{ s.name }}" title="Share on {{ s.name }}">{% icon s.icon %}</a>{% endif %}{% endfor %}
       </div>
     </div>
 

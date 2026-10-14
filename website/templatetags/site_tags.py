@@ -100,8 +100,13 @@ def share_links(url, title):
         "Facebook": ("facebook", f"https://www.facebook.com/sharer/sharer.php?{urlencode({'u': url})}"),
         "X": ("x", f"https://twitter.com/intent/tweet?{urlencode({'url': url, 'text': title})}"),
         "LinkedIn": ("linkedin", f"https://www.linkedin.com/sharing/share-offsite/?{urlencode({'url': url})}"),
+        "Threads": ("threads", f"https://www.threads.net/intent/post?{urlencode({'text': f'{title} {url}'})}"),
     }
-    return [{"name": k, "icon": v[0], "url": v[1]} for k, v in data.items()]
+    links = [{"name": k, "icon": v[0], "url": v[1]} for k, v in data.items()]
+    # Instagram has no web share link: the button opens the phone's share sheet (which lists Instagram),
+    # or copies the link on a computer so it can be pasted into Instagram.
+    links.append({"name": "Instagram", "icon": "instagram", "url": url, "native": True, "title": title})
+    return links
 
 
 @register.inclusion_tag("partials/section_head.html")

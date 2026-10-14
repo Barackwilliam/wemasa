@@ -106,6 +106,7 @@ class SiteSettings(OptimisedImagesMixin, Singleton):
 
     facebook = models.URLField(blank=True)
     instagram = models.URLField(blank=True)
+    threads = models.URLField(blank=True)
     x_twitter = models.URLField("X (Twitter)", blank=True)
     linkedin = models.URLField(blank=True)
     youtube = models.URLField(blank=True)
@@ -146,6 +147,7 @@ class SiteSettings(OptimisedImagesMixin, Singleton):
     def social_links(self):
         links = [
             ("facebook", "Facebook", self.facebook), ("instagram", "Instagram", self.instagram),
+            ("threads", "Threads", self.threads),
             ("x", "X", self.x_twitter), ("linkedin", "LinkedIn", self.linkedin),
             ("youtube", "YouTube", self.youtube), ("tiktok", "TikTok", self.tiktok),
         ]

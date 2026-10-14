@@ -272,3 +272,24 @@
     open(btn.getAttribute("data-video"), btn.getAttribute("data-video-title"), btn.getAttribute("data-video-kind"));
   });
 })();
+
+/* Share buttons without a web link (Instagram): use the phone's share sheet, or copy the link. */
+(function () {
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".share-native");
+    if (!btn) return;
+    var url = btn.getAttribute("data-share-url"), title = btn.getAttribute("data-share-title");
+    var tip = btn.querySelector(".share-tip");
+    function say(msg) {
+      tip.textContent = msg;
+      setTimeout(function () { tip.textContent = ""; }, 2600);
+    }
+    if (navigator.share && window.matchMedia("(pointer: coarse)").matches) {
+      navigator.share({ title: title, url: url }).catch(function () {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(function () { say("Link copied: paste it on Instagram"); }, function () { window.prompt("Copy this link:", url); });
+    } else {
+      window.prompt("Copy this link:", url);
+    }
+  });
+})();

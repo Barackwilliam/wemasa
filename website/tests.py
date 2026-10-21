@@ -234,3 +234,27 @@ class CertificateTests(TestCase):
         home = self.client.get(reverse("website:home")).content.decode()
         self.assertEqual(home.count('class="cert-pol"'), 5)
         self.assertIn("/about/#certificates", home)
+
+
+@override_settings(STORAGES=TEST_STORAGES, CACHES=TEST_CACHES, PAGE_CACHE_ENABLED=False)
+class HeroPhotoTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_content", verbosity=0)
+
+    def test_hero_photos_are_seeded_and_rotate_behind_the_headline(self):
+        from .models import HeroPhoto
+        self.assertEqual(HeroPhoto.objects.published().count(), 8)
+        html = self.client.get(reverse("website:home")).content.decode()
+        self.assertIn("data-hero-photos", html)
+        # The first photo loads straight away; the rest wait for the slideshow.
+        self.assertEqual(html.count('class="slide-bg is-on"'), 1)
+        self.assertGreaterEqual(html.count('class="slide-bg" data-src='), 7)
+
+    def test_hidden_photo_is_not_shown(self):
+        from .models import HeroPhoto
+        photo = HeroPhoto.objects.first()
+        photo.is_published = False
+        photo.save()
+        html = self.client.get(reverse("website:home")).content.decode()
+        self.assertNotIn(photo.image.url, html)

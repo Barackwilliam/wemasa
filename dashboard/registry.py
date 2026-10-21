@@ -67,6 +67,10 @@ SECTIONS = [
                                         "cta_secondary_text", "cta_secondary_url"]),
         ],
     ),
+    Section("hero-photos", m.HeroPhoto, "Hero photos", "camera", "Website", singular="Hero photo",
+            help="Photos that change one after another behind the headline at the top of the home page. "
+                 "The photo set in Home page → Hero banner is shown first.",
+            list_display=["caption", "order", "is_published"], search_fields=["caption"], thumb="image", view_url="/"),
     Section(
         "about-page", m.AboutPage, "About page", "leaf", "Website", singleton=True, view_url="/about/",
         help="Your story, vision, mission and the introductions to each About section.",

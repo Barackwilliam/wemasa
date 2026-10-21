@@ -10,6 +10,9 @@
 }
 /* Dimmed by the overlay above, but a little more saturated so the photo still looks rich. */
 .hm-hero .slide-bg { filter: saturate(1.18) contrast(1.06); animation: hm-drift 22s ease-in-out infinite alternate; }
+.hm-bgs { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
+.hm-bgs .slide-bg { z-index: auto; opacity: 0; transition: opacity 1.8s ease, transform 8s ease-out; }
+.hm-bgs .slide-bg.is-on { opacity: 1; }
 @keyframes hm-drift { from { transform: scale(1.02); } to { transform: scale(1.1) translate(-1%, -1%); } }
 .hm-hero .slide-body { padding-top: calc(var(--header-h) + 56px); padding-bottom: 190px; }
 .hm-hero .slide-body h1, .hm-hero .slide-title { font-size: clamp(2.6rem, 5.2vw, 4.6rem); line-height: .98; letter-spacing: -.005em; max-width: 13.5ch; margin-bottom: .32em; text-wrap: balance; text-shadow: 0 2px 30px rgba(0, 0, 0, .25); }

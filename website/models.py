@@ -340,6 +340,27 @@ class Certificate(Orderable):
         return self.title
 
 
+class HeroPhoto(OptimisedImagesMixin, Orderable):
+    """Photos that fade one into another behind the home page headline."""
+
+    image_sizes = {"image": 2200}
+
+    caption = models.CharField(max_length=160, help_text="What the photo shows, so you can find it again here.")
+    image = models.ImageField(
+        "Photo", upload_to=UploadTo("hero"),
+        help_text="A landscape photo. The headline sits over the left side, so the main subject works best in the "
+                  "middle or on the right.",
+    )
+
+    objects = PublishedQuerySet.as_manager()
+
+    class Meta(Orderable.Meta):
+        verbose_name = "Hero photo"
+
+    def __str__(self):
+        return self.caption
+
+
 class Milestone(Orderable):
     year = models.CharField(max_length=20)
     title = models.CharField(max_length=200)

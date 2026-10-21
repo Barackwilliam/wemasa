@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 {% load static site_tags %}
 {% block title %}{{ site.org_name }} — {{ site.tagline }}{% endblock %}
-{% block preload %}<link rel="stylesheet" href="{% asset 'css/home.css' %}">{% if page.hero_image %}<link rel="preload" as="image" href="{{ page.hero_image.url }}" fetchpriority="high">{% endif %}{% endblock %}
+{% block preload %}<link rel="stylesheet" href="{% asset 'css/home.css' %}">{% if page.hero_image %}<link rel="preload" as="image" href="{{ page.hero_image.url }}" fetchpriority="high">{% elif hero_photos %}<link rel="preload" as="image" href="{{ hero_photos.0.image.url }}" fetchpriority="high">{% endif %}{% endblock %}
 
 {% block content %}
 <!-- Hero: the home page message (projects are shown once, in the cards further down) -->
 <section class="hero hero-slider hm-hero" data-slider>
   <div class="slides">
     <article class="slide is-active">
-      {% if page.hero_image %}<img class="slide-bg" src="{{ page.hero_image.url }}" alt="" fetchpriority="high">{% endif %}
+      <div class="hm-bgs" data-hero-photos>
+        {% if page.hero_image %}<img class="slide-bg is-on" src="{{ page.hero_image.url }}" alt="" fetchpriority="high">{% endif %}
+        {% for p in hero_photos %}{% if forloop.first and not page.hero_image %}<img class="slide-bg is-on" src="{{ p.image.url }}" alt="" fetchpriority="high">{% else %}<img class="slide-bg" data-src="{{ p.image.url }}" alt="">{% endif %}{% endfor %}
+      </div>
       <div class="container slide-body">
         {% if page.hero_eyebrow %}<p class="hm-pill"><span class="hm-pulse" aria-hidden="true"></span>{{ page.hero_eyebrow }}</p>{% endif %}
         <h1>{{ page.hero_title|highlight:page.hero_highlight }}</h1>

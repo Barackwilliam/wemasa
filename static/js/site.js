@@ -222,6 +222,38 @@
   restart();
 })();
 
+/* Home hero photos: each one fades into the next behind the headline. */
+(function () {
+  "use strict";
+  var box = document.querySelector("[data-hero-photos]");
+  if (!box) return;
+  var imgs = Array.prototype.slice.call(box.querySelectorAll("img"));
+  if (imgs.length < 2) return;
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var idx = 0, busy = false;
+  function load(img) {
+    if (img.dataset.src) { img.src = img.dataset.src; img.removeAttribute("data-src"); }
+  }
+  function next() {
+    if (busy || document.hidden) return;
+    var n = (idx + 1) % imgs.length, img = imgs[n];
+    load(img);
+    function show() {
+      busy = false;
+      imgs[idx].classList.remove("is-on");
+      img.classList.add("is-on");
+      idx = n;
+      load(imgs[(n + 1) % imgs.length]);
+    }
+    if (img.complete && img.naturalWidth) { show(); return; }
+    busy = true;
+    img.addEventListener("load", show, { once: true });
+    img.addEventListener("error", function () { busy = false; imgs.splice(n, 1); }, { once: true });
+  }
+  window.addEventListener("load", function () { load(imgs[1]); });
+  setInterval(next, 6000);
+})();
+
 /* Video player: a YouTube video loads only when played (thumbnails until then); uploaded files play in a <video>. */
 (function () {
   var doc = document, modal, frame, video, lastFocus;

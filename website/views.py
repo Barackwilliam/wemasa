@@ -15,7 +15,7 @@ from django.views.decorators.http import require_POST
 from .cache import cached_page
 from .forms import ContactForm, SubscribeForm
 from .models import (
-    FAQ, SDG, Video, AboutPage, Certificate, CoreValue, DonationMethod, FocusArea, GalleryImage, HomePage, ImpactStat,
+    FAQ, SDG, Video, AboutPage, Certificate, CoreValue, HeroPhoto, DonationMethod, FocusArea, GalleryImage, HomePage, ImpactStat,
     InvolvementOption, MediaCoverage, Milestone, NewsPost, Objective, PageHeader, Partner, Project,
     Resource, Subscriber, TeamMember, Testimonial,
 )
@@ -63,6 +63,7 @@ def home(request):
     news = list(NewsPost.objects.published()[:4])
     return render(request, "website/home.html", {
         "page": HomePage.load(),
+        "hero_photos": HeroPhoto.objects.published(),
         "focus_areas": FocusArea.objects.published().annotate(project_count=Count("projects", filter=Q(projects__is_published=True))),
         "projects": projects,
         "news": news,

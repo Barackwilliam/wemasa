@@ -20,6 +20,7 @@ from website import models as m
 SEED_DIR = Path(settings.BASE_DIR) / "seed" / "images"
 DOCS_DIR = Path(settings.BASE_DIR) / "seed" / "documents"
 CERT_DIR = Path(settings.BASE_DIR) / "seed" / "certificates"
+HERO_DIR = Path(settings.BASE_DIR) / "seed" / "hero"
 
 
 def photo(name, folder=SEED_DIR):
@@ -839,6 +840,18 @@ CERTIFICATES = [
      "world-cleanup-day-2018.jpg"),
 ]
 
+# Photos supplied by WEMASA that fade one into another behind the home page headline.
+HERO_PHOTOS = [
+    ("Community cleanup of a roadside drain", "drain-cleanup.jpg"),
+    ("Students at Mangaya Secondary School, Temeke", "mangaya-secondary-school.jpg"),
+    ("Planting a tree with children", "tree-planting-children.jpg"),
+    ("Pupils holding seedlings on a school tree-planting day", "school-seedlings.jpg"),
+    ("Weighing collected waste during a waste and brand audit", "weighing-waste.jpg"),
+    ("Volunteers sorting collected waste", "sorting-waste.jpg"),
+    ("First workshop for young girls and women environment journalists", "women-journalists-workshop.jpg"),
+    ("Women farmers at an organic farming training", "women-farmers-training.jpg"),
+]
+
 INVOLVEMENT = [
     ("Volunteer with us", "hand-heart", "Join cleanups, tree-planting days and community awareness campaigns. No environmental background needed — just energy and commitment.", "Become a volunteer", "/contact/?topic=volunteer"),
     ("Partner with WEMASA", "handshake", "Development partners, businesses and institutions can co-design, fund or scale programmes with measurable community impact.", "Discuss a partnership", "/contact/?topic=partnership"),
@@ -999,6 +1012,15 @@ class Command(BaseCommand):
             cert = m.Certificate(title=title, issuer=issuer, kind=kind, issued_on=issued, description=text, order=order)
             if upload(cert.image, f):
                 cert.save()
+
+        for order, (caption, image) in enumerate(HERO_PHOTOS):
+            if m.HeroPhoto.objects.filter(caption=caption).exists():
+                continue
+            f = photo(image, HERO_DIR)
+            if f:
+                hp = m.HeroPhoto(caption=caption, order=order)
+                if upload(hp.image, f):
+                    hp.save()
 
         self.seed_simple(m.InvolvementOption, "title", [
             {"title": t, "icon": i, "description": d, "button_text": b, "button_url": u} for t, i, d, b, u in INVOLVEMENT])
